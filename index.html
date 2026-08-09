@@ -85,6 +85,36 @@
     0%{ filter:brightness(1); } 30%{ filter:brightness(1.6) saturate(1.4); } 100%{ filter:brightness(1); }
   }
 
+  .choice-btn{
+    background:var(--ui-card); border:3px solid rgba(255,255,255,.15); border-radius:16px;
+    padding:20px 8px; font-size:22px; font-weight:800; color:#fff; cursor:pointer; text-align:center;
+  }
+  .choice-btn:active{ transform:scale(.95); }
+  .choice-btn.correct{ background:#2e7d32; border-color:#8bd450; animation:pulseGood .4s ease; }
+  .choice-btn.wrong{ background:#8b2e2e; border-color:#ff6f59; animation:flashWall .3s ease; }
+  .choice-btn.disabled{ opacity:.35; pointer-events:none; }
+  @keyframes pulseGood{ 0%{transform:scale(1);} 50%{transform:scale(1.08);} 100%{transform:scale(1);} }
+
+  #mathPadDisplay{
+    font-size:32px; font-weight:800; min-height:20px; background:rgba(255,255,255,.08);
+    border-radius:12px; padding:10px 24px; min-width:140px; text-align:center; letter-spacing:2px;
+  }
+  #mathPadKeys{ display:grid; grid-template-columns:repeat(3,64px); gap:10px; }
+  #mathPadKeys button{
+    width:64px; height:56px; border-radius:14px; border:none; background:rgba(255,255,255,.12);
+    color:#fff; font-size:22px; font-weight:700; cursor:pointer;
+  }
+  #mathPadKeys button:active{ background:rgba(255,255,255,.25); }
+
+  #flashcard{
+    margin-top:16px; background:var(--ui-card); border-radius:24px; padding:30px 20px;
+    text-align:center; width:100%; max-width:320px; border:3px solid rgba(255,255,255,.15);
+  }
+  #flashEmoji{ font-size:80px; }
+  #flashWord{ font-size:30px; font-weight:800; margin-top:10px; }
+  #flashRead{ font-size:16px; opacity:.75; margin-top:2px; }
+  #flashKo{ font-size:15px; opacity:.6; margin-top:8px; }
+
   footer.credit{ margin-top:auto; padding-top:16px; font-size:11px; opacity:.4; text-align:center; }
 
   #screen-game{ position:relative; transition:background .3s ease; }
@@ -108,12 +138,12 @@
   <canvas id="confettiCanvas"></canvas>
   <button class="icon-btn" id="btnMute">🔊</button>
 
-  <!-- HOME -->
+  <!-- HOME / HUB -->
   <section id="screen-home" class="screen active">
-    <h1 class="title">🧭 손가락 미로 탐험</h1>
-    <p class="sub">손가락으로 길을 따라 쭉 그어서<br>출발부터 도착까지 가보세요!</p>
-    <button class="big-btn" id="btnStart">시작하기</button>
-    <footer class="credit">가로/세로로 돌려도 괜찮아요 · 벽에 닿으면 살짝 멈춰요</footer>
+    <h1 class="title">🎮 아이들 놀이터</h1>
+    <p class="sub">하고 싶은 놀이를 골라보세요!</p>
+    <div class="grid" id="gameHubGrid" style="max-width:320px; grid-template-columns:1fr;"></div>
+    <footer class="credit">가로/세로로 돌려도 괜찮아요</footer>
   </section>
 
   <!-- THEME SELECT -->
@@ -158,6 +188,116 @@
     <button class="big-btn" id="btnNextLevel">다음 단계로</button>
     <button class="big-btn" id="btnRetryLevel" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 도전하기</button>
     <button class="icon-btn" id="btnResultHome" style="margin-top:10px">🏠 테마 화면으로</button>
+  </section>
+
+  <!-- MATH: operation select -->
+  <section id="screen-math-op" class="screen">
+    <h1 class="title">🔢 숫자 놀이</h1>
+    <p class="sub">어떤 계산을 연습할까요?</p>
+    <div class="grid" id="mathOpGrid"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnMathOpBack">◀ 뒤로</button>
+  </section>
+
+  <!-- MATH: level select -->
+  <section id="screen-math-level" class="screen">
+    <h1 class="title" id="mathLevelTitle">난이도 선택</h1>
+    <p class="sub">쉬운 것부터 차근차근 도전해봐요</p>
+    <div class="level-list" id="mathLevelList"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnMathLevelBack">◀ 연산 다시 고르기</button>
+  </section>
+
+  <!-- MATH: game -->
+  <section id="screen-math-game" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnMathHome">🏠</button>
+      <div class="info" id="mathInfo">덧셈 · 1단계</div>
+      <button class="icon-btn" id="btnMathInputMode">🔘 객관식</button>
+    </div>
+    <div class="info" id="mathProgress" style="margin:4px 0 6px;">문제 1 / 8</div>
+    <div id="mathProblem" style="font-size:clamp(34px,10vw,52px); font-weight:800; margin:18px 0; text-align:center;">7 + 5 = ?</div>
+    <div id="mathChoiceArea" class="grid" style="max-width:340px;"></div>
+    <div id="mathPadArea" style="display:none; flex-direction:column; align-items:center; gap:14px; width:100%;">
+      <div id="mathPadDisplay">&nbsp;</div>
+      <div id="mathPadKeys"></div>
+      <button id="btnMathPadConfirm" class="big-btn" style="max-width:220px;">확인 ✓</button>
+    </div>
+  </section>
+
+  <!-- MATH: result -->
+  <section id="screen-math-result" class="screen">
+    <h1 class="title">🎉 완료!</h1>
+    <div class="stars" id="mathResultStars">⭐⭐⭐</div>
+    <div class="result-time" id="mathResultScore">8 / 8 정답</div>
+    <div class="result-best" id="mathResultBest">최고 기록: ⭐⭐⭐</div>
+    <button class="big-btn" id="btnMathNextLevel">다음 단계로</button>
+    <button class="big-btn" id="btnMathRetryLevel" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 도전하기</button>
+    <button class="icon-btn" id="btnMathResultHome" style="margin-top:10px">🏠 연산 다시 고르기</button>
+  </section>
+
+  <!-- WORD: language select -->
+  <section id="screen-word-lang" class="screen">
+    <h1 class="title">🗣️ 단어 놀이</h1>
+    <p class="sub">어떤 언어를 배워볼까요?</p>
+    <div class="grid" id="wordLangGrid"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnWordLangBack">◀ 뒤로</button>
+  </section>
+
+  <!-- WORD: topic select -->
+  <section id="screen-word-topic" class="screen">
+    <h1 class="title" id="wordTopicTitle">주제 선택</h1>
+    <p class="sub">배우고 싶은 주제를 골라보세요</p>
+    <div class="grid" id="wordTopicGrid"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnWordTopicBack">◀ 언어 다시 고르기</button>
+  </section>
+
+  <!-- WORD: mode select -->
+  <section id="screen-word-mode" class="screen">
+    <h1 class="title" id="wordModeTitle">어떻게 배워볼까요?</h1>
+    <div class="grid" id="wordModeGrid" style="grid-template-columns:1fr; max-width:320px;"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnWordModeBack">◀ 주제 다시 고르기</button>
+  </section>
+
+  <!-- WORD: flashcard mode -->
+  <section id="screen-word-card" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnWordCardHome">🏠</button>
+      <div class="info" id="wordCardInfo">영어 · 동물</div>
+      <div class="info" id="wordCardProgress">1 / 8</div>
+    </div>
+    <div id="flashcard">
+      <div id="flashEmoji">🐶</div>
+      <div id="flashWord">Dog</div>
+      <div id="flashRead">도그</div>
+      <div id="flashKo">강아지</div>
+      <button class="icon-btn" id="btnFlashSpeak" style="margin-top:16px; font-size:22px;">🔊 듣기</button>
+    </div>
+    <div class="game-actions" style="margin-top:20px;">
+      <button id="btnFlashPrev">◀ 이전</button>
+      <button id="btnFlashNext">다음 ▶</button>
+    </div>
+  </section>
+
+  <!-- WORD: quiz mode -->
+  <section id="screen-word-quiz" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnWordQuizHome">🏠</button>
+      <div class="info" id="wordQuizInfo">영어 · 동물</div>
+      <div class="info" id="wordQuizProgress">1 / 8</div>
+    </div>
+    <div id="wordQuizEmoji" style="font-size:88px; margin:18px 0 4px;">🐶</div>
+    <button class="icon-btn" id="btnWordQuizSpeak" style="margin-bottom:14px;">🔊 다시 듣기</button>
+    <p class="sub" style="margin-bottom:10px;">이 그림은 뭐라고 할까요?</p>
+    <div class="grid" id="wordQuizOptions" style="max-width:340px;"></div>
+  </section>
+
+  <!-- WORD: result -->
+  <section id="screen-word-result" class="screen">
+    <h1 class="title">🎉 완료!</h1>
+    <div class="stars" id="wordResultStars">⭐⭐⭐</div>
+    <div class="result-time" id="wordResultScore">8 / 8 정답</div>
+    <div class="result-best" id="wordResultBest">최고 기록: ⭐⭐⭐</div>
+    <button class="big-btn" id="btnWordRetryQuiz" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 도전하기</button>
+    <button class="icon-btn" id="btnWordResultHome" style="margin-top:10px">🏠 주제 다시 고르기</button>
   </section>
 
 </div>
@@ -722,10 +862,25 @@
   }
 
   // ---------- Buttons ----------
-  document.getElementById('btnStart').addEventListener('click', ()=>{
-    buildThemeGrid();
-    showScreen('screen-theme');
-  });
+  function buildGameHub(){
+    const wrap = document.getElementById('gameHubGrid');
+    wrap.innerHTML = '';
+    const games = [
+      {emoji:'🧭', label:'미로찾기', gradient:'linear-gradient(160deg,#232b66,#0b1030)', onClick:()=>{ buildThemeGrid(); showScreen('screen-theme'); }},
+      {emoji:'🔢', label:'숫자놀이', gradient:'linear-gradient(160deg,#3a3a3a,#161616)', onClick:()=>{ buildMathOpGrid(); showScreen('screen-math-op'); }},
+      {emoji:'🗣️', label:'단어놀이', gradient:'linear-gradient(160deg,#6d2e8f,#3a0f52)', onClick:()=>{ buildWordLangGrid(); showScreen('screen-word-lang'); }},
+    ];
+    games.forEach(g=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.background = g.gradient;
+      div.innerHTML = '<span class="emoji">'+g.emoji+'</span><span class="name">'+g.label+'</span>';
+      div.addEventListener('click', g.onClick);
+      wrap.appendChild(div);
+    });
+  }
+  buildGameHub();
+
   document.getElementById('btnThemeBack').addEventListener('click', ()=> showScreen('screen-home'));
   document.getElementById('btnLevelBack').addEventListener('click', ()=>{
     buildThemeGrid();
@@ -761,6 +916,530 @@
       redrawAll();
     }
   });
+
+  // =====================================================================
+  // Shared helpers
+  // =====================================================================
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function sfxCorrect(){ beep(988,0.12,'sine',0.15); }
+
+  // =====================================================================
+  // MATH GAME
+  // =====================================================================
+  const MATH_OPS = [
+    {id:'add', symbol:'+', label:'덧셈', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)'},
+    {id:'sub', symbol:'-', label:'뺄셈', gradient:'linear-gradient(160deg,#c46a2e,#3b2412)'},
+    {id:'mul', symbol:'×', label:'곱셈', gradient:'linear-gradient(160deg,#7a3fb0,#3a0f52)'},
+    {id:'div', symbol:'÷', label:'나눗셈', gradient:'linear-gradient(160deg,#2e9e5b,#0d2b1d)'},
+  ];
+  const MATH_LEVEL_META = [
+    {label:'1단계 · 아주 쉬워요', age:'유치원'},
+    {label:'2단계 · 쉬워요', age:'유치원~초1'},
+    {label:'3단계 · 보통이에요', age:'초1~2'},
+    {label:'4단계 · 살짝 어려워요', age:'초2~3'},
+    {label:'5단계 · 어려워요', age:'초3~4'},
+    {label:'6단계 · 아주 어려워요', age:'초5~6'},
+  ];
+  const MATH_STORE_KEY = 'fingerMazeMathStars_v1';
+
+  let mathState = {
+    opIdx: 0, levelIdx: 0,
+    inputMode: localStorage.getItem('fingerMazeMathInputMode') || 'choice',
+    qIndex: 0, totalQ: 8, mistakesThisQ: 0, roundMistakes: 0,
+    current: null, padValue: '', locked: false,
+  };
+
+  function loadMathStars(){ try{ return JSON.parse(localStorage.getItem(MATH_STORE_KEY)||'{}'); }catch(e){ return {}; } }
+  function saveMathStars(map){ try{ localStorage.setItem(MATH_STORE_KEY, JSON.stringify(map)); }catch(e){} }
+  function mathKey(opId, levelIdx){ return opId+'_'+levelIdx; }
+  function currentMathOp(){ return MATH_OPS[mathState.opIdx]; }
+
+  function generateMathProblem(opId, levelIdx){
+    let a,b,answer;
+    if(opId==='add'){
+      const ranges = [[1,5],[1,10],[1,20],[10,50],[50,200],[100,500]];
+      const [lo,hi] = ranges[levelIdx];
+      a = randInt(lo,hi); b = randInt(lo,hi); answer = a+b;
+    } else if(opId==='sub'){
+      const ranges = [[1,10],[1,20],[1,50],[10,100],[50,300],[100,1000]];
+      const [lo,hi] = ranges[levelIdx];
+      a = randInt(lo,hi); b = randInt(1,a); answer = a-b;
+    } else if(opId==='mul'){
+      const tableRanges = [[1,2],[1,5],[1,9],[1,9],[10,30],[20,99]];
+      const bigRanges =    [[1,9],[1,9],[1,9],[10,50],[10,20],[10,99]];
+      const [tlo,thi] = tableRanges[levelIdx];
+      const [blo,bhi] = bigRanges[levelIdx];
+      a = randInt(blo,bhi); b = randInt(tlo,thi); answer = a*b;
+    } else {
+      const divisorRanges  = [[1,2],[1,5],[1,9],[2,9],[2,12],[2,20]];
+      const quotientRanges = [[1,9],[1,9],[1,9],[10,20],[10,50],[20,99]];
+      const [dlo,dhi] = divisorRanges[levelIdx];
+      const [qlo,qhi] = quotientRanges[levelIdx];
+      b = randInt(dlo,dhi); const q = randInt(qlo,qhi); a = b*q; answer = q;
+    }
+    const opMeta = MATH_OPS.find(o=>o.id===opId);
+    return { a, b, op:opId, symbol:opMeta.symbol, answer };
+  }
+
+  function generateChoices(correct){
+    const options = new Set([correct]);
+    const spread = Math.max(3, Math.round(correct*0.2)+1);
+    let guard = 0;
+    while(options.size<4 && guard<60){
+      guard++;
+      const delta = randInt(-spread,spread);
+      if(delta===0) continue;
+      const cand = correct+delta;
+      if(cand<0 || options.has(cand)) continue;
+      options.add(cand);
+    }
+    let filler = correct+1;
+    while(options.size<4){ if(!options.has(filler)) options.add(filler); filler++; }
+    return shuffle(Array.from(options));
+  }
+
+  function buildMathOpGrid(){
+    const wrap = document.getElementById('mathOpGrid');
+    wrap.innerHTML = '';
+    MATH_OPS.forEach((op, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.background = op.gradient;
+      div.innerHTML = '<span class="emoji">'+op.symbol+'</span><span class="name">'+op.label+'</span>';
+      div.addEventListener('click', ()=>{
+        mathState.opIdx = idx;
+        buildMathLevelList();
+        showScreen('screen-math-level');
+      });
+      wrap.appendChild(div);
+    });
+  }
+
+  function buildMathLevelList(){
+    const op = currentMathOp();
+    document.getElementById('mathLevelTitle').textContent = op.symbol+' '+op.label;
+    const stars = loadMathStars();
+    const wrap = document.getElementById('mathLevelList');
+    wrap.innerHTML = '';
+    MATH_LEVEL_META.forEach((meta, idx)=>{
+      const row = document.createElement('div');
+      row.className = 'level-row';
+      const key = mathKey(op.id, idx);
+      const s = stars[key];
+      const bestText = s!==undefined ? ('⭐'.repeat(s)+'☆'.repeat(3-s)) : '아직 기록 없음';
+      row.innerHTML = '<div><div class="lv-name">'+meta.label+'</div><div class="lv-age">'+meta.age+'</div></div><div class="lv-best">'+bestText+'</div>';
+      row.addEventListener('click', ()=>{
+        mathState.levelIdx = idx;
+        showScreen('screen-math-game');
+        startMathRound();
+      });
+      wrap.appendChild(row);
+    });
+  }
+
+  function updateMathInputModeBtn(){
+    document.getElementById('btnMathInputMode').textContent = mathState.inputMode==='choice' ? '🔘 객관식' : '⌨️ 직접입력';
+  }
+
+  function startMathRound(){
+    const op = currentMathOp();
+    const meta = MATH_LEVEL_META[mathState.levelIdx];
+    document.getElementById('mathInfo').textContent = op.label+' · '+meta.label.split(' · ')[0];
+    mathState.qIndex = 0;
+    mathState.roundMistakes = 0;
+    updateMathInputModeBtn();
+    nextMathProblem();
+  }
+
+  function nextMathProblem(){
+    mathState.locked = false;
+    if(mathState.qIndex >= mathState.totalQ){
+      finishMathRound();
+      return;
+    }
+    mathState.current = generateMathProblem(currentMathOp().id, mathState.levelIdx);
+    mathState.mistakesThisQ = 0;
+    mathState.padValue = '';
+    document.getElementById('mathProgress').textContent = '문제 '+(mathState.qIndex+1)+' / '+mathState.totalQ;
+    document.getElementById('mathProblem').textContent = mathState.current.a+' '+mathState.current.symbol+' '+mathState.current.b+' = ?';
+    renderMathAnswerUI();
+  }
+
+  function renderMathAnswerUI(){
+    const choiceArea = document.getElementById('mathChoiceArea');
+    const padArea = document.getElementById('mathPadArea');
+    if(mathState.inputMode==='choice'){
+      choiceArea.style.display = 'grid';
+      padArea.style.display = 'none';
+      choiceArea.innerHTML = '';
+      const options = generateChoices(mathState.current.answer);
+      options.forEach(val=>{
+        const btn = document.createElement('div');
+        btn.className = 'choice-btn';
+        btn.textContent = val;
+        btn.addEventListener('click', ()=> submitMathAnswer(val, btn));
+        choiceArea.appendChild(btn);
+      });
+    } else {
+      choiceArea.style.display = 'none';
+      padArea.style.display = 'flex';
+      renderMathPadKeys();
+      updateMathPadDisplay();
+    }
+  }
+
+  function renderMathPadKeys(){
+    const wrap = document.getElementById('mathPadKeys');
+    wrap.innerHTML = '';
+    const keys = ['1','2','3','4','5','6','7','8','9','⌫','0',''];
+    keys.forEach(k=>{
+      const btn = document.createElement('button');
+      btn.textContent = k;
+      if(k===''){ btn.style.visibility = 'hidden'; btn.disabled = true; }
+      else {
+        btn.addEventListener('click', ()=>{
+          if(k==='⌫') mathState.padValue = mathState.padValue.slice(0,-1);
+          else if(mathState.padValue.length<5) mathState.padValue += k;
+          updateMathPadDisplay();
+        });
+      }
+      wrap.appendChild(btn);
+    });
+  }
+
+  function updateMathPadDisplay(){
+    document.getElementById('mathPadDisplay').textContent = mathState.padValue.length ? mathState.padValue : ' ';
+  }
+
+  function submitMathAnswer(val, btnEl){
+    if(mathState.locked) return;
+    const correct = mathState.current.answer;
+    if(val === correct){
+      mathState.locked = true;
+      if(btnEl){
+        btnEl.classList.add('correct');
+        document.querySelectorAll('#mathChoiceArea .choice-btn').forEach(b=>{ if(b!==btnEl) b.classList.add('disabled'); });
+      } else {
+        const d = document.getElementById('mathPadDisplay');
+        d.style.background = '#2e7d32'; d.style.animation = 'pulseGood .4s ease';
+      }
+      sfxCorrect();
+      if(mathState.mistakesThisQ>0) mathState.roundMistakes++;
+      setTimeout(()=>{ mathState.qIndex++; nextMathProblem(); }, 550);
+    } else {
+      mathState.mistakesThisQ++;
+      wallFeedback();
+      if(btnEl){
+        btnEl.classList.add('wrong');
+        setTimeout(()=> btnEl.classList.remove('wrong'), 300);
+      } else {
+        const d = document.getElementById('mathPadDisplay');
+        d.style.background = '#8b2e2e'; d.style.animation = 'flashWall .3s ease';
+        setTimeout(()=>{ d.style.background=''; d.style.animation=''; }, 300);
+        mathState.padValue = '';
+        updateMathPadDisplay();
+      }
+    }
+  }
+
+  function finishMathRound(){
+    const stars = mathState.roundMistakes===0 ? 3 : (mathState.roundMistakes<=2 ? 2 : 1);
+    const op = currentMathOp();
+    const key = mathKey(op.id, mathState.levelIdx);
+    const map = loadMathStars();
+    if(map[key]===undefined || stars>map[key]){ map[key]=stars; saveMathStars(map); }
+    document.getElementById('mathResultStars').textContent = '⭐'.repeat(stars)+'☆'.repeat(3-stars);
+    document.getElementById('mathResultScore').textContent = mathState.totalQ+' 문제 완료!';
+    document.getElementById('mathResultBest').textContent = '최고 기록: '+'⭐'.repeat(map[key])+'☆'.repeat(3-map[key]);
+    document.getElementById('btnMathNextLevel').style.display = (mathState.levelIdx < MATH_LEVEL_META.length-1) ? 'block' : 'none';
+    sfxWin();
+    setTimeout(()=>{
+      showScreen('screen-math-result');
+      launchConfetti(['#ffd93d','#7bd8ff','#ff6f59','#ffffff']);
+    }, 300);
+  }
+
+  document.getElementById('btnMathInputMode').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    mathState.inputMode = mathState.inputMode==='choice' ? 'pad' : 'choice';
+    localStorage.setItem('fingerMazeMathInputMode', mathState.inputMode);
+    updateMathInputModeBtn();
+    renderMathAnswerUI();
+  });
+  document.getElementById('btnMathPadConfirm').addEventListener('click', ()=>{
+    if(mathState.padValue==='') return;
+    submitMathAnswer(Number(mathState.padValue), null);
+  });
+  document.getElementById('btnMathOpBack').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnMathLevelBack').addEventListener('click', ()=>{ buildMathOpGrid(); showScreen('screen-math-op'); });
+  document.getElementById('btnMathHome').addEventListener('click', ()=>{ buildMathLevelList(); showScreen('screen-math-level'); });
+  document.getElementById('btnMathNextLevel').addEventListener('click', ()=>{
+    if(mathState.levelIdx < MATH_LEVEL_META.length-1){ mathState.levelIdx++; showScreen('screen-math-game'); startMathRound(); }
+  });
+  document.getElementById('btnMathRetryLevel').addEventListener('click', ()=>{ showScreen('screen-math-game'); startMathRound(); });
+  document.getElementById('btnMathResultHome').addEventListener('click', ()=>{ buildMathLevelList(); showScreen('screen-math-level'); });
+
+  // =====================================================================
+  // WORD GAME
+  // =====================================================================
+  const WORD_LANGS = [
+    {id:'en', label:'영어', flag:'🇬🇧', speechLang:'en-US', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)'},
+    {id:'ja', label:'일본어', flag:'🇯🇵', speechLang:'ja-JP', gradient:'linear-gradient(160deg,#c4462e,#3b1010)'},
+    {id:'zh', label:'중국어', flag:'🇨🇳', speechLang:'zh-CN', gradient:'linear-gradient(160deg,#c49a2e,#3b2b10)'},
+  ];
+  const WORD_TOPICS = [
+    {id:'animal', label:'동물', emoji:'🐾', gradient:'linear-gradient(160deg,#4c701f,#22350f)'},
+    {id:'color', label:'색깔', emoji:'🎨', gradient:'linear-gradient(160deg,#7a3fb0,#3a0f52)'},
+    {id:'number', label:'숫자', emoji:'🔢', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)'},
+    {id:'food', label:'음식', emoji:'🍎', gradient:'linear-gradient(160deg,#c46a2e,#3b2412)'},
+  ];
+  const WORD_DATA = {
+    animal: [
+      {emoji:'🐶', ko:'강아지', en:{word:'Dog',read:'도그'}, ja:{word:'犬',read:'이누'}, zh:{word:'狗',read:'거우'}},
+      {emoji:'🐱', ko:'고양이', en:{word:'Cat',read:'캣'}, ja:{word:'猫',read:'네코'}, zh:{word:'猫',read:'마오'}},
+      {emoji:'🐰', ko:'토끼', en:{word:'Rabbit',read:'래빗'}, ja:{word:'うさぎ',read:'우사기'}, zh:{word:'兔子',read:'투즈'}},
+      {emoji:'🦁', ko:'사자', en:{word:'Lion',read:'라이언'}, ja:{word:'ライオン',read:'라이온'}, zh:{word:'狮子',read:'스즈'}},
+      {emoji:'🐘', ko:'코끼리', en:{word:'Elephant',read:'엘리펀트'}, ja:{word:'ぞう',read:'조우'}, zh:{word:'大象',read:'따시앙'}},
+      {emoji:'🐟', ko:'물고기', en:{word:'Fish',read:'피시'}, ja:{word:'さかな',read:'사카나'}, zh:{word:'鱼',read:'위'}},
+      {emoji:'🐻', ko:'곰', en:{word:'Bear',read:'베어'}, ja:{word:'くま',read:'쿠마'}, zh:{word:'熊',read:'시옹'}},
+      {emoji:'🐦', ko:'새', en:{word:'Bird',read:'버드'}, ja:{word:'とり',read:'토리'}, zh:{word:'鸟',read:'냐오'}},
+    ],
+    color: [
+      {emoji:'🔴', ko:'빨강', en:{word:'Red',read:'레드'}, ja:{word:'あか',read:'아카'}, zh:{word:'红色',read:'홍써'}},
+      {emoji:'🔵', ko:'파랑', en:{word:'Blue',read:'블루'}, ja:{word:'あお',read:'아오'}, zh:{word:'蓝色',read:'란써'}},
+      {emoji:'🟡', ko:'노랑', en:{word:'Yellow',read:'옐로우'}, ja:{word:'きいろ',read:'키이로'}, zh:{word:'黄色',read:'황써'}},
+      {emoji:'🟢', ko:'초록', en:{word:'Green',read:'그린'}, ja:{word:'みどり',read:'미도리'}, zh:{word:'绿色',read:'뤼써'}},
+      {emoji:'⚫', ko:'검정', en:{word:'Black',read:'블랙'}, ja:{word:'くろ',read:'쿠로'}, zh:{word:'黑色',read:'헤이써'}},
+      {emoji:'⚪', ko:'하양', en:{word:'White',read:'화이트'}, ja:{word:'しろ',read:'시로'}, zh:{word:'白色',read:'바이써'}},
+      {emoji:'🩷', ko:'분홍', en:{word:'Pink',read:'핑크'}, ja:{word:'ピンク',read:'핑쿠'}, zh:{word:'粉色',read:'펀써'}},
+      {emoji:'🟣', ko:'보라', en:{word:'Purple',read:'퍼플'}, ja:{word:'むらさき',read:'무라사키'}, zh:{word:'紫色',read:'즈써'}},
+    ],
+    number: [
+      {emoji:'1️⃣', ko:'하나', en:{word:'One',read:'원'}, ja:{word:'いち',read:'이치'}, zh:{word:'一',read:'이'}},
+      {emoji:'2️⃣', ko:'둘', en:{word:'Two',read:'투'}, ja:{word:'に',read:'니'}, zh:{word:'二',read:'얼'}},
+      {emoji:'3️⃣', ko:'셋', en:{word:'Three',read:'쓰리'}, ja:{word:'さん',read:'산'}, zh:{word:'三',read:'싼'}},
+      {emoji:'4️⃣', ko:'넷', en:{word:'Four',read:'포'}, ja:{word:'よん',read:'욘'}, zh:{word:'四',read:'쓰'}},
+      {emoji:'5️⃣', ko:'다섯', en:{word:'Five',read:'파이브'}, ja:{word:'ご',read:'고'}, zh:{word:'五',read:'우'}},
+      {emoji:'6️⃣', ko:'여섯', en:{word:'Six',read:'식스'}, ja:{word:'ろく',read:'로쿠'}, zh:{word:'六',read:'리우'}},
+      {emoji:'7️⃣', ko:'일곱', en:{word:'Seven',read:'세븐'}, ja:{word:'なな',read:'나나'}, zh:{word:'七',read:'치'}},
+      {emoji:'8️⃣', ko:'여덟', en:{word:'Eight',read:'에잇'}, ja:{word:'はち',read:'하치'}, zh:{word:'八',read:'빠'}},
+    ],
+    food: [
+      {emoji:'🍎', ko:'사과', en:{word:'Apple',read:'애플'}, ja:{word:'りんご',read:'링고'}, zh:{word:'苹果',read:'핑구어'}},
+      {emoji:'🍌', ko:'바나나', en:{word:'Banana',read:'바나나'}, ja:{word:'バナナ',read:'바나나'}, zh:{word:'香蕉',read:'시앙지아오'}},
+      {emoji:'🍞', ko:'빵', en:{word:'Bread',read:'브레드'}, ja:{word:'パン',read:'팡'}, zh:{word:'面包',read:'미엔빠오'}},
+      {emoji:'🥛', ko:'우유', en:{word:'Milk',read:'밀크'}, ja:{word:'牛乳',read:'규뉴'}, zh:{word:'牛奶',read:'니우나이'}},
+      {emoji:'🍚', ko:'밥', en:{word:'Rice',read:'라이스'}, ja:{word:'ご飯',read:'고항'}, zh:{word:'米饭',read:'미판'}},
+      {emoji:'💧', ko:'물', en:{word:'Water',read:'워터'}, ja:{word:'水',read:'미즈'}, zh:{word:'水',read:'쉐이'}},
+      {emoji:'🧀', ko:'치즈', en:{word:'Cheese',read:'치즈'}, ja:{word:'チーズ',read:'치즈'}, zh:{word:'奶酪',read:'나이라오'}},
+      {emoji:'🍓', ko:'딸기', en:{word:'Strawberry',read:'스트로베리'}, ja:{word:'いちご',read:'이치고'}, zh:{word:'草莓',read:'차오메이'}},
+    ],
+  };
+  const WORD_STORE_KEY = 'fingerMazeWordStars_v1';
+
+  let wordState = {
+    langIdx:0, topicIdx:0, cardIndex:0,
+    quizOrder:[], quizIndex:0, roundMistakes:0, mistakesThisQ:0, locked:false,
+  };
+
+  function loadWordStars(){ try{ return JSON.parse(localStorage.getItem(WORD_STORE_KEY)||'{}'); }catch(e){ return {}; } }
+  function saveWordStars(map){ try{ localStorage.setItem(WORD_STORE_KEY, JSON.stringify(map)); }catch(e){} }
+  function wordKey(langId, topicId){ return langId+'_'+topicId; }
+  function currentWordLang(){ return WORD_LANGS[wordState.langIdx]; }
+  function currentWordTopic(){ return WORD_TOPICS[wordState.topicIdx]; }
+  function currentWordItems(){ return WORD_DATA[currentWordTopic().id]; }
+
+  function speak(text, lang){
+    try{
+      if(!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang;
+      utter.rate = 0.85;
+      window.speechSynthesis.speak(utter);
+    }catch(e){}
+  }
+
+  function buildWordLangGrid(){
+    const wrap = document.getElementById('wordLangGrid');
+    wrap.innerHTML = '';
+    WORD_LANGS.forEach((lang, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.background = lang.gradient;
+      div.innerHTML = '<span class="emoji">'+lang.flag+'</span><span class="name">'+lang.label+'</span>';
+      div.addEventListener('click', ()=>{
+        wordState.langIdx = idx;
+        buildWordTopicGrid();
+        showScreen('screen-word-topic');
+      });
+      wrap.appendChild(div);
+    });
+  }
+
+  function buildWordTopicGrid(){
+    const lang = currentWordLang();
+    document.getElementById('wordTopicTitle').textContent = lang.flag+' '+lang.label;
+    const stars = loadWordStars();
+    const wrap = document.getElementById('wordTopicGrid');
+    wrap.innerHTML = '';
+    WORD_TOPICS.forEach((topic, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.background = topic.gradient;
+      const s = stars[wordKey(lang.id, topic.id)];
+      const starLine = s!==undefined ? ('<span style="font-size:13px; opacity:.85; display:block; margin-top:2px;">'+'⭐'.repeat(s)+'☆'.repeat(3-s)+'</span>') : '';
+      div.innerHTML = '<span class="emoji">'+topic.emoji+'</span><span class="name">'+topic.label+'</span>'+starLine;
+      div.addEventListener('click', ()=>{
+        wordState.topicIdx = idx;
+        buildWordModeGrid();
+        showScreen('screen-word-mode');
+      });
+      wrap.appendChild(div);
+    });
+  }
+
+  function buildWordModeGrid(){
+    const lang = currentWordLang(), topic = currentWordTopic();
+    document.getElementById('wordModeTitle').textContent = lang.flag+' '+lang.label+' · '+topic.emoji+' '+topic.label;
+    const wrap = document.getElementById('wordModeGrid');
+    wrap.innerHTML = '';
+    const modes = [
+      {id:'card', emoji:'🗂️', label:'카드로 배우기'},
+      {id:'quiz', emoji:'🎯', label:'퀴즈 풀기'},
+    ];
+    modes.forEach(m=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = '<span class="emoji">'+m.emoji+'</span><span class="name">'+m.label+'</span>';
+      div.addEventListener('click', ()=>{
+        if(m.id==='card'){ wordState.cardIndex=0; showScreen('screen-word-card'); renderFlashcard(); }
+        else { startWordQuiz(); showScreen('screen-word-quiz'); }
+      });
+      wrap.appendChild(div);
+    });
+  }
+
+  function renderFlashcard(){
+    const lang = currentWordLang(), topic = currentWordTopic();
+    const items = currentWordItems();
+    const item = items[wordState.cardIndex];
+    const entry = item[lang.id];
+    document.getElementById('wordCardInfo').textContent = lang.label+' · '+topic.label;
+    document.getElementById('wordCardProgress').textContent = (wordState.cardIndex+1)+' / '+items.length;
+    document.getElementById('flashEmoji').textContent = item.emoji;
+    document.getElementById('flashWord').textContent = entry.word;
+    document.getElementById('flashRead').textContent = entry.read;
+    document.getElementById('flashKo').textContent = item.ko;
+    speak(entry.word, lang.speechLang);
+  }
+
+  function startWordQuiz(){
+    const items = currentWordItems();
+    wordState.quizOrder = shuffle(items.map((_,i)=>i));
+    wordState.quizIndex = 0;
+    wordState.roundMistakes = 0;
+    const lang = currentWordLang(), topic = currentWordTopic();
+    document.getElementById('wordQuizInfo').textContent = lang.label+' · '+topic.label;
+    nextWordQuestion();
+  }
+
+  function nextWordQuestion(){
+    wordState.locked = false;
+    if(wordState.quizIndex >= wordState.quizOrder.length){
+      finishWordQuiz();
+      return;
+    }
+    const items = currentWordItems();
+    const lang = currentWordLang();
+    const idx = wordState.quizOrder[wordState.quizIndex];
+    const item = items[idx];
+    wordState.mistakesThisQ = 0;
+    document.getElementById('wordQuizProgress').textContent = (wordState.quizIndex+1)+' / '+wordState.quizOrder.length;
+    document.getElementById('wordQuizEmoji').textContent = item.emoji;
+    speak(item[lang.id].word, lang.speechLang);
+
+    const optionsArea = document.getElementById('wordQuizOptions');
+    optionsArea.innerHTML = '';
+    const wrongPool = shuffle(items.filter((_,i)=>i!==idx).map(w=>w[lang.id].word));
+    const options = shuffle([item[lang.id].word, ...wrongPool.slice(0,3)]);
+    options.forEach(word=>{
+      const btn = document.createElement('div');
+      btn.className = 'choice-btn';
+      btn.textContent = word;
+      btn.addEventListener('click', ()=> submitWordAnswer(word, item[lang.id].word, btn));
+      optionsArea.appendChild(btn);
+    });
+  }
+
+  function submitWordAnswer(picked, correct, btnEl){
+    if(wordState.locked) return;
+    if(picked===correct){
+      wordState.locked = true;
+      btnEl.classList.add('correct');
+      document.querySelectorAll('#wordQuizOptions .choice-btn').forEach(b=>{ if(b!==btnEl) b.classList.add('disabled'); });
+      sfxCorrect();
+      if(wordState.mistakesThisQ>0) wordState.roundMistakes++;
+      setTimeout(()=>{ wordState.quizIndex++; nextWordQuestion(); }, 550);
+    } else {
+      wordState.mistakesThisQ++;
+      btnEl.classList.add('wrong');
+      setTimeout(()=> btnEl.classList.remove('wrong'), 300);
+      wallFeedback();
+    }
+  }
+
+  function finishWordQuiz(){
+    const stars = wordState.roundMistakes===0 ? 3 : (wordState.roundMistakes<=2 ? 2 : 1);
+    const lang = currentWordLang(), topic = currentWordTopic();
+    const key = wordKey(lang.id, topic.id);
+    const map = loadWordStars();
+    if(map[key]===undefined || stars>map[key]){ map[key]=stars; saveWordStars(map); }
+    document.getElementById('wordResultStars').textContent = '⭐'.repeat(stars)+'☆'.repeat(3-stars);
+    document.getElementById('wordResultScore').textContent = wordState.quizOrder.length+' 단어 완료!';
+    document.getElementById('wordResultBest').textContent = '최고 기록: '+'⭐'.repeat(map[key])+'☆'.repeat(3-map[key]);
+    sfxWin();
+    setTimeout(()=>{
+      showScreen('screen-word-result');
+      launchConfetti(['#ffb3e6','#7fffd4','#ffffff','#ffd166']);
+    }, 300);
+  }
+
+  document.getElementById('btnFlashSpeak').addEventListener('click', ()=>{
+    const lang = currentWordLang();
+    const item = currentWordItems()[wordState.cardIndex];
+    speak(item[lang.id].word, lang.speechLang);
+  });
+  document.getElementById('btnFlashPrev').addEventListener('click', ()=>{
+    const items = currentWordItems();
+    wordState.cardIndex = (wordState.cardIndex - 1 + items.length) % items.length;
+    renderFlashcard();
+  });
+  document.getElementById('btnFlashNext').addEventListener('click', ()=>{
+    const items = currentWordItems();
+    wordState.cardIndex = (wordState.cardIndex + 1) % items.length;
+    renderFlashcard();
+  });
+  document.getElementById('btnWordQuizSpeak').addEventListener('click', ()=>{
+    const lang = currentWordLang();
+    const items = currentWordItems();
+    const idx = wordState.quizOrder[wordState.quizIndex];
+    speak(items[idx][lang.id].word, lang.speechLang);
+  });
+  document.getElementById('btnWordCardHome').addEventListener('click', ()=>{ buildWordModeGrid(); showScreen('screen-word-mode'); });
+  document.getElementById('btnWordQuizHome').addEventListener('click', ()=>{ buildWordModeGrid(); showScreen('screen-word-mode'); });
+  document.getElementById('btnWordRetryQuiz').addEventListener('click', ()=>{ startWordQuiz(); showScreen('screen-word-quiz'); });
+  document.getElementById('btnWordResultHome').addEventListener('click', ()=>{ buildWordTopicGrid(); showScreen('screen-word-topic'); });
+  document.getElementById('btnWordTopicBack').addEventListener('click', ()=>{ buildWordLangGrid(); showScreen('screen-word-lang'); });
+  document.getElementById('btnWordModeBack').addEventListener('click', ()=>{ buildWordTopicGrid(); showScreen('screen-word-topic'); });
+  document.getElementById('btnWordLangBack').addEventListener('click', ()=> showScreen('screen-home'));
 
 })();
 </script>
