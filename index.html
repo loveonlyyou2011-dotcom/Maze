@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1030">
+<title>손가락 미로 탐험</title>
+<style>
+  :root{
+    --bg:#0b1030; --path:#1c2456; --wall:#7bd8ff; --trail:#ffd93d; --accent:#7bd8ff;
+    --ui-bg:#151a3d; --ui-card:#1f2657;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%; overscroll-behavior:none;
+    touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+    background:#0b1030; font-family:"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  }
+  #app{ position:fixed; inset:0; display:flex; flex-direction:column; overflow:hidden; }
+  .screen{
+    display:none; flex-direction:column; align-items:center; justify-content:flex-start;
+    width:100%; height:100%; padding:env(safe-area-inset-top,16px) 16px calc(env(safe-area-inset-bottom,16px) + 8px);
+    overflow-y:auto; color:#fff;
+  }
+  .screen.active{ display:flex; }
+
+  h1.title{ font-size:clamp(24px,7vw,34px); margin:12px 0 4px; text-align:center; }
+  p.sub{ margin:0 0 20px; opacity:.8; font-size:15px; text-align:center; }
+
+  .big-btn{
+    width:100%; max-width:340px; padding:18px; margin:8px 0; border:none; border-radius:20px;
+    font-size:20px; font-weight:700; background:linear-gradient(180deg,#ffd93d,#ffb703);
+    color:#3a2a00; box-shadow:0 6px 0 #b8860b; cursor:pointer;
+  }
+  .big-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #b8860b; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:420px; margin-top:8px; }
+  .card{
+    background:var(--ui-card); border:3px solid rgba(255,255,255,.15); border-radius:20px;
+    padding:16px 8px; text-align:center; cursor:pointer; transition:transform .1s;
+  }
+  .card:active{ transform:scale(.95); }
+  .card .emoji{ font-size:44px; display:block; margin-bottom:6px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4)); }
+  .card .name{ font-size:16px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,.5); }
+
+  .level-list{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:420px; }
+  .level-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--ui-card); border:3px solid rgba(255,255,255,.15); border-radius:16px; padding:14px 18px;
+    cursor:pointer;
+  }
+  .level-row:active{ transform:scale(.97); }
+  .level-row .lv-name{ font-size:17px; font-weight:700; }
+  .level-row .lv-age{ font-size:12px; opacity:.7; }
+  .level-row .lv-best{ font-size:14px; opacity:.9; white-space:nowrap; }
+
+  .topbar{
+    width:100%; max-width:480px; display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:10px; flex-shrink:0;
+  }
+  .topbar .info{ font-size:15px; font-weight:700; }
+  .icon-btn{
+    background:rgba(255,255,255,.12); border:none; border-radius:12px; color:#fff;
+    font-size:20px; padding:8px 14px; cursor:pointer;
+  }
+  .icon-btn:active{ background:rgba(255,255,255,.25); }
+
+  #timerDisplay{ font-variant-numeric:tabular-nums; }
+
+  canvas{ background:var(--path); border-radius:16px; touch-action:none; box-shadow:0 8px 24px rgba(0,0,0,.4); }
+
+  .game-actions{ display:flex; gap:10px; margin-top:14px; }
+  .game-actions button{
+    background:rgba(255,255,255,.12); border:none; border-radius:12px; color:#fff;
+    font-size:14px; padding:10px 16px; cursor:pointer; font-weight:600;
+  }
+  .game-actions button:active{ background:rgba(255,255,255,.25); }
+
+  .stars{ font-size:56px; margin:14px 0; letter-spacing:4px; }
+  .result-time{ font-size:22px; font-weight:700; margin-bottom:6px; }
+  .result-best{ font-size:14px; opacity:.8; margin-bottom:18px; }
+
+  .flash-wall{ animation:flashWall .25s ease; }
+  @keyframes flashWall{
+    0%{ filter:brightness(1); } 30%{ filter:brightness(1.6) saturate(1.4); } 100%{ filter:brightness(1); }
+  }
+
+  footer.credit{ margin-top:auto; padding-top:16px; font-size:11px; opacity:.4; text-align:center; }
+
+  #screen-game{ position:relative; transition:background .3s ease; }
+  #decorLayer{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  #decorLayer span{ position:absolute; opacity:.5; animation-name:floatDecor; animation-iteration-count:infinite; animation-timing-function:ease-in-out; }
+  @keyframes floatDecor{
+    0%,100%{ transform:translateY(0) rotate(-6deg); }
+    50%{ transform:translateY(-18px) rotate(6deg); }
+  }
+  #screen-game > *:not(#decorLayer){ position:relative; z-index:1; }
+
+  #confettiCanvas{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:60; background:transparent; box-shadow:none; border-radius:0; }
+
+  #btnMute{
+    position:fixed; top:calc(env(safe-area-inset-top,10px) + 10px); right:14px; z-index:70;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="confettiCanvas"></canvas>
+  <button class="icon-btn" id="btnMute">🔊</button>
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen active">
+    <h1 class="title">🧭 손가락 미로 탐험</h1>
+    <p class="sub">손가락으로 길을 따라 쭉 그어서<br>출발부터 도착까지 가보세요!</p>
+    <button class="big-btn" id="btnStart">시작하기</button>
+    <footer class="credit">가로/세로로 돌려도 괜찮아요 · 벽에 닿으면 살짝 멈춰요</footer>
+  </section>
+
+  <!-- THEME SELECT -->
+  <section id="screen-theme" class="screen">
+    <h1 class="title">어떤 미로로 갈까요?</h1>
+    <p class="sub">테마를 골라주세요</p>
+    <div class="grid" id="themeGrid"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnThemeBack">◀ 뒤로</button>
+  </section>
+
+  <!-- LEVEL SELECT -->
+  <section id="screen-level" class="screen">
+    <h1 class="title" id="levelScreenTitle">난이도 선택</h1>
+    <p class="sub">쉬운 것부터 차근차근 도전해봐요</p>
+    <div class="level-list" id="levelList"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnLevelBack">◀ 테마 다시 고르기</button>
+  </section>
+
+  <!-- GAME -->
+  <section id="screen-game" class="screen">
+    <div id="decorLayer"></div>
+    <div class="topbar">
+      <button class="icon-btn" id="btnGameHome">🏠</button>
+      <div class="info" id="gameInfo">우주 탐험 · 1단계</div>
+      <div class="info" id="timerDisplay">00:00.0</div>
+    </div>
+    <div id="canvasWrap" style="flex:1; display:flex; align-items:center; justify-content:center; width:100%;">
+      <canvas id="mazeCanvas"></canvas>
+    </div>
+    <div class="game-actions">
+      <button id="btnRedraw">🔄 다시 그리기</button>
+      <button id="btnNewMaze">🎲 새 미로</button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="screen-result" class="screen">
+    <h1 class="title">🎉 도착!</h1>
+    <div class="stars" id="resultStars">⭐⭐⭐</div>
+    <div class="result-time" id="resultTime">00:00.0</div>
+    <div class="result-best" id="resultBest">최고 기록: 00:00.0</div>
+    <button class="big-btn" id="btnNextLevel">다음 단계로</button>
+    <button class="big-btn" id="btnRetryLevel" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 도전하기</button>
+    <button class="icon-btn" id="btnResultHome" style="margin-top:10px">🏠 테마 화면으로</button>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Data ----------
+  const THEMES = [
+    {id:'space', label:'우주 탐험', emoji:'🚀', goalEmoji:'⭐',
+      bgGradient:'radial-gradient(circle at 30% 20%, #202a63 0%, #0b1030 60%, #050714 100%)',
+      path:'#1c2456', path2:'#141a3f', wall:'#7bd8ff', trail:'#ffd93d',
+      decor:['✨','🌟','🪐','☄️'], cardGradient:'linear-gradient(160deg,#232b66,#0b1030)'},
+    {id:'ocean', label:'바닷속 여행', emoji:'🐠', goalEmoji:'🐚',
+      bgGradient:'radial-gradient(circle at 70% 15%, #0f5372 0%, #04324d 60%, #021f30 100%)',
+      path:'#0c5678', path2:'#0a4763', wall:'#bdf3ff', trail:'#ffdd57',
+      decor:['🫧','🐟','🌊','🐚'], cardGradient:'linear-gradient(160deg,#12608a,#04324d)'},
+    {id:'dino',  label:'공룡 나라',   emoji:'🦕', goalEmoji:'🥚',
+      bgGradient:'radial-gradient(circle at 25% 20%, #3d5a1c 0%, #22350f 60%, #131f09 100%)',
+      path:'#3f5c1c', path2:'#345017', wall:'#ffd27a', trail:'#ff6f59',
+      decor:['🌿','🦴','🌋','🍃'], cardGradient:'linear-gradient(160deg,#4c701f,#22350f)'},
+    {id:'farm',  label:'동물 농장',   emoji:'🐮', goalEmoji:'🌾',
+      bgGradient:'radial-gradient(circle at 75% 20%, #5c3a1e 0%, #3b2412 60%, #21140a 100%)',
+      path:'#5c3a1e', path2:'#4c3019', wall:'#ffe8b0', trail:'#8bd450',
+      decor:['🌻','🐔','🐑','🍀'], cardGradient:'linear-gradient(160deg,#6d461f,#3b2412)'},
+    {id:'cars',  label:'자동차 경주', emoji:'🚗', goalEmoji:'🏁',
+      bgGradient:'radial-gradient(circle at 50% 15%, #2b2b2b 0%, #161616 60%, #050505 100%)',
+      path:'#2e2e2e', path2:'#262626', wall:'#ffd93d', trail:'#ff5f5f',
+      decor:['🚦','🚧','🏁','🛣️'], cardGradient:'linear-gradient(160deg,#3a3a3a,#161616)'},
+    {id:'candy', label:'사탕 나라',   emoji:'🍭', goalEmoji:'🍬',
+      bgGradient:'radial-gradient(circle at 30% 20%, #5c1f7a 0%, #3a0f52 60%, #220833 100%)',
+      path:'#552a72', path2:'#4a2263', wall:'#ffb3e6', trail:'#7fffd4',
+      decor:['🍬','🍩','🧁','🍪'], cardGradient:'linear-gradient(160deg,#6d2e8f,#3a0f52)'},
+    {id:'jungle', label:'정글 사파리', emoji:'🦁', goalEmoji:'🐾',
+      bgGradient:'radial-gradient(circle at 70% 20%, #184a30 0%, #0d2b1d 60%, #071a11 100%)',
+      path:'#184a30', path2:'#123d27', wall:'#ffe066', trail:'#ff7b54',
+      decor:['🌴','🍌','🦋','🌺'], cardGradient:'linear-gradient(160deg,#1f5c3c,#0d2b1d)'},
+    {id:'winter', label:'겨울 나라',   emoji:'⛄', goalEmoji:'🎄',
+      bgGradient:'radial-gradient(circle at 30% 15%, #163f5e 0%, #0a1f33 60%, #05121f 100%)',
+      path:'#123a5c', path2:'#0f314e', wall:'#e6f7ff', trail:'#ffd166',
+      decor:['❄️','🌨️','⛸️','🧊'], cardGradient:'linear-gradient(160deg,#1c507a,#0a1f33)'},
+  ];
+
+  const LEVELS = [
+    {id:1, label:'1단계 · 아주 쉬워요', age:'유치원',      cols:5,  rows:6},
+    {id:2, label:'2단계 · 쉬워요',      age:'유치원~초1',  cols:7,  rows:8},
+    {id:3, label:'3단계 · 보통이에요',  age:'초1~2',        cols:9,  rows:10},
+    {id:4, label:'4단계 · 살짝 어려워요', age:'초2~3',      cols:10, rows:12},
+    {id:5, label:'5단계 · 어려워요',    age:'초3~4',        cols:12, rows:14},
+    {id:6, label:'6단계 · 아주 어려워요', age:'초5~6',      cols:14, rows:16},
+  ];
+
+  const STORE_KEY = 'fingerMazeBestTimes_v1';
+
+  // ---------- State ----------
+  let state = {
+    themeIdx: 0,
+    levelIdx: 0,
+    maze: null,
+    cellSize: 0,
+    wallT: 0,
+    dragging: false,
+    resumed: false,
+    lastPoint: null,
+    trail: [],
+    startMs: 0,
+    elapsedMs: 0,
+    finished: false,
+    rafId: null,
+    distSinceTick: 0,
+  };
+
+  function loadBest(){
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){ return {}; }
+  }
+  function saveBest(map){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(map)); } catch(e){}
+  }
+  function bestKey(themeId, levelId){ return themeId + '_' + levelId; }
+  function fmtTime(ms){
+    const totalSec = ms/1000;
+    const m = Math.floor(totalSec/60);
+    const s = Math.floor(totalSec%60);
+    const d = Math.floor((totalSec*10)%10);
+    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'.'+d;
+  }
+
+  // ---------- Audio (Web Audio API, no external files) ----------
+  let audioCtx = null;
+  let muted = localStorage.getItem('fingerMazeMuted') === '1';
+  function ensureAudio(){
+    if(!audioCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      audioCtx = new AC();
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function beep(freq, duration, type, vol, when){
+    if(muted) return;
+    const ac = ensureAudio();
+    if(!ac) return;
+    const t0 = ac.currentTime + (when||0);
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, t0);
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(vol!==undefined?vol:0.15, t0+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0+duration);
+    osc.connect(gain); gain.connect(ac.destination);
+    osc.start(t0); osc.stop(t0+duration+0.02);
+  }
+  function sfxClick(){ beep(600,0.05,'sine',0.06); }
+  function sfxTick(){ beep(880,0.05,'sine',0.05); }
+  function sfxBump(){ beep(140,0.12,'square',0.12); }
+  function sfxWin(){ [523.25,659.25,783.99,1046.5].forEach((f,i)=>beep(f,0.2,'triangle',0.18,i*0.12)); }
+
+  function updateMuteBtn(){
+    document.getElementById('btnMute').textContent = muted ? '🔇' : '🔊';
+  }
+  document.getElementById('btnMute').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    ensureAudio();
+    muted = !muted;
+    localStorage.setItem('fingerMazeMuted', muted?'1':'0');
+    updateMuteBtn();
+  });
+  updateMuteBtn();
+
+  document.getElementById('app').addEventListener('click', (e)=>{
+    const t = e.target.closest('button, .card, .level-row');
+    if(t && t.id !== 'btnMute') sfxClick();
+  });
+
+  // ---------- Confetti ----------
+  const confettiCanvas = document.getElementById('confettiCanvas');
+  const cctx = confettiCanvas.getContext('2d');
+  let confettiParticles = [];
+  let confettiRAF = null;
+  function launchConfetti(colors){
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    confettiParticles = [];
+    const count = 90;
+    for(let i=0;i<count;i++){
+      confettiParticles.push({
+        x: confettiCanvas.width/2 + (Math.random()-0.5)*100,
+        y: confettiCanvas.height*0.3,
+        vx: (Math.random()-0.5)*8,
+        vy: -Math.random()*9-4,
+        size: 6+Math.random()*7,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        rot: Math.random()*Math.PI*2,
+        vr: (Math.random()-0.5)*0.3,
+        shape: Math.random()<0.5?'rect':'circle',
+        life: 0,
+      });
+    }
+    if(confettiRAF) cancelAnimationFrame(confettiRAF);
+    animateConfetti();
+  }
+  function animateConfetti(){
+    cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    let stillFalling = false;
+    for(const p of confettiParticles){
+      p.vy += 0.25;
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+      if(p.life < 220) stillFalling = true;
+      cctx.save();
+      cctx.translate(p.x,p.y);
+      cctx.rotate(p.rot);
+      cctx.fillStyle = p.color;
+      cctx.globalAlpha = Math.max(0, 1 - p.life/220);
+      if(p.shape==='rect') cctx.fillRect(-p.size/2,-p.size*0.3,p.size,p.size*0.6);
+      else { cctx.beginPath(); cctx.arc(0,0,p.size/2,0,Math.PI*2); cctx.fill(); }
+      cctx.restore();
+    }
+    if(stillFalling){
+      confettiRAF = requestAnimationFrame(animateConfetti);
+    } else {
+      cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    }
+  }
+
+  // ---------- Decorative background particles ----------
+  function spawnDecor(theme){
+    const layer = document.getElementById('decorLayer');
+    layer.innerHTML = '';
+    const count = 12;
+    for(let i=0;i<count;i++){
+      const span = document.createElement('span');
+      span.textContent = theme.decor[Math.floor(Math.random()*theme.decor.length)];
+      const left = Math.random()*100, top = Math.random()*100;
+      const size = 16+Math.random()*22;
+      const dur = 5+Math.random()*5;
+      const delay = Math.random()*5;
+      span.style.left = left+'%';
+      span.style.top = top+'%';
+      span.style.fontSize = size+'px';
+      span.style.animationDuration = dur+'s';
+      span.style.animationDelay = (-delay)+'s';
+      layer.appendChild(span);
+    }
+  }
+
+  // ---------- Screen management ----------
+  const screens = {};
+  document.querySelectorAll('.screen').forEach(el => screens[el.id] = el);
+  function showScreen(id){
+    Object.values(screens).forEach(el => el.classList.remove('active'));
+    screens[id].classList.add('active');
+  }
+
+  // ---------- Maze generation (recursive backtracker) ----------
+  function generateMaze(cols, rows){
+    const grid = [];
+    for(let r=0;r<rows;r++){
+      const row=[];
+      for(let c=0;c<cols;c++) row.push({top:true,right:true,bottom:true,left:true,visited:false});
+      grid.push(row);
+    }
+    const dirs = [
+      {dr:-1,dc:0, wall:'top', opp:'bottom'},
+      {dr:0,dc:1,  wall:'right', opp:'left'},
+      {dr:1,dc:0,  wall:'bottom', opp:'top'},
+      {dr:0,dc:-1, wall:'left', opp:'right'},
+    ];
+    const stack=[{r:0,c:0}];
+    grid[0][0].visited = true;
+    while(stack.length){
+      const cur = stack[stack.length-1];
+      const {r,c} = cur;
+      const neighbors = [];
+      for(const d of dirs){
+        const nr=r+d.dr, nc=c+d.dc;
+        if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&!grid[nr][nc].visited) neighbors.push({nr,nc,d});
+      }
+      if(neighbors.length===0){ stack.pop(); continue; }
+      const pick = neighbors[Math.floor(Math.random()*neighbors.length)];
+      grid[r][c][pick.d.wall] = false;
+      grid[pick.nr][pick.nc][pick.d.opp] = false;
+      grid[pick.nr][pick.nc].visited = true;
+      stack.push({r:pick.nr, c:pick.nc});
+    }
+    return grid;
+  }
+
+  // ---------- Canvas / rendering ----------
+  const canvas = document.getElementById('mazeCanvas');
+  const ctx = canvas.getContext('2d');
+  const canvasWrap = document.getElementById('canvasWrap');
+
+  function currentTheme(){ return THEMES[state.themeIdx]; }
+  function currentLevel(){ return LEVELS[state.levelIdx]; }
+
+  function setupCanvasSize(level){
+    const wrapW = canvasWrap.clientWidth - 8;
+    const wrapH = canvasWrap.clientHeight - 8;
+    const maxW = Math.min(wrapW, 480);
+    const maxH = Math.min(wrapH, 640);
+    const cs = Math.floor(Math.min(maxW/level.cols, maxH/level.rows));
+    state.cellSize = Math.max(cs, 22);
+    state.wallT = Math.max(4, Math.round(state.cellSize*0.16));
+    canvas.width = state.cellSize*level.cols;
+    canvas.height = state.cellSize*level.rows;
+    canvas.style.width = canvas.width+'px';
+    canvas.style.height = canvas.height+'px';
+  }
+
+  function drawMaze(){
+    const theme = currentTheme();
+    const level = currentLevel();
+    const cs = state.cellSize, wt = state.wallT;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const bgGrad = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+    bgGrad.addColorStop(0, theme.path);
+    bgGrad.addColorStop(1, theme.path2);
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.strokeStyle = theme.wall;
+    ctx.lineWidth = wt;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = theme.wall;
+    ctx.shadowBlur = Math.max(4, cs*0.15);
+
+    for(let r=0;r<level.rows;r++){
+      for(let c=0;c<level.cols;c++){
+        const cell = state.maze[r][c];
+        const x0=c*cs, y0=r*cs, x1=x0+cs, y1=y0+cs;
+        ctx.beginPath();
+        if(cell.top){ ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); }
+        if(cell.left){ ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); }
+        if(cell.bottom){ ctx.moveTo(x0,y1); ctx.lineTo(x1,y1); }
+        if(cell.right){ ctx.moveTo(x1,y0); ctx.lineTo(x1,y1); }
+        ctx.stroke();
+      }
+    }
+    ctx.shadowBlur = 0;
+
+    // start marker (small dot, since the character now rides the trail's tip)
+    ctx.beginPath();
+    ctx.fillStyle = theme.trail;
+    ctx.globalAlpha = 0.55;
+    ctx.arc(cs*0.5, cs*0.5, cs*0.12, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // goal marker
+    ctx.font = (cs*0.62)+'px serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(theme.goalEmoji, (level.cols-0.5)*cs, (level.rows-0.5)*cs);
+
+    drawTrail();
+
+    // character rides at the tip of the finger trail
+    const head = state.trail.length ? state.trail[state.trail.length-1] : startCenter();
+    const bob = state.dragging ? Math.sin(performance.now()/120)*cs*0.05 : 0;
+    ctx.font = (cs*0.62)+'px serif';
+    ctx.fillText(theme.emoji, head.x, head.y+bob);
+  }
+
+  function drawTrail(){
+    const theme = currentTheme();
+    if(state.trail.length<2) return;
+    ctx.beginPath();
+    ctx.moveTo(state.trail[0].x, state.trail[0].y);
+    for(let i=1;i<state.trail.length;i++) ctx.lineTo(state.trail[i].x, state.trail[i].y);
+    ctx.strokeStyle = theme.trail;
+    ctx.lineWidth = state.wallT*0.9;
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.globalAlpha = 0.9;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  function redrawAll(){ drawMaze(); }
+
+  // ---------- Hit testing ----------
+  function isBlocked(x,y){
+    const level = currentLevel();
+    const cs = state.cellSize, half = state.wallT/2;
+    if(x<0||y<0||x>=canvas.width||y>=canvas.height) return true;
+    const col = Math.min(level.cols-1, Math.floor(x/cs));
+    const row = Math.min(level.rows-1, Math.floor(y/cs));
+    const cell = state.maze[row][col];
+    const lx = x - col*cs, ly = y - row*cs;
+    if(cell.top && ly < half) return true;
+    if(cell.bottom && ly > cs-half) return true;
+    if(cell.left && lx < half) return true;
+    if(cell.right && lx > cs-half) return true;
+    return false;
+  }
+
+  function startCenter(){ return {x: state.cellSize*0.5, y: state.cellSize*0.5}; }
+  function goalCenter(){
+    const level = currentLevel();
+    return {x:(level.cols-0.5)*state.cellSize, y:(level.rows-0.5)*state.cellSize};
+  }
+  function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+
+  // ---------- Timer ----------
+  function tick(){
+    if(!state.finished){
+      state.elapsedMs = performance.now() - state.startMs;
+      document.getElementById('timerDisplay').textContent = fmtTime(state.elapsedMs);
+      state.rafId = requestAnimationFrame(tick);
+    }
+  }
+  function startTimer(){
+    state.startMs = performance.now() - state.elapsedMs;
+    if(state.rafId) cancelAnimationFrame(state.rafId);
+    state.rafId = requestAnimationFrame(tick);
+  }
+  function stopTimer(){
+    if(state.rafId) cancelAnimationFrame(state.rafId);
+  }
+
+  // ---------- Wall feedback ----------
+  let flashTimeout = null;
+  function wallFeedback(){
+    if(navigator.vibrate) navigator.vibrate(20);
+    sfxBump();
+    canvas.classList.remove('flash-wall');
+    void canvas.offsetWidth;
+    canvas.classList.add('flash-wall');
+  }
+
+  // ---------- Pointer handling ----------
+  function getLocalPoint(e){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width/rect.width, scaleY = canvas.height/rect.height;
+    return { x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY };
+  }
+
+  function resetTrail(){
+    state.trail = [];
+    state.lastPoint = null;
+    state.dragging = false;
+    state.finished = false;
+    state.elapsedMs = 0;
+    state.distSinceTick = 0;
+    stopTimer();
+    document.getElementById('timerDisplay').textContent = '00:00.0';
+    redrawAll();
+  }
+
+  function onPointerDown(e){
+    if(state.finished) return;
+    const p = getLocalPoint(e);
+    const sc = startCenter();
+    const tolerance = state.cellSize*0.9;
+    let resumeFromTrail = false;
+    if(state.trail.length && dist(p, state.trail[state.trail.length-1]) < tolerance){
+      resumeFromTrail = true;
+    }
+    if(dist(p, sc) < tolerance){
+      state.trail = [sc];
+      state.lastPoint = sc;
+      state.dragging = true;
+      startTimer();
+      try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+      redrawAll();
+    } else if(resumeFromTrail){
+      state.dragging = true;
+      startTimer();
+      try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+    }
+  }
+
+  function onPointerMove(e){
+    if(!state.dragging || state.finished) return;
+    const p = getLocalPoint(e);
+    const prev = state.lastPoint;
+    const stepLen = Math.max(2, state.cellSize/6);
+    const d = dist(prev, p);
+    const steps = Math.max(1, Math.ceil(d/stepLen));
+    let hitWall = false;
+    let advanced = false;
+    for(let i=1;i<=steps;i++){
+      const t = i/steps;
+      const px = prev.x + (p.x-prev.x)*t;
+      const py = prev.y + (p.y-prev.y)*t;
+      if(isBlocked(px,py)){ hitWall = true; break; }
+      const stepDist = dist(state.lastPoint, {x:px,y:py});
+      state.trail.push({x:px,y:py});
+      state.lastPoint = {x:px,y:py};
+      advanced = true;
+      state.distSinceTick += stepDist;
+      if(state.distSinceTick > state.cellSize*0.8){
+        sfxTick();
+        state.distSinceTick = 0;
+      }
+    }
+    if(hitWall) wallFeedback();
+    if(advanced){
+      const gc = goalCenter();
+      if(dist(state.lastPoint, gc) < state.cellSize*0.5){
+        finishLevel();
+      }
+    }
+    redrawAll();
+  }
+
+  function onPointerUp(e){
+    state.dragging = false;
+  }
+
+  canvas.addEventListener('pointerdown', onPointerDown);
+  canvas.addEventListener('pointermove', onPointerMove);
+  canvas.addEventListener('pointerup', onPointerUp);
+  canvas.addEventListener('pointercancel', onPointerUp);
+  canvas.addEventListener('contextmenu', e=>e.preventDefault());
+
+  // ---------- Level flow ----------
+  function calcStars(level, timeMs){
+    const cellCount = level.cols*level.rows;
+    const sec = timeMs/1000;
+    if(sec <= cellCount*1.0) return 3;
+    if(sec <= cellCount*2.0) return 2;
+    return 1;
+  }
+
+  function finishLevel(){
+    state.finished = true;
+    state.dragging = false;
+    stopTimer();
+    const theme = currentTheme();
+    const level = currentLevel();
+    const best = loadBest();
+    const key = bestKey(theme.id, level.id);
+    const prevBest = best[key];
+    if(prevBest===undefined || state.elapsedMs < prevBest){
+      best[key] = state.elapsedMs;
+      saveBest(best);
+    }
+    const stars = calcStars(level, state.elapsedMs);
+    document.getElementById('resultStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+    document.getElementById('resultTime').textContent = '내 기록: ' + fmtTime(state.elapsedMs);
+    const finalBest = best[key];
+    document.getElementById('resultBest').textContent = '최고 기록: ' + fmtTime(finalBest);
+    document.getElementById('btnNextLevel').style.display = (state.levelIdx < LEVELS.length-1) ? 'block' : 'none';
+    sfxWin();
+    setTimeout(()=>{
+      showScreen('screen-result');
+      launchConfetti([theme.wall, theme.trail, '#ffffff', theme.path2]);
+    }, 350);
+  }
+
+  function loadLevelIntoGame(){
+    const theme = currentTheme();
+    const level = currentLevel();
+    screens['screen-game'].style.background = theme.bgGradient;
+    document.getElementById('gameInfo').textContent = theme.label + ' · ' + level.label.split(' · ')[0];
+    spawnDecor(theme);
+    state.maze = generateMaze(level.cols, level.rows);
+    setupCanvasSize(level);
+    resetTrail();
+  }
+
+  // ---------- UI population ----------
+  function buildThemeGrid(){
+    const wrap = document.getElementById('themeGrid');
+    wrap.innerHTML = '';
+    THEMES.forEach((t, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.background = t.cardGradient;
+      div.innerHTML = '<span class="emoji">'+t.emoji+'</span><span class="name">'+t.label+'</span>';
+      div.addEventListener('click', ()=>{
+        state.themeIdx = idx;
+        buildLevelList();
+        showScreen('screen-level');
+      });
+      wrap.appendChild(div);
+    });
+  }
+
+  function buildLevelList(){
+    const theme = currentTheme();
+    document.getElementById('levelScreenTitle').textContent = theme.emoji + ' ' + theme.label;
+    const best = loadBest();
+    const wrap = document.getElementById('levelList');
+    wrap.innerHTML = '';
+    LEVELS.forEach((lv, idx)=>{
+      const row = document.createElement('div');
+      row.className = 'level-row';
+      const key = bestKey(theme.id, lv.id);
+      const bestMs = best[key];
+      const bestText = bestMs!==undefined ? ('🏆 '+fmtTime(bestMs)) : '아직 기록 없음';
+      row.innerHTML = '<div><div class="lv-name">'+lv.label+'</div><div class="lv-age">'+lv.age+'</div></div><div class="lv-best">'+bestText+'</div>';
+      row.addEventListener('click', ()=>{
+        state.levelIdx = idx;
+        showScreen('screen-game');
+        loadLevelIntoGame();
+      });
+      wrap.appendChild(row);
+    });
+  }
+
+  // ---------- Buttons ----------
+  document.getElementById('btnStart').addEventListener('click', ()=>{
+    buildThemeGrid();
+    showScreen('screen-theme');
+  });
+  document.getElementById('btnThemeBack').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnLevelBack').addEventListener('click', ()=>{
+    buildThemeGrid();
+    showScreen('screen-theme');
+  });
+  document.getElementById('btnGameHome').addEventListener('click', ()=>{
+    stopTimer();
+    buildLevelList();
+    showScreen('screen-level');
+  });
+  document.getElementById('btnRedraw').addEventListener('click', resetTrail);
+  document.getElementById('btnNewMaze').addEventListener('click', loadLevelIntoGame);
+
+  document.getElementById('btnNextLevel').addEventListener('click', ()=>{
+    if(state.levelIdx < LEVELS.length-1){
+      state.levelIdx++;
+      showScreen('screen-game');
+      loadLevelIntoGame();
+    }
+  });
+  document.getElementById('btnRetryLevel').addEventListener('click', ()=>{
+    showScreen('screen-game');
+    loadLevelIntoGame();
+  });
+  document.getElementById('btnResultHome').addEventListener('click', ()=>{
+    buildLevelList();
+    showScreen('screen-level');
+  });
+
+  window.addEventListener('resize', ()=>{
+    if(screens['screen-game'].classList.contains('active')){
+      setupCanvasSize(currentLevel());
+      redrawAll();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
