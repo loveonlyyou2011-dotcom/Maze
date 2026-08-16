@@ -166,13 +166,13 @@
   .color-subject-card:active{ transform:scale(.95); }
   .color-subject-card .csc-label{ display:block; font-size:11px; margin-top:4px; opacity:.85; }
 
-  #colorSvgWrap{ display:flex; justify-content:center; margin:10px 0; }
-  #colorSvgWrap svg{ width:min(78vw,300px); height:min(78vw,300px); touch-action:none; background:#fff; border-radius:20px; }
+  #colorSvgWrap{ display:flex; justify-content:center; margin:10px 0; color-scheme:light; }
+  #colorSvgWrap svg{ width:min(78vw,300px); height:min(78vw,300px); touch-action:none; background:#ffffff; border-radius:20px; }
   #colorSvg [data-region]{ cursor:pointer; }
-  #colorRasterWrap{ position:relative; width:min(78vw,300px); height:min(78vw,300px); touch-action:none; border-radius:20px; overflow:hidden; }
+  #colorRasterWrap{ position:relative; width:min(78vw,300px); height:min(78vw,300px); touch-action:none; border-radius:20px; overflow:hidden; background:#ffffff; color-scheme:light; isolation:isolate; }
   #colorRasterWrap canvas{ position:absolute; inset:0; width:100%; height:100%; }
-  #colorPaintCanvas{ background:#fff; }
-  #colorLineCanvas{ pointer-events:none; }
+  #colorPaintCanvas{ background:#ffffff !important; }
+  #colorLineCanvas{ pointer-events:none; background:transparent; }
 
   #colorToolRow{ display:flex; gap:10px; width:100%; max-width:380px; margin-top:10px; }
   .color-tool-btn{
@@ -258,18 +258,24 @@
 
   <!-- COLORING: category select -->
   <section id="screen-color-select" class="screen">
-    <h1 class="title">🎨 색칠놀이</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnColorSelectHome">◀ 뒤로</button>
+      <div class="info">🎨 색칠놀이</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">어떤 그림을 색칠할까요?</p>
     <div class="grid" id="colorCategoryGrid"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnColorSelectHome">◀ 뒤로</button>
   </section>
 
   <!-- COLORING: item select within category -->
   <section id="screen-color-items" class="screen">
-    <h1 class="title" id="colorItemsTitle">그림 고르기</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnColorItemsBack">◀ 뒤로</button>
+      <div class="info" id="colorItemsTitle">그림 고르기</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">색칠할 그림을 골라보세요</p>
     <div class="color-subject-grid" id="colorItemsGrid" style="width:100%; max-width:420px;"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnColorItemsBack">◀ 뒤로</button>
   </section>
 
   <!-- COLORING: canvas -->
