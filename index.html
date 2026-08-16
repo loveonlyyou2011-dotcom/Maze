@@ -140,6 +140,22 @@
   }
   .connect-tile.matched{ background:#2e7d32; border-color:#8bd450; }
 
+  #travelPhraseList{ width:100%; max-width:420px; display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+  .travel-card{
+    background:var(--ui-card); border:2px solid rgba(255,255,255,.12); border-radius:16px;
+    padding:14px 16px; text-align:left; display:flex; align-items:center; gap:10px;
+  }
+  .travel-card .travel-num{ font-size:13px; opacity:.55; font-weight:800; min-width:20px; }
+  .travel-card .travel-text{ flex:1; min-width:0; }
+  .travel-card .travel-ko{ font-size:12px; opacity:.65; margin-bottom:3px; }
+  .travel-card .travel-foreign{ font-size:16px; font-weight:800; line-height:1.35; }
+  .travel-card .travel-read{ font-size:13px; opacity:.8; margin-top:3px; }
+  .travel-card .travel-speak{
+    flex-shrink:0; width:40px; height:40px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.12); color:#fff; font-size:17px; cursor:pointer;
+  }
+  .travel-card .travel-speak:active{ background:rgba(255,255,255,.25); }
+
   footer.credit{ margin-top:auto; padding-top:16px; font-size:11px; opacity:.4; text-align:center; }
 
   #screen-game{ position:relative; transition:background .3s ease; }
@@ -179,6 +195,33 @@
     <div id="stickerBadge" style="font-size:44px; margin-bottom:10px;"></div>
     <div id="stickerBoard" style="width:100%; max-width:420px;"></div>
     <button class="icon-btn" style="margin-top:20px" id="btnStickerHome">◀ 뒤로</button>
+  </section>
+
+  <!-- TRAVEL: language select -->
+  <section id="screen-travel-lang" class="screen">
+    <h1 class="title">✈️ 여행 회화</h1>
+    <p class="sub">어느 나라 말로 볼까요?</p>
+    <div class="grid" id="travelLangGrid"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnTravelLangBack">◀ 뒤로</button>
+  </section>
+
+  <!-- TRAVEL: situation select -->
+  <section id="screen-travel-situation" class="screen">
+    <h1 class="title" id="travelSituationTitle">어떤 상황인가요?</h1>
+    <p class="sub">여행 순서대로 정리했어요</p>
+    <div class="grid" id="travelSituationGrid"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnTravelSituationBack">◀ 언어 다시 고르기</button>
+  </section>
+
+  <!-- TRAVEL: phrase list -->
+  <section id="screen-travel-list" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnTravelListHome">🏠</button>
+      <div class="info" id="travelListInfo">이미그레이션</div>
+      <button class="icon-btn" id="btnTravelListLang">🌐</button>
+    </div>
+    <div id="travelPhraseList"></div>
+    <button class="icon-btn" style="margin:14px 0 4px" id="btnTravelListBack">◀ 다른 상황 보기</button>
   </section>
 
   <!-- THEME SELECT -->
@@ -933,6 +976,7 @@
       {emoji:'🔢', label:'숫자놀이', gradient:'linear-gradient(160deg,#3a3a3a,#161616)', onClick:()=>{ buildMathOpGrid(); showScreen('screen-math-op'); }},
       {emoji:'🗣️', label:'단어놀이', gradient:'linear-gradient(160deg,#6d2e8f,#3a0f52)', onClick:()=>{ buildWordLangGrid(); showScreen('screen-word-lang'); }},
       {emoji:'🏆', label:'스티커판', gradient:'linear-gradient(160deg,#8b6d2e,#3b2b10)', onClick:()=>{ buildStickerBoard(); showScreen('screen-stickers'); }},
+      {emoji:'✈️', label:'여행 회화', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)', onClick:()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); }},
     ];
     games.forEach(g=>{
       const div = document.createElement('div');
@@ -2294,6 +2338,253 @@
   document.getElementById('btnWordTopicBack').addEventListener('click', ()=>{ buildWordLangGrid(); showScreen('screen-word-lang'); });
   document.getElementById('btnWordModeBack').addEventListener('click', ()=>{ buildWordTopicGrid(); showScreen('screen-word-topic'); });
   document.getElementById('btnWordLangBack').addEventListener('click', ()=> showScreen('screen-home'));
+
+  // =====================================================================
+  // TRAVEL PHRASEBOOK
+  // =====================================================================
+  const TRAVEL_LANGS = [
+    {id:'en', label:'영어', flag:'🇺🇸', speechLang:'en-US'},
+    {id:'ja', label:'일본어', flag:'🇯🇵', speechLang:'ja-JP'},
+    {id:'zh', label:'중국어(간체)', flag:'🇨🇳', speechLang:'zh-CN'},
+    {id:'zhtw', label:'중국어(번체)', flag:'🇹🇼', speechLang:'zh-TW'},
+    {id:'th', label:'태국어', flag:'🇹🇭', speechLang:'th-TH'},
+    {id:'vi', label:'베트남어', flag:'🇻🇳', speechLang:'vi-VN'},
+    {id:'es', label:'스페인어', flag:'🇪🇸', speechLang:'es-ES'},
+    {id:'id', label:'인도네시아어', flag:'🇮🇩', speechLang:'id-ID'},
+  ];
+
+  const TRAVEL_SITUATIONS = [
+    {id:'immigration', emoji:'🛂', label:'이미그레이션'},
+    {id:'sim', emoji:'📱', label:'유심 구매'},
+    {id:'toHotel', emoji:'🚕', label:'호텔까지 이동'},
+    {id:'checkin', emoji:'🏨', label:'호텔 체크인'},
+    {id:'booking', emoji:'🎫', label:'여행지 예약'},
+    {id:'restaurant', emoji:'🍽️', label:'식당 주문·결제'},
+    {id:'restroom', emoji:'🚻', label:'화장실 찾기'},
+    {id:'ticket', emoji:'🎟️', label:'티켓 구매'},
+    {id:'tour', emoji:'🧭', label:'투어 상품 문의'},
+    {id:'checkout', emoji:'🧳', label:'체크아웃·짐 보관'},
+    {id:'toAirport', emoji:'🚌', label:'공항 가는 법'},
+    {id:'ticketing', emoji:'✈️', label:'비행기 티켓팅'},
+  ];
+
+  function tp(ko, en, ja, zh, zhtw, th, vi, es, id){
+    return {ko, en, ja, zh, zhtw, th, vi, es, id};
+  }
+
+  const TRAVEL_PHRASES = {
+    immigration: [
+      tp('관광하러 왔습니다.', ['I am here for tourism.','아이 엠 히어 포 투어리즘'], ['観光で来ました。','캉코-데 키마시타'], ['我是来旅游的。','워 스 라이 뤼여우 더'], ['我是來旅遊的。','워 스 라이 뤼여우 더'], ['ฉันมาท่องเที่ยว','찬 마 텅티여우'], ['Tôi đến đây để du lịch.','또이 덴 더이 데 주 릭'], ['Estoy aquí de turismo.','에스또이 아끼 데 뚜리스모'], ['Saya di sini untuk berwisata.','사야 디 시니 운뚝 버르위사따']),
+      tp('일주일 동안 머물 예정입니다.', ['I will stay for a week.','아이 윌 스테이 포러 위크'], ['一週間滞在する予定です。','잇슈-칸 타이자이스루 요테-데스'], ['我打算待一个星期。','워 다쑤안 다이 이거 싱치'], ['我打算待一個星期。','워 다쑤안 다이 이거 싱치'], ['ฉันจะอยู่หนึ่งสัปดาห์','찬 짜 유 능 삽다'], ['Tôi sẽ ở lại một tuần.','또이 세 어 라이 못 뚜언'], ['Me quedaré una semana.','메 께다레 우나 세마나'], ['Saya akan tinggal selama satu minggu.','사야 아깐 띵갈 슬라마 사뚜 밍구']),
+      tp('호텔에 묵을 예정입니다.', ['I will be staying at a hotel.','아이 윌 비 스테잉 애러 호텔'], ['ホテルに泊まる予定です。','호테루니 토마루 요테-데스'], ['我打算住酒店。','워 다쑤안 쭈 지우디엔'], ['我打算住飯店。','워 다쑤안 쭈 판디엔'], ['ฉันจะพักที่โรงแรม','찬 짜 팍 티 롱램'], ['Tôi sẽ ở khách sạn.','또이 세 어 카익 산'], ['Me alojaré en un hotel.','메 알로하레 엔 운 오뗄'], ['Saya akan menginap di hotel.','사야 아깐 멍이납 디 호텔']),
+      tp('여기 제 여권입니다.', ['Here is my passport.','히얼 이즈 마이 패스포트'], ['これが私のパスポートです。','코레가 와타시노 파스포-토데스'], ['这是我的护照。','쩌 스 워더 후자오'], ['這是我的護照。','쩌 스 워더 후자오'], ['นี่คือพาสปอร์ตของฉัน','니 크 파스뽀 컹 찬'], ['Đây là hộ chiếu của tôi.','더이 라 호 찌에우 꾸어 또이'], ['Aquí está mi pasaporte.','아끼 에스따 미 빠사뽀르떼'], ['Ini paspor saya.','이니 빠스뽀르 사야']),
+      tp('왕복 항공권입니다.', ['This is a round-trip ticket.','디스 이즈 어 라운드트립 티켓'], ['往復航空券です。','오-후쿠 코-쿠-켄데스'], ['这是往返机票。','쩌 스 왕판 지퍄오'], ['這是來回機票。','쩌 스 라이후이 지퍄오'], ['นี่คือตั๋วไปกลับ','니 크 뚜어 빠이 끌랍'], ['Đây là vé khứ hồi.','더이 라 베 크 호이'], ['Este es un billete de ida y vuelta.','에스떼 에스 운 비예떼 데 이다 이 부엘따'], ['Ini tiket pulang-pergi.','이니 띠껫 뿔랑 뻐르기']),
+      tp('신고할 물품이 없습니다.', ['I have nothing to declare.','아이 해브 낫띵 투 디클레어'], ['申告するものはありません。','신코쿠스루 모노와 아리마센'], ['我没有需要申报的东西。','워 메이여우 쉬야오 션빠오더 똥시'], ['我沒有需要申報的東西。','워 메이여우 쉬야오 션빠오더 똥시'], ['ฉันไม่มีอะไรต้องแจ้ง','찬 마이 미 아라이 떵 짱'], ['Tôi không có gì để khai báo.','또이 콩 꺼 지 데 카이 바오'], ['No tengo nada que declarar.','노 뗑고 나다 께 데끌라라르'], ['Saya tidak punya barang untuk dilaporkan.','사야 띠닥 뿌냐 바랑 운뚝 딜라뽀르깐']),
+      tp('혼자 여행 중입니다.', ['I am traveling alone.','아이 엠 트래블링 얼론'], ['一人で旅行しています。','히토리데 료코- 시테이마스'], ['我一个人旅行。','워 이거런 뤼싱'], ['我一個人旅行。','워 이거런 뤼싱'], ['ฉันเดินทางคนเดียว','찬 던탕 콘디여우'], ['Tôi đi du lịch một mình.','또이 디 주 릭 못 밍'], ['Viajo solo.','비아호 솔로'], ['Saya bepergian sendirian.','사야 버뻐르기안 슨디리안']),
+      tp('친구를 만나러 왔습니다.', ['I am here to meet a friend.','아이 엠 히어 투 미러 프렌드'], ['友達に会いに来ました。','토모다치니 아이니 키마시타'], ['我是来见朋友的。','워 스 라이 지엔 펑여우더'], ['我是來見朋友的。','워 스 라이 지엔 펑요우더'], ['ฉันมาเพื่อพบเพื่อน','찬 마 프어 폽 프언'], ['Tôi đến để gặp bạn.','또이 덴 데 갑 반'], ['Vine a ver a un amigo.','비네 아 베르 아 운 아미고'], ['Saya datang untuk bertemu teman.','사야 다땅 운뚝 버르뜨무 뜨만']),
+      tp('이건 제 개인 물건입니다.', ['This is for personal use.','디스 이즈 포 퍼스널 유즈'], ['これは私の私物です。','코레와 와타시노 시부츠데스'], ['这是我的私人物品。','쩌 스 워더 쓰런 우핀'], ['這是我的私人物品。','쩌 스 워더 쓰런 우핀'], ['นี่คือของใช้ส่วนตัวของฉัน','니 크 컹 차이 쑤언뚜어 컹 찬'], ['Đây là đồ dùng cá nhân của tôi.','더이 라 도 중 까년 꾸어 또이'], ['Esto es de uso personal.','에스또 에스 데 우소 뻬르소날'], ['Ini untuk keperluan pribadi.','이니 운뚝 꺼뻐를루안 쁘리바디']),
+      tp('입국 신고서 작성을 도와주시겠어요?', ['Could you help me fill out the arrival card?','쿠쥬 헬프 미 필 아웃 디 어라이벌 카드'], ['入国カードの記入を手伝ってもらえますか。','뉴-코쿠 카-도노 키뉴-오 테츠닷떼 모라에마스카'], ['您能帮我填写入境卡吗？','닌 넝 빵 워 티엔시에 루징카 마'], ['您能幫我填寫入境卡嗎？','닌 넝 빵 워 티엔시에 루징카 마'], ['ช่วยกรอกบัตรขาเข้าให้หน่อยได้ไหม','추어이 껏 밧 카카오 하이 너이 다이 마이'], ['Anh chị có thể giúp tôi điền tờ khai nhập cảnh không?','아잉 찌 꺼 테 죱 또이 디엔 떠 카이 녑 까잉 콩'], ['¿Podría ayudarme a llenar la tarjeta de llegada?','뽀드리아 아유다르메 아 예나르 라 따르헤따 데 예가다'], ['Bisakah Anda membantu saya mengisi kartu kedatangan?','비사까 안다 멈반뚜 사야 멍이시 까르뚜 꺼다땅안']),
+    ],
+    sim: [
+      tp('유심카드를 사고 싶어요.', ["I'd like to buy a SIM card.",'아이드 라이크 투 바이 어 심 카드'], ['SIMカードを買いたいです。','시무카-도오 카이따이데스'], ['我想买一张SIM卡。','워 시앙 마이 이짱 씸카'], ['我想買一張SIM卡。','워 시앙 마이 이짱 씸카'], ['ฉันอยากซื้อซิมการ์ด','찬 야악 쓰 씸깟'], ['Tôi muốn mua thẻ SIM.','또이 무온 무어 테 씸'], ['Quisiera comprar una tarjeta SIM.','끼시에라 꼼쁘라르 우나 따르헤따 씸'], ['Saya ingin membeli kartu SIM.','사야 잉인 멈블리 까르뚜 씸']),
+      tp('일주일 동안 쓸 데이터 요금제가 있나요?', ['Is there a data plan for a week?','이즈 데어 어 데이터 플랜 포러 위크'], ['一週間分のデータプランはありますか。','잇슈-칸분노 데-타 푸란와 아리마스카'], ['有一周的流量套餐吗？','여우 이저우더 리우량 타오찬 마'], ['有一週的流量方案嗎？','여우 이저우더 리우량 팡안 마'], ['มีแพ็กเกจข้อมูลสำหรับหนึ่งสัปดาห์ไหม','미 팩껫 커문 삼랍 능 삽다 마이'], ['Có gói dữ liệu cho một tuần không?','꺼 고이 즈 리에우 쪼 못 뚜언 콩'], ['¿Hay un plan de datos para una semana?','아이 운 쁠란 데 다또스 빠라 우나 세마나'], ['Apakah ada paket data untuk satu minggu?','아빠까 아다 빠껫 다따 운뚝 사뚜 밍구']),
+      tp('이 유심은 얼마예요?', ['How much is this SIM card?','하우 머치 이즈 디스 심 카드'], ['このSIMカードはいくらですか。','코노 시무카-도와 이쿠라데스카'], ['这个SIM卡多少钱？','쩌거 씸카 뚜오샤오 치엔'], ['這個SIM卡多少錢？','쩌거 씸카 뚜오샤오 치엔'], ['ซิมนี้ราคาเท่าไหร่','씸 니 라카 타오라이'], ['Thẻ SIM này giá bao nhiêu?','테 씸 나이 자 바오 니에우'], ['¿Cuánto cuesta esta tarjeta SIM?','꾸안또 꾸에스따 에스따 따르헤따 씸'], ['Berapa harga kartu SIM ini?','버라빠 하르가 까르뚜 씸 이니']),
+      tp('데이터는 몇 기가인가요?', ['How many gigabytes of data?','하우 매니 기가바이츠 오브 데이터'], ['データは何ギガですか。','데-타와 난기가데스카'], ['有多少G的流量？','여우 뚜오샤오 지 더 리우량'], ['有多少G的流量？','여우 뚜오샤오 지 더 리우량'], ['มีข้อมูลกี่กิกะไบต์','미 커문 끼 기가바이'], ['Có bao nhiêu GB dữ liệu?','꺼 바오 니에우 지비 즈 리에우'], ['¿Cuántos gigas de datos tiene?','꾸안또스 기가스 데 다또스 띠에네'], ['Berapa gigabyte datanya?','버라빠 기가바이뜨 다따냐']),
+      tp('유심을 끼워주실 수 있나요?', ['Could you install the SIM card for me?','쿠쥬 인스톨 더 심 카드 포 미'], ['SIMカードを入れてもらえますか。','시무카-도오 이레떼 모라에마스카'], ['您能帮我装一下SIM卡吗？','닌 넝 빵 워 쭈앙 이시아 씸카 마'], ['您能幫我裝一下SIM卡嗎？','닌 넝 빵 워 쭈앙 이시아 씸카 마'], ['ช่วยใส่ซิมให้หน่อยได้ไหม','추어이 싸이 씸 하이 너이 다이 마이'], ['Anh chị có thể lắp SIM giúp tôi không?','아잉 찌 꺼 테 랍 씸 죱 또이 콩'], ['¿Podría instalarme la tarjeta SIM?','뽀드리아 인스딸라르메 라 따르헤따 씸'], ['Bisakah Anda memasangkan kartu SIM ini?','비사까 안다 머마상깐 까르뚜 씸 이니']),
+      tp('이 번호로 전화가 되나요?', ['Can I make calls with this number?','캔 아이 메이크 콜스 위드 디스 넘버'], ['この番号で電話はできますか。','코노 방고-데 뎅와와 데키마스카'], ['用这个号码可以打电话吗？','용 쩌거 하오마 커이 다 디엔화 마'], ['用這個號碼可以打電話嗎？','용 쩌거 하오마 커이 다 디엔화 마'], ['ใช้เบอร์นี้โทรได้ไหม','차이 버 니 토 다이 마이'], ['Tôi có thể gọi điện với số này không?','또이 꺼 테 고이 디엔 버이 소 나이 콩'], ['¿Puedo hacer llamadas con este número?','뿌에도 아쎄르 야마다스 꼰 에스떼 누메로'], ['Bisakah saya menelepon dengan nomor ini?','비사까 사야 머넬레뽄 등안 노모르 이니']),
+      tp('통화도 가능한가요?', ['Can I use it for calls too?','캔 아이 유즈 잇 포 콜스 투'], ['通話もできますか。','츠-와모 데키마스카'], ['也可以通话吗？','예 커이 통화 마'], ['也可以通話嗎？','예 커이 통화 마'], ['โทรออกได้ด้วยไหม','토 억 다이 두어이 마이'], ['Cũng có thể gọi điện được không?','꿍 꺼 테 고이 디엔 드억 콩'], ['¿También puedo hacer llamadas?','땀비엔 뿌에도 아쎄르 야마다스'], ['Apakah bisa juga untuk menelepon?','아빠까 비사 주가 운뚝 머넬레뽄']),
+      tp('공항에서도 살 수 있나요?', ['Can I buy it at the airport too?','캔 아이 바이 잇 앳 디 에어포트 투'], ['空港でも買えますか。','쿠-코-데모 카에마스카'], ['在机场也能买到吗？','짜이 지창 예 넝 마이다오 마'], ['在機場也能買到嗎？','짜이 지창 예 넝 마이다오 마'], ['ซื้อที่สนามบินได้ไหม','쓰 티 사남빈 다이 마이'], ['Tôi có thể mua ở sân bay không?','또이 꺼 테 무어 어 선 바이 콩'], ['¿Puedo comprarla también en el aeropuerto?','뿌에도 꼼쁘라를라 땀비엔 엔 엘 아에로뿌에르또'], ['Bisakah saya membelinya di bandara juga?','비사까 사야 멈블리냐 디 반다라 주가']),
+      tp('여권을 보여드려야 하나요?', ['Do I need to show my passport?','두 아이 니드 투 쇼우 마이 패스포트'], ['パスポートを見せる必要がありますか。','파스포-토오 미세루 히츠요-가 아리마스카'], ['需要出示护照吗？','쉬야오 추스 후자오 마'], ['需要出示護照嗎？','쉬야오 추스 후자오 마'], ['ต้องแสดงพาสปอร์ตไหม','떵 싸댕 파스뽀 마이'], ['Tôi có cần xuất trình hộ chiếu không?','또이 꺼 껀 쑤엇 찐 호 찌에우 콩'], ['¿Necesito mostrar mi pasaporte?','네쎄시또 모스뜨라르 미 빠사뽀르떼'], ['Apakah saya perlu menunjukkan paspor?','아빠까 사야 뻐를루 머눈죽깐 빠스뽀르']),
+      tp('카드나 현금으로 결제할 수 있나요?', ['Can I pay by card or cash?','캔 아이 페이 바이 카드 오어 캐시'], ['カードか現金で支払えますか。','카-도카 겐킨데 시하라에마스카'], ['可以用卡或现金支付吗？','커이 용 카 훠 시엔진 즈푸 마'], ['可以用卡或現金支付嗎？','커이 용 카 훠 시엔진 즈푸 마'], ['จ่ายด้วยบัตรหรือเงินสดได้ไหม','짜이 두어이 밧 르 응언솟 다이 마이'], ['Tôi có thể trả bằng thẻ hoặc tiền mặt không?','또이 꺼 테 짜 방 테 화익 띠엔 맏 콩'], ['¿Puedo pagar con tarjeta o en efectivo?','뿌에도 빠가르 꼰 따르헤따 오 엔 에펙띠보'], ['Bisakah saya bayar dengan kartu atau tunai?','비사까 사야 바야르 등안 까르뚜 아따우 뚜나이']),
+    ],
+    toHotel: [
+      tp('이 호텔까지 어떻게 가나요?', ['How do I get to this hotel?','하우 두 아이 겟 투 디스 호텔'], ['このホテルまでどう行けばいいですか。','코노 호테루마데 도- 이케바 이이데스카'], ['怎么去这家酒店？','전머 취 쩌지아 지우디엔'], ['怎麼去這家飯店？','전머 취 쩌지아 판디엔'], ['ไปโรงแรมนี้ยังไง','빠이 롱램 니 양응아이'], ['Làm sao để đến khách sạn này?','람 사오 데 덴 카익 산 나이'], ['¿Cómo llego a este hotel?','꼬모 예고 아 에스떼 오뗄'], ['Bagaimana cara ke hotel ini?','바가이마나 짜라 꺼 호텔 이니']),
+      tp('택시를 어디서 탈 수 있나요?', ['Where can I catch a taxi?','웨어 캔 아이 캐치 어 택시'], ['タクシーはどこで乗れますか。','타쿠시-와 도코데 노레마스카'], ['在哪里可以打车？','짜이 나리 커이 다처'], ['在哪裡可以搭計程車？','짜이 나리 커이 다 지청처'], ['ขึ้นแท็กซี่ได้ที่ไหน','큰 택씨 다이 티 나이'], ['Tôi có thể bắt taxi ở đâu?','또이 꺼 테 밧 딱시 어 더우'], ['¿Dónde puedo tomar un taxi?','돈데 뿌에도 또마르 운 딱시'], ['Di mana saya bisa naik taksi?','디 마나 사야 비사 나익 딱시']),
+      tp('공항버스가 있나요?', ['Is there an airport bus?','이즈 데어 언 에어포트 버스'], ['空港バスはありますか。','쿠-코- 바스와 아리마스카'], ['有机场大巴吗？','여우 지창 따바 마'], ['有機場巴士嗎？','여우 지창 빠스 마'], ['มีรถบัสสนามบินไหม','미 롯밧 사남빈 마이'], ['Có xe buýt sân bay không?','꺼 쎄 부잇 선 바이 콩'], ['¿Hay un autobús al aeropuerto?','아이 운 아우또부스 알 아에로뿌에르또'], ['Apakah ada bus bandara?','아빠까 아다 부스 반다라']),
+      tp('지하철로 갈 수 있나요?', ['Can I get there by subway?','캔 아이 겟 데어 바이 서브웨이'], ['地下鉄で行けますか。','치카테츠데 이케마스카'], ['可以坐地铁去吗？','커이 쭈오 디티에 취 마'], ['可以搭捷運去嗎？','커이 다 지에윈 취 마'], ['นั่งรถไฟใต้ดินไปได้ไหม','낭 롯파이 따이딘 빠이 다이 마이'], ['Tôi có thể đi tàu điện ngầm không?','또이 꺼 테 디 따우 디엔 응엄 콩'], ['¿Puedo llegar en metro?','뿌에도 예가르 엔 메뜨로'], ['Bisakah saya naik kereta bawah tanah?','비사까 사야 나익 꺼레따 바와 따나']),
+      tp('얼마나 걸리나요?', ['How long does it take?','하우 롱 더즈 잇 테이크'], ['どのくらいかかりますか。','도노쿠라이 카카리마스카'], ['需要多长时间？','쉬야오 뚜오창 스지엔'], ['需要多長時間？','쉬야오 뚜오창 스지엔'], ['ใช้เวลานานแค่ไหน','차이 웰라 난 캐나이'], ['Mất bao lâu?','멋 바오 러우'], ['¿Cuánto tiempo toma?','꾸안또 띠엠뽀 또마'], ['Berapa lama waktunya?','버라빠 라마 왁뚜냐']),
+      tp('요금이 얼마 정도 나오나요?', ['About how much does it cost?','어바웃 하우 머치 더즈 잇 코스트'], ['料金はいくらくらいですか。','료-킨와 이쿠라쿠라이데스카'], ['大概多少钱？','따가이 뚜오샤오 치엔'], ['大概多少錢？','따가이 뚜오샤오 치엔'], ['ค่าโดยสารประมาณเท่าไหร่','카도이산 쁘라만 타오라이'], ['Giá khoảng bao nhiêu?','자 코앙 바오 니에우'], ['¿Cuánto cuesta aproximadamente?','꾸안또 꾸에스따 아쁘록시마다멘떼'], ['Kira-kira berapa biayanya?','끼라끼라 버라빠 비아야냐']),
+      tp('이 주소로 가주세요.', ['Please take me to this address.','플리즈 테이크 미 투 디스 어드레스'], ['この住所までお願いします。','코노 쥬-쇼마데 오네가이시마스'], ['请带我去这个地址。','칭 따이 워 취 쩌거 띠즈'], ['請帶我去這個地址。','칭 따이 워 취 쩌거 띠즈'], ['ไปที่อยู่นี้ให้หน่อย','빠이 티유 니 하이 너이'], ['Cho tôi đến địa chỉ này.','쪼 또이 덴 디아 찌 나이'], ['Lléveme a esta dirección, por favor.','예베메 아 에스따 디렉씨온 뽀르 파보르'], ['Tolong antar saya ke alamat ini.','똘롱 안따르 사야 꺼 알라맛 이니']),
+      tp('셔틀버스가 있나요?', ['Is there a shuttle bus?','이즈 데어 어 셔틀 버스'], ['シャトルバスはありますか。','샤토루바스와 아리마스카'], ['有班车吗？','여우 빤처 마'], ['有接駁車嗎？','여우 지에보처 마'], ['มีรถรับส่งไหม','미 롯랍송 마이'], ['Có xe đưa đón không?','꺼 쎄 드어 던 콩'], ['¿Hay un servicio de transporte gratuito?','아이 운 세르비씨오 데 뜨란스뽀르떼 그라뚜이또'], ['Apakah ada bus shuttle?','아빠까 아다 부스 셔틀']),
+      tp('가장 빠른 방법이 뭔가요?', ["What's the fastest way?",'왓츠 더 패스티스트 웨이'], ['一番速い方法は何ですか。','이치반 하야이 호-호-와 난데스카'], ['最快的方法是什么？','쭈이콰이더 팡파 스 션머'], ['最快的方法是什麼？','쭈이콰이더 팡파 스 션머'], ['วิธีที่เร็วที่สุดคืออะไร','위티 티 레오 티쑫 크 아라이'], ['Cách nhanh nhất là gì?','까익 냐잉 녓 라 지'], ['¿Cuál es la forma más rápida?','꾸알 에스 라 포르마 마스 라피다'], ['Apa cara tercepat?','아빠 짜라 떠르쯔빳']),
+      tp('여기서 걸어갈 수 있나요?', ['Can I walk from here?','캔 아이 워크 프럼 히어'], ['ここから歩いて行けますか。','코코카라 아루이떼 이케마스카'], ['从这里可以走过去吗？','총 쩌리 커이 조우 꿔취 마'], ['從這裡可以走過去嗎？','총 쩌리 커이 조우 꿔취 마'], ['เดินจากที่นี่ได้ไหม','던 짝 티니 다이 마이'], ['Tôi có thể đi bộ từ đây không?','또이 꺼 테 디 보 뜨 더이 콩'], ['¿Puedo caminar desde aquí?','뿌에도 까미나르 데스데 아끼'], ['Bisakah saya jalan kaki dari sini?','비사까 사야 잘란 까끼 다리 시니']),
+    ],
+    checkin: [
+      tp('체크인하려고 합니다.', ["I'd like to check in.",'아이드 라이크 투 체크 인'], ['チェックインしたいです。','첵쿠인 시따이데스'], ['我要办理入住。','워 야오 빤리 루쭈'], ['我要辦理入住。','워 야오 빤리 루쭈'], ['ฉันต้องการเช็คอิน','찬 떵깐 첵인'], ['Tôi muốn nhận phòng.','또이 무온 년 퐁'], ['Quisiera registrarme.','끼시에라 레히스뜨라르메'], ['Saya ingin check in.','사야 잉인 첵인']),
+      tp('예약을 했습니다, 이름은 ○○입니다.', ['I have a reservation under the name ○○.','아이 해브 어 레저베이션 언더 더 네임 ○○'], ['予約しています、名前は○○です。','요야쿠시떼이마스, 나마에와 ○○데스'], ['我预订了，名字是○○。','워 위딩러, 밍즈 스 ○○'], ['我預訂了，名字是○○。','워 위딩러, 밍즈 스 ○○'], ['ฉันจองไว้แล้ว ชื่อ ○○','찬 쩡 와이 래우 츠 ○○'], ['Tôi đã đặt phòng, tên là ○○.','또이 다 닷 퐁, 뗀 라 ○○'], ['Tengo una reserva a nombre de ○○.','뗑고 우나 레세르바 아 놈브레 데 ○○'], ['Saya sudah reservasi atas nama ○○.','사야 수다 레세르바시 아따스 나마 ○○']),
+      tp('몇 시부터 체크인 가능한가요?', ['What time can I check in?','왓 타임 캔 아이 체크 인'], ['何時からチェックインできますか。','난지카라 첵쿠인 데키마스카'], ['几点可以办理入住？','지디엔 커이 빤리 루쭈'], ['幾點可以辦理入住？','지디엔 커이 빤리 루쭈'], ['เช็คอินได้ตั้งแต่กี่โมง','첵인 다이 땅때 끼몽'], ['Mấy giờ có thể nhận phòng?','머이 저 꺼 테 년 퐁'], ['¿A qué hora puedo registrarme?','아 께 오라 뿌에도 레히스뜨라르메'], ['Jam berapa saya bisa check in?','잠 버라빠 사야 비사 첵인']),
+      tp('조식이 포함되어 있나요?', ['Is breakfast included?','이즈 브렉퍼스트 인클루디드'], ['朝食は含まれていますか。','쵸-쇼쿠와 후쿠마레떼이마스카'], ['含早餐吗？','한 자오찬 마'], ['含早餐嗎？','한 자오찬 마'], ['รวมอาหารเช้าไหม','루엄 아한차오 마이'], ['Có bao gồm bữa sáng không?','꺼 바오 곰 브어 상 콩'], ['¿Incluye el desayuno?','인끌루예 엘 데사유노'], ['Apakah termasuk sarapan?','아빠까 떠르마숙 사라빤']),
+      tp('와이파이 비밀번호가 뭔가요?', ["What's the Wi-Fi password?",'왓츠 더 와이파이 패스워드'], ['Wi-Fiのパスワードは何ですか。','와이파이노 파스와-도와 난데스카'], ['Wi-Fi密码是多少？','와이파이 미마 스 뚜오샤오'], ['Wi-Fi密碼是多少？','와이파이 미마 스 뚜오샤오'], ['รหัสไวไฟคืออะไร','라핫 와이파이 크 아라이'], ['Mật khẩu Wi-Fi là gì?','멋 카우 와이파이 라 지'], ['¿Cuál es la contraseña del Wi-Fi?','꾸알 에스 라 꼰뜨라세냐 델 와이파이'], ['Apa kata sandi Wi-Fi-nya?','아빠 까따 산디 와이파이냐']),
+      tp('방을 업그레이드할 수 있나요?', ['Can I upgrade my room?','캔 아이 업그레이드 마이 룸'], ['部屋をアップグレードできますか。','헤야오 압푸구레-도 데키마스카'], ['可以升级房间吗？','커이 셩지 팡지엔 마'], ['可以升等房間嗎？','커이 셩덩 팡지엔 마'], ['อัปเกรดห้องได้ไหม','압그렛 헝 다이 마이'], ['Tôi có thể nâng cấp phòng không?','또이 꺼 테 넝 껍 퐁 콩'], ['¿Puedo mejorar mi habitación?','뿌에도 메호라르 미 아비따씨온'], ['Bisakah saya upgrade kamar?','비사까 사야 업그레이드 까마르']),
+      tp('수건을 더 받을 수 있나요?', ['Can I get more towels?','캔 아이 겟 모어 타월스'], ['タオルをもっともらえますか。','타오루오 못또 모라에마스카'], ['可以多给我几条毛巾吗？','커이 뚜오 게이 워 지티아오 마오진 마'], ['可以多給我幾條毛巾嗎？','커이 뚜오 게이 워 지티아오 마오진 마'], ['ขอผ้าเช็ดตัวเพิ่มได้ไหม','커 파쳇뚜어 프름 다이 마이'], ['Tôi có thể lấy thêm khăn tắm không?','또이 꺼 테 러이 템 칸 땀 콩'], ['¿Puedo tener más toallas?','뿌에도 떼네르 마스 또아야스'], ['Bisakah saya minta handuk tambahan?','비사까 사야 민따 한둑 땀바한']),
+      tp('헬스장은 몇 층에 있나요?', ['What floor is the gym on?','왓 플로어 이즈 더 짐 온'], ['ジムは何階にありますか。','지무와 난가이니 아리마스카'], ['健身房在几楼？','지엔션팡 짜이 지러우'], ['健身房在幾樓？','지엔션팡 짜이 지러우'], ['ยิมอยู่ชั้นไหน','임 유 찬 나이'], ['Phòng gym ở tầng mấy?','퐁 짐 어 떵 머이'], ['¿En qué piso está el gimnasio?','엔 께 삐소 에스따 엘 힘나시오'], ['Gym ada di lantai berapa?','짐 아다 디 란따이 버라빠']),
+      tp('몇 시까지 체크아웃해야 하나요?', ['What time is check-out?','왓 타임 이즈 체크아웃'], ['何時までにチェックアウトすればいいですか。','난지마데니 첵쿠아우토 스레바 이이데스카'], ['几点前需要退房？','지디엔치엔 쉬야오 투이팡'], ['幾點前需要退房？','지디엔치엔 쉬야오 투이팡'], ['ต้องเช็คเอาท์ก่อนกี่โมง','떵 첵아오 껀 끼몽'], ['Mấy giờ phải trả phòng?','머이 저 파이 짜 퐁'], ['¿A qué hora es el check-out?','아 께 오라 에스 엘 첵아우뜨'], ['Jam berapa harus check out?','잠 버라빠 하루스 첵아웃']),
+      tp('방 카드키를 하나 더 받을 수 있나요?', ['Can I get an extra room key?','캔 아이 겟 언 엑스트라 룸 키'], ['部屋の鍵をもう一つもらえますか。','헤야노 카기오 모- 히토츠 모라에마스카'], ['可以再给我一张房卡吗？','커이 짜이 게이 워 이짱 팡카 마'], ['可以再給我一張房卡嗎？','커이 짜이 게이 워 이짱 팡카 마'], ['ขอกุญแจห้องเพิ่มอีกใบได้ไหม','커 꾼째헝 프름 익 바이 다이 마이'], ['Tôi có thể lấy thêm một thẻ phòng không?','또이 꺼 테 러이 템 못 테 퐁 콩'], ['¿Puedo tener una llave de habitación adicional?','뿌에도 떼네르 우나 야베 데 아비따씨온 아디씨오날'], ['Bisakah saya minta kunci kamar tambahan?','비사까 사야 민따 꾼찌 까마르 땀바한']),
+    ],
+    booking: [
+      tp('이 티켓을 온라인으로 예약할 수 있나요?', ['Can I book this ticket online?','캔 아이 북 디스 티켓 온라인'], ['このチケットはオンラインで予約できますか。','코노 치켓토와 온라인데 요야쿠 데키마스카'], ['可以在网上预订这张票吗？','커이 짜이 왕상 위딩 쩌짱 퍄오 마'], ['可以在網路上預訂這張票嗎？','커이 짜이 왕루상 위딩 쩌짱 퍄오 마'], ['จองตั๋วนี้ออนไลน์ได้ไหม','쩡 뚜어 니 온라인 다이 마이'], ['Tôi có thể đặt vé này trực tuyến không?','또이 꺼 테 닷 베 나이 쯕 뚜엔 콩'], ['¿Puedo reservar esta entrada en línea?','뿌에도 레세르바르 에스따 엔뜨라다 엔 리네아'], ['Bisakah saya memesan tiket ini secara online?','비사까 사야 머메산 띠껫 이니 스짜라 온라인']),
+      tp('오늘 자리가 남아있나요?', ['Are there spots available today?','아 데어 스팟츠 어베일러블 투데이'], ['今日空きはありますか。','쿄- 아키와 아리마스카'], ['今天还有名额吗？','진티엔 하이여우 밍어 마'], ['今天還有名額嗎？','진티엔 하이여우 밍어 마'], ['วันนี้ยังมีที่ว่างไหม','완니 양 미 티왕 마이'], ['Hôm nay còn chỗ trống không?','홈 나이 꼰 쪼 쫑 콩'], ['¿Hay lugares disponibles hoy?','아이 루가레스 디스뽀니블레스 오이'], ['Apakah masih ada tempat hari ini?','아빠까 마시 아다 뜸빳 하리 이니']),
+      tp('몇 시 예약이 가능한가요?', ['What times are available for booking?','왓 타임즈 아 어베일러블 포 부킹'], ['何時の予約ができますか。','난지노 요야쿠가 데키마스카'], ['有哪些时间可以预约？','여우 나시에 스지엔 커이 위위에'], ['有哪些時間可以預約？','여우 나시에 스지엔 커이 위위에'], ['มีเวลาไหนให้จองบ้าง','미 웰라 나이 하이 쩡 방'], ['Có những khung giờ nào để đặt?','꺼 늉 쿵 저 나오 데 닷'], ['¿Qué horarios hay disponibles para reservar?','께 오라리오스 아이 디스뽀니블레스 빠라 레세르바르'], ['Jam berapa saja yang tersedia untuk reservasi?','잠 버라빠 사자 양 떠르세디아 운뚝 레세르바시']),
+      tp('인원수를 변경할 수 있나요?', ['Can I change the number of people?','캔 아이 체인지 더 넘버 오브 피플'], ['人数を変更できますか。','닌즈-오 헨코- 데키마스카'], ['可以更改人数吗？','커이 껑가이 런수 마'], ['可以更改人數嗎？','커이 껑가이 런수 마'], ['เปลี่ยนจำนวนคนได้ไหม','쁠리얀 짬누언 콘 다이 마이'], ['Tôi có thể thay đổi số lượng người không?','또이 꺼 테 타이 도이 소 르엉 응어이 콩'], ['¿Puedo cambiar el número de personas?','뿌에도 깜비아르 엘 누메로 데 뻬르소나스'], ['Bisakah saya mengubah jumlah orang?','비사까 사야 멍우바 줌라 오랑']),
+      tp('예약을 취소하고 싶어요.', ["I'd like to cancel my reservation.",'아이드 라이크 투 캔슬 마이 레저베이션'], ['予約をキャンセルしたいです。','요야쿠오 캰세루 시따이데스'], ['我想取消预订。','워 시앙 취샤오 위딩'], ['我想取消預訂。','워 시앙 취샤오 위딩'], ['ฉันอยากยกเลิกการจอง','찬 야악 욕럭 깐쩡'], ['Tôi muốn hủy đặt chỗ.','또이 무온 후이 닷 쪼'], ['Quisiera cancelar mi reserva.','끼시에라 깐셀라르 미 레세르바'], ['Saya ingin membatalkan reservasi.','사야 잉인 멈바딸깐 레세르바시']),
+      tp('예약 확인서를 보여드릴게요.', ['Here is my booking confirmation.','히얼 이즈 마이 부킹 컨퍼메이션'], ['予約確認書をお見せします。','요야쿠 카쿠닌쇼오 오미세시마스'], ['这是我的预订确认单。','쩌 스 워더 위딩 취에런딴'], ['這是我的預訂確認單。','쩌 스 워더 위딩 취에런딴'], ['นี่คือใบยืนยันการจองของฉัน','니 크 바이 이엔얀 깐쩡 컹 찬'], ['Đây là xác nhận đặt chỗ của tôi.','더이 라 삭 년 닷 쪼 꾸어 또이'], ['Aquí está mi confirmación de reserva.','아끼 에스따 미 꼰피르마씨온 데 레세르바'], ['Ini konfirmasi reservasi saya.','이니 꼰피르마시 레세르바시 사야']),
+      tp('할인 혜택이 있나요?', ['Is there any discount?','이즈 데어 애니 디스카운트'], ['割引はありますか。','와리비키와 아리마스카'], ['有折扣吗？','여우 저커우 마'], ['有折扣嗎？','여우 저커우 마'], ['มีส่วนลดไหม','미 쑤언롯 마이'], ['Có giảm giá không?','꺼 잠 자 콩'], ['¿Hay algún descuento?','아이 알군 데스꾸엔또'], ['Apakah ada diskon?','아빠까 아다 디스꼰']),
+      tp('현장에서도 예약할 수 있나요?', ['Can I book on-site as well?','캔 아이 북 온사이트 애즈 웰'], ['現地でも予約できますか。','겐치데모 요야쿠 데키마스카'], ['现场也可以预订吗？','시엔창 예 커이 위딩 마'], ['現場也可以預訂嗎？','시엔창 예 커이 위딩 마'], ['จองที่หน้างานได้ไหม','쩡 티 나응안 다이 마이'], ['Tôi có thể đặt trực tiếp tại chỗ không?','또이 꺼 테 닷 쯕 띠엡 따이 쪼 콩'], ['¿Puedo reservar también en el lugar?','뿌에도 레세르바르 땀비엔 엔 엘 루가르'], ['Bisakah saya reservasi langsung di tempat?','비사까 사야 레세르바시 랑숭 디 뜸빳']),
+      tp('우천 시에도 진행되나요?', ['Does it still run if it rains?','더즈 잇 스틸 런 이프 잇 레인즈'], ['雨でも開催されますか。','아메데모 카이사이사레마스카'], ['下雨也照常进行吗？','시아위 예 자오창 진싱 마'], ['下雨也照常進行嗎？','시아위 예 자오창 진싱 마'], ['ถ้าฝนตกยังจัดอยู่ไหม','타 폰똑 양 짯 유 마이'], ['Nếu trời mưa vẫn diễn ra chứ?','네우 쩌이 므어 번 지엔 라 쯔'], ['¿Sigue en marcha si llueve?','시게 엔 마르차 시 유에베'], ['Apakah tetap berjalan jika hujan?','아빠까 뜨땁 버르잘란 지까 후잔']),
+      tp('한국어 가이드가 있나요?', ['Is there a Korean-speaking guide?','이즈 데어 어 코리안 스피킹 가이드'], ['韓国語のガイドはいますか。','캉코쿠고노 가이도와 이마스카'], ['有会说韩语的导游吗？','여우 후이슈오 한위더 다오요우 마'], ['有會說韓語的導遊嗎？','여우 훼이슈오 한위더 다오요우 마'], ['มีไกด์พูดภาษาเกาหลีไหม','미 까이 풋 파사 까올리 마이'], ['Có hướng dẫn viên nói tiếng Hàn không?','꺼 흐엉 전 비엔 노이 띠엥 한 콩'], ['¿Hay un guía que hable coreano?','아이 운 기아 께 아블레 꼬레아노'], ['Apakah ada pemandu berbahasa Korea?','아빠까 아다 뻐만두 버르바하사 꼬레아']),
+    ],
+    restaurant: [
+      tp('두 명 자리 있나요?', ['Do you have a table for two?','두 유 해브 어 테이블 포 투'], ['二人分の席はありますか。','후타리분노 세키와 아리마스카'], ['有两人的位子吗？','여우 량런더 웨이즈 마'], ['有兩人的位子嗎？','여우 량런더 웨이즈 마'], ['มีโต๊ะสำหรับสองคนไหม','미 또 삼랍 썽콘 마이'], ['Có bàn cho hai người không?','꺼 반 쪼 하이 응어이 콩'], ['¿Tiene una mesa para dos?','띠에네 우나 메사 빠라 도스'], ['Apakah ada meja untuk dua orang?','아빠까 아다 메자 운뚝 두아 오랑']),
+      tp('메뉴판 좀 보여주세요.', ['Could I see the menu, please?','쿠다이 씨 더 메뉴 플리즈'], ['メニューを見せてください。','메뉴-오 미세떼 쿠다사이'], ['请给我看一下菜单。','칭 게이 워 칸이시아 차이딴'], ['請給我看一下菜單。','칭 게이 워 칸이시아 차이딴'], ['ขอดูเมนูหน่อย','커 두 메누 너이'], ['Cho tôi xem thực đơn.','쪼 또이 셈 특 던'], ['¿Podría ver el menú, por favor?','뽀드리아 베르 엘 메누 뽀르 파보르'], ['Boleh saya lihat menunya?','볼레 사야 리핫 메누냐']),
+      tp('이거 추천해 주실 수 있나요?', ['Could you recommend something?','쿠쥬 레커멘드 썸띵'], ['おすすめはありますか。','오스스메와 아리마스카'], ['您能推荐一下吗？','닌 넝 투이지엔 이시아 마'], ['您能推薦一下嗎？','닌 넝 투이지엔 이시아 마'], ['ช่วยแนะนำอะไรหน่อยได้ไหม','추어이 내남 아라이 너이 다이 마이'], ['Anh chị có thể giới thiệu món gì không?','아잉 찌 꺼 테 저이 티에우 몬 지 콩'], ['¿Podría recomendarme algo?','뽀드리아 레꼬멘다르메 알고'], ['Bisakah Anda merekomendasikan sesuatu?','비사까 안다 머레꼬멘다시깐 스수아뚜']),
+      tp('덜 맵게 해주세요.', ['Please make it less spicy.','플리즈 메이크 잇 레스 스파이시'], ['辛さを控えめにしてください。','카라사오 히카에메니 시떼 쿠다사이'], ['请做得不要太辣。','칭 쭈오더 부야오 타이 라'], ['請做得不要太辣。','칭 쭈오더 부야오 타이 라'], ['ขอไม่เผ็ดมาก','커 마이 펫 막'], ['Làm ít cay hơn giúp tôi.','람 잇 까이 헌 죱 또이'], ['Que no sea muy picante, por favor.','께 노 세아 무이 삐깐떼 뽀르 파보르'], ['Tolong buat tidak terlalu pedas.','똘롱 부앗 띠닥 떠를랄루 뻐다스']),
+      tp('이거 하나 주세요.', ["I'll have this one, please.",'아윌 해브 디스 원 플리즈'], ['これを一つください。','코레오 히토츠 쿠다사이'], ['请给我一份这个。','칭 게이 워 이펀 쩌거'], ['請給我一份這個。','칭 게이 워 이펀 쩌거'], ['ขอนี่หนึ่งที่','커 니 능 티'], ['Cho tôi món này.','쪼 또이 몬 나이'], ['Quiero esto, por favor.','끼에로 에스또 뽀르 파보르'], ['Saya mau yang ini.','사야 마우 양 이니']),
+      tp('물 좀 더 주세요.', ['More water, please.','모어 워터 플리즈'], ['お水をもっとください。','오미즈오 못또 쿠다사이'], ['请再给我一些水。','칭 짜이 게이 워 이시에 수이'], ['請再給我一些水。','칭 짜이 게이 워 이시에 수이'], ['ขอน้ำเพิ่มหน่อย','커 남 프름 너이'], ['Cho tôi thêm nước.','쪼 또이 템 느억'], ['Más agua, por favor.','마스 아구아 뽀르 파보르'], ['Tolong tambah air.','똘롱 땀바 아이르']),
+      tp('계산서 주세요.', ['Check, please.','첵 플리즈'], ['お会計をお願いします。','오카이케이오 오네가이시마스'], ['请给我账单。','칭 게이 워 짱딴'], ['請給我帳單。','칭 게이 워 짱딴'], ['ขอบิลหน่อย','커 빈 너이'], ['Cho tôi hóa đơn.','쪼 또이 화 던'], ['La cuenta, por favor.','라 꾸엔따 뽀르 파보르'], ['Minta bonnya.','민따 본냐']),
+      tp('카드로 계산할게요.', ["I'll pay by card.",'아윌 페이 바이 카드'], ['カードで払います。','카-도데 하라이마스'], ['我要刷卡。','워 야오 솨카'], ['我要刷卡。','워 야오 솨카'], ['จ่ายด้วยบัตร','짜이 두어이 밧'], ['Tôi trả bằng thẻ.','또이 짜 방 테'], ['Voy a pagar con tarjeta.','보이 아 빠가르 꼰 따르헤따'], ['Saya bayar pakai kartu.','사야 바야르 빠까이 까르뚜']),
+      tp('따로 계산할 수 있나요?', ['Can we pay separately?','캔 위 페이 세퍼레이틀리'], ['別々に払えますか。','베츠베츠니 하라에마스카'], ['可以分开结账吗？','커이 펀카이 지에짱 마'], ['可以分開結帳嗎？','커이 펀카이 지에짱 마'], ['จ่ายแยกกันได้ไหม','짜이 얙 깐 다이 마이'], ['Chúng tôi có thể trả riêng không?','쭝 또이 꺼 테 짜 리엥 콩'], ['¿Podemos pagar por separado?','뽀데모스 빠가르 뽀르 세빠라도'], ['Bisakah kami bayar terpisah?','비사까 까미 바야르 떠르삐사']),
+      tp('남은 음식을 포장할 수 있나요?', ['Can I get the leftovers to go?','캔 아이 겟 더 레프트오버즈 투 고'], ['残った料理を持ち帰れますか。','노콧따 료-리오 모치카에레마스카'], ['剩下的可以打包吗？','셩시아더 커이 다빠오 마'], ['剩下的可以打包嗎？','셩시아더 커이 다빠오 마'], ['ขอห่อกลับได้ไหม','커 허 끌랍 다이 마이'], ['Tôi có thể gói mang về không?','또이 꺼 테 고이 망 베 콩'], ['¿Puedo llevarme lo que sobró?','뿌에도 예바르메 로 께 소브로'], ['Bisakah saya bungkus sisanya?','비사까 사야 붕꾸스 시사냐']),
+    ],
+    restroom: [
+      tp('화장실이 어디에 있나요?', ['Where is the restroom?','웨어 이즈 더 레스트룸'], ['トイレはどこですか。','토이레와 도코데스카'], ['洗手间在哪里？','시쇼우지엔 짜이 나리'], ['洗手間在哪裡？','시쇼우지엔 짜이 나리'], ['ห้องน้ำอยู่ที่ไหน','헝남 유 티나이'], ['Nhà vệ sinh ở đâu?','냐 베 신 어 더우'], ['¿Dónde está el baño?','돈데 에스따 엘 바뇨'], ['Di mana toiletnya?','디 마나 또일렛냐']),
+      tp('가까운 화장실이 있나요?', ['Is there a restroom nearby?','이즈 데어 어 레스트룸 니어바이'], ['近くにトイレはありますか。','치카쿠니 토이레와 아리마스카'], ['附近有洗手间吗？','푸진 여우 시쇼우지엔 마'], ['附近有洗手間嗎？','푸진 여우 시쇼우지엔 마'], ['มีห้องน้ำใกล้ๆไหม','미 헝남 끌라이끌라이 마이'], ['Có nhà vệ sinh gần đây không?','꺼 냐 베 신 건 더이 콩'], ['¿Hay un baño cerca?','아이 운 바뇨 쎄르까'], ['Apakah ada toilet di dekat sini?','아빠까 아다 또일렛 디 드깟 시니']),
+      tp('화장실 좀 써도 될까요?', ['May I use the restroom?','메이 아이 유즈 더 레스트룸'], ['トイレを借りてもいいですか。','토이레오 카리떼모 이이데스카'], ['我可以用一下洗手间吗？','워 커이 용이시아 시쇼우지엔 마'], ['我可以用一下洗手間嗎？','워 커이 용이시아 시쇼우지엔 마'], ['ขอใช้ห้องน้ำหน่อยได้ไหม','커 차이 헝남 너이 다이 마이'], ['Tôi có thể dùng nhà vệ sinh không?','또이 꺼 테 중 냐 베 신 콩'], ['¿Puedo usar el baño?','뿌에도 우사르 엘 바뇨'], ['Bolehkah saya menggunakan toilet?','볼레카 사야 멍구나깐 또일렛']),
+      tp('이 근처에 화장실 있나요?', ['Is there a restroom around here?','이즈 데어 어 레스트룸 어라운드 히어'], ['この辺にトイレはありますか。','코노헨니 토이레와 아리마스카'], ['这附近有洗手间吗？','쩌푸진 여우 시쇼우지엔 마'], ['這附近有洗手間嗎？','쩌푸진 여우 시쇼우지엔 마'], ['แถวนี้มีห้องน้ำไหม','태우니 미 헝남 마이'], ['Quanh đây có nhà vệ sinh không?','꽝 더이 꺼 냐 베 신 콩'], ['¿Hay un baño por aquí?','아이 운 바뇨 뽀르 아끼'], ['Apakah ada toilet di sekitar sini?','아빠까 아다 또일렛 디 스끼따르 시니']),
+      tp('무료로 이용할 수 있나요?', ['Is it free to use?','이즈 잇 프리 투 유즈'], ['無料で使えますか。','무료-데 츠카에마스카'], ['可以免费使用吗？','커이 미엔페이 스용 마'], ['可以免費使用嗎？','커이 미엔페이 스용 마'], ['ใช้ฟรีไหม','차이 프리 마이'], ['Sử dụng miễn phí không?','스 중 미엔 피 콩'], ['¿Es gratis usarlo?','에스 그라띠스 우사를로'], ['Apakah gratis untuk digunakan?','아빠까 그라띠스 운뚝 디구나깐']),
+      tp('남자 화장실은 어느 쪽인가요?', ["Which way is the men's restroom?",'위치 웨이 이즈 더 멘즈 레스트룸'], ['男性用トイレはどちらですか。','단세이요- 토이레와 도치라데스카'], ['男厕在哪边？','난처 짜이 나비엔'], ['男廁在哪邊？','난처 짜이 나비엔'], ['ห้องน้ำชายอยู่ทางไหน','헝남차이 유 탕나이'], ['Nhà vệ sinh nam ở hướng nào?','냐 베 신 남 어 흐엉 나오'], ['¿Dónde está el baño de hombres?','돈데 에스따 엘 바뇨 데 옴브레스'], ['Toilet pria ke arah mana?','또일렛 쁘리아 꺼 아라 마나']),
+      tp('여자 화장실은 어느 쪽인가요?', ["Which way is the women's restroom?",'위치 웨이 이즈 더 위민즈 레스트룸'], ['女性用トイレはどちらですか。','죠세이요- 토이레와 도치라데스카'], ['女厕在哪边？','뉘처 짜이 나비엔'], ['女廁在哪邊？','뉘처 짜이 나비엔'], ['ห้องน้ำหญิงอยู่ทางไหน','헝남잉 유 탕나이'], ['Nhà vệ sinh nữ ở hướng nào?','냐 베 신 느 어 흐엉 나오'], ['¿Dónde está el baño de mujeres?','돈데 에스따 엘 바뇨 데 무헤레스'], ['Toilet wanita ke arah mana?','또일렛 와니따 꺼 아라 마나']),
+      tp('휴지가 있나요?', ['Is there toilet paper?','이즈 데어 토일렛 페이퍼'], ['トイレットペーパーはありますか。','토이렛토페-파-와 아리마스카'], ['有卫生纸吗？','여우 웨이셩즈 마'], ['有衛生紙嗎？','여우 웨이셩즈 마'], ['มีกระดาษทิชชู่ไหม','미 끄라닷 팃추 마이'], ['Có giấy vệ sinh không?','꺼 저이 베 신 콩'], ['¿Hay papel higiénico?','아이 빠뻴 이히에니꼬'], ['Apakah ada tisu toilet?','아빠까 아다 띠수 또일렛']),
+      tp('몇 층에 있나요?', ['What floor is it on?','왓 플로어 이즈 잇 온'], ['何階にありますか。','난가이니 아리마스카'], ['在几楼？','짜이 지러우'], ['在幾樓？','짜이 지러우'], ['อยู่ชั้นไหน','유 찬 나이'], ['Ở tầng mấy?','어 떵 머이'], ['¿En qué piso está?','엔 께 삐소 에스따'], ['Ada di lantai berapa?','아다 디 란따이 버라빠']),
+      tp('장애인 화장실이 있나요?', ['Is there an accessible restroom?','이즈 데어 언 억세서블 레스트룸'], ['車椅子用トイレはありますか。','쿠루마이스요- 토이레와 아리마스카'], ['有无障碍洗手间吗？','여우 우짱아이 시쇼우지엔 마'], ['有無障礙洗手間嗎？','여우 우짱아이 시쇼우지엔 마'], ['มีห้องน้ำสำหรับผู้พิการไหม','미 헝남 삼랍 푸피깐 마이'], ['Có nhà vệ sinh cho người khuyết tật không?','꺼 냐 베 신 쪼 응어이 쿠옛 떳 콩'], ['¿Hay un baño accesible?','아이 운 바뇨 악세시블레'], ['Apakah ada toilet untuk difabel?','아빠까 아다 또일렛 운뚝 디파벨']),
+    ],
+    ticket: [
+      tp('표는 어디서 사나요?', ['Where can I buy a ticket?','웨어 캔 아이 바이 어 티켓'], ['切符はどこで買えますか。','킷푸와 도코데 카에마스카'], ['在哪里买票？','짜이 나리 마이퍄오'], ['在哪裡買票？','짜이 나리 마이퍄오'], ['ซื้อตั๋วได้ที่ไหน','쓰뚜어 다이 티나이'], ['Tôi có thể mua vé ở đâu?','또이 꺼 테 무어 베 어 더우'], ['¿Dónde puedo comprar un boleto?','돈데 뿌에도 꼼쁘라르 운 볼레또'], ['Di mana saya bisa membeli tiket?','디 마나 사야 비사 멈블리 띠껫']),
+      tp('성인 한 장 주세요.', ['One adult ticket, please.','원 어덜트 티켓 플리즈'], ['大人一枚ください。','오토나 이치마이 쿠다사이'], ['请给我一张成人票。','칭 게이 워 이짱 청런퍄오'], ['請給我一張成人票。','칭 게이 워 이짱 청런퍄오'], ['ขอตั๋วผู้ใหญ่หนึ่งใบ','커 뚜어 푸야이 능 바이'], ['Cho tôi một vé người lớn.','쪼 또이 못 베 응어이 런'], ['Un boleto de adulto, por favor.','운 볼레또 데 아둘또 뽀르 파보르'], ['Satu tiket dewasa.','사뚜 띠껫 데와사']),
+      tp('왕복으로 주세요.', ['Round trip, please.','라운드트립 플리즈'], ['往復でお願いします。','오-후쿠데 오네가이시마스'], ['请给我往返票。','칭 게이 워 왕판퍄오'], ['請給我來回票。','칭 게이 워 라이후이퍄오'], ['ขอแบบไปกลับ','커 뱁 빠이끌랍'], ['Cho tôi vé khứ hồi.','쪼 또이 베 크 호이'], ['Ida y vuelta, por favor.','이다 이 부엘따 뽀르 파보르'], ['Tiket pulang-pergi.','띠껫 뿔랑 뻐르기']),
+      tp('다음 출발 시간이 언제예요?', ['When is the next departure?','웬 이즈 더 넥스트 디파처'], ['次の出発は何時ですか。','츠기노 슛빠츠와 난지데스카'], ['下一班几点出发？','시아이빤 지디엔 추파'], ['下一班幾點出發？','시아이빤 지디엔 추파'], ['เที่ยวต่อไปออกกี่โมง','티여우떠빠이 억 끼몽'], ['Chuyến tiếp theo khởi hành khi nào?','쭈옌 띠엡 태오 커이 하잉 키 나오'], ['¿Cuándo es la próxima salida?','꾸안도 에스 라 프록시마 살리다'], ['Jam berapa keberangkatan berikutnya?','잠 버라빠 꺼버랑깟딴 버리꿋냐']),
+      tp('이 표로 환승할 수 있나요?', ['Can I transfer with this ticket?','캔 아이 트랜스퍼 위드 디스 티켓'], ['この切符で乗り換えできますか。','코노 킷푸데 노리카에 데키마스카'], ['用这张票可以换乘吗？','용 쩌짱퍄오 커이 환청 마'], ['用這張票可以轉乘嗎？','용 쩌짱퍄오 커이 좐청 마'], ['ใช้ตั๋วนี้ต่อรถได้ไหม','차이뚜어니 떠롯 다이 마이'], ['Tôi có thể chuyển tuyến bằng vé này không?','또이 꺼 테 쭈옌 뚜옌 방 베 나이 콩'], ['¿Puedo hacer transbordo con este boleto?','뿌에도 아쎄르 뜨란스보르도 꼰 에스떼 볼레또'], ['Bisakah saya transit dengan tiket ini?','비사까 사야 뜨란싯 등안 띠껫 이니']),
+      tp('자유이용권이 있나요?', ['Is there an all-day pass?','이즈 데어 언 올데이 패스'], ['フリーパスはありますか。','후리-파스와 아리마스카'], ['有通票吗？','여우 통퍄오 마'], ['有通票嗎？','여우 통퍄오 마'], ['มีบัตรผ่านทั้งวันไหม','미 밧판 탕완 마이'], ['Có vé cả ngày không?','꺼 베 까 응아이 콩'], ['¿Hay un pase de un día?','아이 운 빠세 데 운 디아'], ['Apakah ada tiket terusan?','아빠까 아다 띠껫 뜨루산']),
+      tp('학생 할인이 되나요?', ['Is there a student discount?','이즈 데어 어 스튜던트 디스카운트'], ['学生割引はありますか。','각세이 와리비키와 아리마스카'], ['有学生优惠吗？','여우 쉬에셩 여우훼이 마'], ['有學生優惠嗎？','여우 쉬에셩 여우훼이 마'], ['มีส่วนลดนักเรียนไหม','미 쑤언롯 낙리안 마이'], ['Có giảm giá sinh viên không?','꺼 잠 자 신 비엔 콩'], ['¿Hay descuento para estudiantes?','아이 데스꾸엔또 빠라 에스뚜디안떼스'], ['Apakah ada diskon pelajar?','아빠까 아다 디스꼰 뻘라자르']),
+      tp('현금만 받나요?', ['Do you only accept cash?','두 유 온리 억셉트 캐시'], ['現金のみですか。','겐킨노미데스카'], ['只收现金吗？','즈 쇼우 시엔진 마'], ['只收現金嗎？','즈 쇼우 시엔진 마'], ['รับแต่เงินสดใช่ไหม','랍 때 응언솟 차이마이'], ['Chỉ nhận tiền mặt thôi à?','찌 년 띠엔 맏 토이 아'], ['¿Solo aceptan efectivo?','솔로 아쎕딴 에펙띠보'], ['Apakah hanya menerima tunai?','아빠까 하냐 머네리마 뚜나이']),
+      tp('표를 취소할 수 있나요?', ['Can I cancel the ticket?','캔 아이 캔슬 더 티켓'], ['チケットをキャンセルできますか。','치켓토오 캰세루 데키마스카'], ['可以取消票吗？','커이 취샤오 퍄오 마'], ['可以取消票嗎？','커이 취샤오 퍄오 마'], ['ยกเลิกตั๋วได้ไหม','욕럭 뚜어 다이 마이'], ['Tôi có thể hủy vé không?','또이 꺼 테 후이 베 콩'], ['¿Puedo cancelar el boleto?','뿌에도 깐셀라르 엘 볼레또'], ['Bisakah saya membatalkan tiket?','비사까 사야 멈바딸깐 띠껫']),
+      tp('좌석을 지정할 수 있나요?', ['Can I choose a seat?','캔 아이 츄즈 어 씨트'], ['座席を指定できますか。','자세키오 시떼- 데키마스카'], ['可以指定座位吗？','커이 즈딩 쭈오웨이 마'], ['可以指定座位嗎？','커이 즈딩 쭈오웨이 마'], ['เลือกที่นั่งได้ไหม','르억 티낭 다이 마이'], ['Tôi có thể chọn chỗ ngồi không?','또이 꺼 테 쫀 쪼 응오이 콩'], ['¿Puedo elegir un asiento?','뿌에도 엘레히르 운 아시엔또'], ['Bisakah saya memilih kursi?','비사까 사야 머밀리 꾸르시']),
+    ],
+    tour: [
+      tp('어떤 투어 상품이 있나요?', ['What tour packages do you have?','왓 투어 패키지스 두 유 해브'], ['どんなツアーがありますか。','돈나 츠아-가 아리마스카'], ['有什么旅游套餐？','여우 션머 뤼요우 타오찬'], ['有什麼旅遊套裝行程？','여우 션머 뤼요우 타오좡싱청'], ['มีทัวร์อะไรบ้าง','미 투어 아라이 방'], ['Có những tour nào?','꺼 늉 뚜어 나오'], ['¿Qué paquetes turísticos tienen?','께 빠께떼스 뚜리스띠꼬스 띠에넨'], ['Ada paket tur apa saja?','아다 빠껫 뚜르 아빠 사자']),
+      tp('하루 코스가 있나요?', ['Is there a one-day course?','이즈 데어 어 원데이 코스'], ['一日コースはありますか。','이치니치 코-스와 아리마스카'], ['有一日游吗？','여우 이르요우 마'], ['有一日遊嗎？','여우 이르요우 마'], ['มีทัวร์วันเดียวไหม','미 투어 완디여우 마이'], ['Có tour một ngày không?','꺼 뚜어 못 응아이 콩'], ['¿Hay una excursión de un día?','아이 우나 엑스꾸르시온 데 운 디아'], ['Apakah ada tur satu hari?','아빠까 아다 뚜르 사뚜 하리']),
+      tp('몇 시간 정도 걸리나요?', ['How many hours does it take?','하우 매니 아워즈 더즈 잇 테이크'], ['何時間くらいかかりますか。','난지칸쿠라이 카카리마스카'], ['大概需要几个小时？','따가이 쉬야오 지거 샤오스'], ['大概需要幾個小時？','따가이 쉬야오 지거 샤오스'], ['ใช้เวลากี่ชั่วโมง','차이 웰라 끼 추어몽'], ['Mất khoảng mấy tiếng?','멋 코앙 머이 띠엥'], ['¿Cuántas horas toma?','꾸안따스 오라스 또마'], ['Berapa jam waktunya?','버라빠 잠 왁뚜냐']),
+      tp('픽업 서비스가 있나요?', ['Is there a pickup service?','이즈 데어 어 픽업 서비스'], ['ピックアップサービスはありますか。','픽쿠압푸 사-비스와 아리마스카'], ['有接送服务吗？','여우 지에송 푸우 마'], ['有接送服務嗎？','여우 지에송 푸우 마'], ['มีบริการรับส่งไหม','미 버리깐 랍송 마이'], ['Có dịch vụ đưa đón không?','꺼 직 부 드어 던 콩'], ['¿Hay servicio de recogida?','아이 세르비씨오 데 레꼬히다'], ['Apakah ada layanan jemput?','아빠까 아다 라야난 즘뿟']),
+      tp('가격에 식사가 포함되나요?', ['Does the price include meals?','더즈 더 프라이스 인클루드 밀즈'], ['料金に食事は含まれますか。','료-킨니 쇼쿠지와 후쿠마레마스카'], ['价格包含餐食吗？','지아거 빠오한 찬스 마'], ['價格包含餐食嗎？','지아거 빠오한 찬스 마'], ['ราคารวมอาหารไหม','라카 루엄 아한 마이'], ['Giá đã bao gồm bữa ăn chưa?','자 다 바오 곰 브어 안 쯔어'], ['¿El precio incluye comidas?','엘 쁘레씨오 인끌루예 꼬미다스'], ['Apakah harga termasuk makan?','아빠까 하르가 떠르마숙 마깐']),
+      tp('최소 인원이 몇 명인가요?', ["What's the minimum number of people?",'왓츠 더 미니멈 넘버 오브 피플'], ['最少何人からですか。','사이쇼- 난닌카라데스카'], ['最少需要多少人？','쭈이샤오 쉬야오 뚜오샤오런'], ['最少需要多少人？','쭈이샤오 쉬야오 뚜오샤오런'], ['ต้องมีคนขั้นต่ำกี่คน','떵 미 콘 칸땀 끼콘'], ['Số người tối thiểu là bao nhiêu?','소 응어이 또이 티에우 라 바오 니에우'], ['¿Cuál es el mínimo de personas?','꾸알 에스 엘 미니모 데 뻬르소나스'], ['Berapa jumlah minimum orang?','버라빠 줌라 미니뭄 오랑']),
+      tp('예약은 어떻게 하나요?', ['How do I make a reservation?','하우 두 아이 메이크 어 레저베이션'], ['予約はどうすればいいですか。','요야쿠와 도- 스레바 이이데스카'], ['怎么预订？','전머 위딩'], ['怎麼預訂？','전머 위딩'], ['จองยังไง','쩡 양응아이'], ['Làm sao để đặt tour?','람 사오 데 닷 뚜어'], ['¿Cómo hago la reserva?','꼬모 아고 라 레세르바'], ['Bagaimana cara reservasi?','바가이마나 짜라 레세르바시']),
+      tp('취소 수수료가 있나요?', ['Is there a cancellation fee?','이즈 데어 어 캔슬레이션 피'], ['キャンセル料はかかりますか。','캰세루료-와 카카리마스카'], ['有取消费吗？','여우 취샤오페이 마'], ['有取消費嗎？','여우 취샤오페이 마'], ['มีค่ายกเลิกไหม','미 카 욕럭 마이'], ['Có phí hủy không?','꺼 피 후이 콩'], ['¿Hay cargo por cancelación?','아이 까르고 뽀르 깐셀라씨온'], ['Apakah ada biaya pembatalan?','아빠까 아다 비아야 뻠바딸란']),
+      tp('사진 촬영 시간이 있나요?', ['Is there time for photos?','이즈 데어 타임 포 포토스'], ['写真撮影の時間はありますか。','샤신 사츠에이노 지칸와 아리마스카'], ['有拍照时间吗？','여우 파이자오 스지엔 마'], ['有拍照時間嗎？','여우 파이자오 스지엔 마'], ['มีเวลาถ่ายรูปไหม','미 웰라 타이룹 마이'], ['Có thời gian chụp ảnh không?','꺼 터이 잔 쭙 아잉 콩'], ['¿Hay tiempo para fotos?','아이 띠엠뽀 빠라 포또스'], ['Apakah ada waktu untuk foto?','아빠까 아다 왁뚜 운뚝 포또']),
+      tp('초보자도 참여할 수 있나요?', ['Can beginners join too?','캔 비기너스 조인 투'], ['初心者も参加できますか。','쇼신샤모 산카 데키마스카'], ['初学者也可以参加吗？','추쉬에저 예 커이 찬지아 마'], ['初學者也可以參加嗎？','추쉬에저 예 커이 찬지아 마'], ['มือใหม่เข้าร่วมได้ไหม','므마이 카오루엄 다이 마이'], ['Người mới bắt đầu có thể tham gia không?','응어이 머이 밧 더우 꺼 테 탐 자 콩'], ['¿Pueden participar principiantes?','뿌에덴 빠르띠씨빠르 쁘린씨삐안떼스'], ['Apakah pemula bisa ikut?','아빠까 뻐물라 비사 이꿋']),
+    ],
+    checkout: [
+      tp('체크아웃하려고 합니다.', ["I'd like to check out.",'아이드 라이크 투 체크 아웃'], ['チェックアウトしたいです。','첵쿠아우토 시따이데스'], ['我要退房。','워 야오 투이팡'], ['我要退房。','워 야오 투이팡'], ['ฉันต้องการเช็คเอาท์','찬 떵깐 첵아오'], ['Tôi muốn trả phòng.','또이 무온 짜 퐁'], ['Quisiera hacer el check-out.','끼시에라 아쎄르 엘 첵아우뜨'], ['Saya ingin check out.','사야 잉인 첵아웃']),
+      tp('추가 요금이 있나요?', ['Are there any additional charges?','아 데어 애니 어디셔널 차지스'], ['追加料金はありますか。','츠이카 료-킨와 아리마스카'], ['有额外费用吗？','여우 어와이 페이용 마'], ['有額外費用嗎？','여우 어와이 페이용 마'], ['มีค่าใช้จ่ายเพิ่มเติมไหม','미 카차이자이 프름떰 마이'], ['Có phí phát sinh không?','꺼 피 팟 신 콩'], ['¿Hay cargos adicionales?','아이 까르고스 아디씨오날레스'], ['Apakah ada biaya tambahan?','아빠까 아다 비아야 땀바한']),
+      tp('늦게 체크아웃할 수 있나요?', ['Can I check out late?','캔 아이 체크 아웃 레이트'], ['遅くチェックアウトできますか。','오소쿠 첵쿠아우토 데키마스카'], ['可以延迟退房吗？','커이 옌츠 투이팡 마'], ['可以延遲退房嗎？','커이 옌츠 투이팡 마'], ['เช็คเอาท์สายได้ไหม','첵아오 사이 다이 마이'], ['Tôi có thể trả phòng muộn không?','또이 꺼 테 짜 퐁 무온 콩'], ['¿Puedo hacer un check-out tardío?','뿌에도 아쎄르 운 첵아우뜨 따르디오'], ['Bisakah saya check out terlambat?','비사까 사야 첵아웃 떠를람밧']),
+      tp('짐을 잠시 맡길 수 있나요?', ['Can I store my luggage for a while?','캔 아이 스토어 마이 러기지 포러 와일'], ['荷物を少しの間預けられますか。','니모츠오 스코시노 아이다 아즈케라레마스카'], ['可以暂时寄存行李吗？','커이 짠스 지춘 싱리 마'], ['可以暫時寄放行李嗎？','커이 짠스 지팡 싱리 마'], ['ฝากกระเป๋าไว้สักครู่ได้ไหม','팍 끄라빠오 와이 삭 크루 다이 마이'], ['Tôi có thể gửi hành lý một lúc không?','또이 꺼 테 그이 하잉 리 못 룩 콩'], ['¿Puedo dejar mi equipaje por un rato?','뿌에도 데하르 미 에끼빠헤 뽀르 운 라또'], ['Bisakah saya menitipkan koper sebentar?','비사까 사야 머니띱깐 꼬뻐르 스븐따르']),
+      tp('몇 시까지 찾으러 오면 되나요?', ['By what time should I pick it up?','바이 왓 타임 슈드 아이 픽 잇 업'], ['何時までに取りに来ればいいですか。','난지마데니 토리니 쿠레바 이이데스카'], ['我几点前来取？','워 지디엔치엔 라이 취'], ['我幾點前來取？','워 지디엔치엔 라이 취'], ['ควรมารับก่อนกี่โมง','쿠언 마랍 껀 끼몽'], ['Tôi nên đến lấy trước mấy giờ?','또이 넨 덴 러이 쯔억 머이 저'], ['¿Para qué hora debo recogerlo?','빠라 께 오라 데보 레꼬헤를로'], ['Sampai jam berapa saya harus mengambilnya?','삼빠이 잠 버라빠 사야 하루스 멍암빌냐']),
+      tp('영수증을 받을 수 있나요?', ['Can I get a receipt?','캔 아이 겟 어 리씨트'], ['領収書をもらえますか。','료-슈-쇼오 모라에마스카'], ['可以给我收据吗？','커이 게이 워 쇼우쥐 마'], ['可以給我收據嗎？','커이 게이 워 쇼우쥐 마'], ['ขอใบเสร็จได้ไหม','커 바이셋 다이 마이'], ['Tôi có thể lấy hóa đơn không?','또이 꺼 테 러이 화 던 콩'], ['¿Puedo tener un recibo?','뿌에도 떼네르 운 레씨보'], ['Bisakah saya minta kuitansi?','비사까 사야 민따 꾸이딴시']),
+      tp('택시를 불러주실 수 있나요?', ['Could you call a taxi for me?','쿠쥬 콜 어 택시 포 미'], ['タクシーを呼んでもらえますか。','타쿠시-오 욘데 모라에마스카'], ['可以帮我叫辆出租车吗？','커이 빵 워 지아오 량 추쭈처 마'], ['可以幫我叫輛計程車嗎？','커이 빵 워 지아오 량 지청처 마'], ['ช่วยเรียกแท็กซี่ให้หน่อยได้ไหม','추어이 리약 택씨 하이 너이 다이 마이'], ['Anh chị có thể gọi taxi giúp tôi không?','아잉 찌 꺼 테 고이 딱시 죱 또이 콩'], ['¿Podría llamarme un taxi?','뽀드리아 야마르메 운 딱시'], ['Bisakah Anda memanggilkan taksi?','비사까 안다 머망길깐 딱시']),
+      tp('미니바 사용 안 했어요.', ["I didn't use the minibar.",'아이 디든트 유즈 더 미니바'], ['ミニバーは使っていません。','미니바-와 츠캇떼이마센'], ['我没有用迷你吧。','워 메이여우 용 미니바'], ['我沒有用迷你吧。','워 메이여우 용 미니바'], ['ฉันไม่ได้ใช้มินิบาร์','찬 마이다이 차이 미니바'], ['Tôi không sử dụng minibar.','또이 콩 스 중 미니바'], ['No usé el minibar.','노 우세 엘 미니바르'], ['Saya tidak menggunakan minibar.','사야 띠닥 멍구나깐 미니바']),
+      tp('짐 옮기는 것 좀 도와주세요.', ['Could you help with my luggage?','쿠쥬 헬프 위드 마이 러기지'], ['荷物を運ぶのを手伝ってください。','니모츠오 하코부노오 테츠닷떼 쿠다사이'], ['请帮我搬一下行李。','칭 빵 워 빤이시아 싱리'], ['請幫我搬一下行李。','칭 빵 워 빤이시아 싱리'], ['ช่วยยกกระเป๋าให้หน่อย','추어이 욕 끄라빠오 하이 너이'], ['Xin giúp tôi mang hành lý.','신 죱 또이 망 하잉 리'], ['¿Podría ayudarme con el equipaje?','뽀드리아 아유다르메 꼰 엘 에끼빠헤'], ['Tolong bantu bawa koper saya.','똘롱 반뚜 바와 꼬뻐르 사야']),
+      tp('좋은 시간이었어요, 감사합니다.', ['I had a great time, thank you.','아이 해드 어 그레잇 타임 땡큐'], ['楽しい時間をありがとうございました。','타노시이 지칸오 아리가토- 고자이마시타'], ['我玩得很开心，谢谢。','워 완더 헌 카이신, 시에시에'], ['我玩得很開心，謝謝。','워 완더 헌 카이신, 시에시에'], ['ขอบคุณสำหรับช่วงเวลาดีๆ','컵쿤 삼랍 추엉웰라 디디'], ['Tôi đã có khoảng thời gian tuyệt vời, cảm ơn.','또이 다 꺼 코앙 터이 잔 뚜옛 버이, 깜 언'], ['Lo pasé muy bien, gracias.','로 빠세 무이 비엔 그라시아스'], ['Terima kasih, saya senang sekali.','뜨리마 까시 사야 스낭 스깔리']),
+    ],
+    toAirport: [
+      tp('공항까지 어떻게 가나요?', ['How do I get to the airport?','하우 두 아이 겟 투 디 에어포트'], ['空港までどう行けばいいですか。','쿠-코-마데 도- 이케바 이이데스카'], ['怎么去机场？','전머 취 지창'], ['怎麼去機場？','전머 취 지창'], ['ไปสนามบินยังไง','빠이 사남빈 양응아이'], ['Làm sao để đến sân bay?','람 사오 데 덴 선 바이'], ['¿Cómo llego al aeropuerto?','꼬모 예고 알 아에로뿌에르또'], ['Bagaimana cara ke bandara?','바가이마나 짜라 꺼 반다라']),
+      tp('여기서 공항버스를 탈 수 있나요?', ['Can I take an airport bus from here?','캔 아이 테이크 언 에어포트 버스 프럼 히어'], ['ここから空港バスに乗れますか。','코코카라 쿠-코-바스니 노레마스카'], ['可以从这里坐机场大巴吗？','커이 총 쩌리 쭈오 지창따바 마'], ['可以從這裡搭機場巴士嗎？','커이 총 쩌리 다 지창빠스 마'], ['ขึ้นรถบัสสนามบินจากที่นี่ได้ไหม','큰 롯밧 사남빈 짝 티니 다이 마이'], ['Tôi có thể bắt xe buýt sân bay từ đây không?','또이 꺼 테 밧 쎄 부잇 선 바이 뜨 더이 콩'], ['¿Puedo tomar el autobús al aeropuerto desde aquí?','뿌에도 또마르 엘 아우또부스 알 아에로뿌에르또 데스데 아끼'], ['Bisakah saya naik bus bandara dari sini?','비사까 사야 나익 부스 반다라 다리 시니']),
+      tp('공항까지 얼마나 걸리나요?', ['How long does it take to the airport?','하우 롱 더즈 잇 테이크 투 디 에어포트'], ['空港までどのくらいかかりますか。','쿠-코-마데 도노쿠라이 카카리마스카'], ['到机场需要多长时间？','따오 지창 쉬야오 뚜오창 스지엔'], ['到機場需要多長時間？','따오 지창 쉬야오 뚜오창 스지엔'], ['ไปสนามบินใช้เวลานานแค่ไหน','빠이 사남빈 차이 웰라 난 캐나이'], ['Đến sân bay mất bao lâu?','덴 선 바이 멋 바오 러우'], ['¿Cuánto se tarda al aeropuerto?','꾸안또 세 따르다 알 아에로뿌에르또'], ['Berapa lama ke bandara?','버라빠 라마 꺼 반다라']),
+      tp('택시로 가는 게 좋을까요?', ['Would it be better to take a taxi?','우드 잇 비 베러 투 테이크 어 택시'], ['タクシーで行った方がいいですか。','타쿠시-데 잇따 호-가 이이데스카'], ['打车去比较好吗？','다처 취 비지아오 하오 마'], ['搭計程車去比較好嗎？','다 지청처 취 비지아오 하오 마'], ['นั่งแท็กซี่ไปดีกว่าไหม','낭 택씨 빠이 디꽈 마이'], ['Đi taxi có tốt hơn không?','디 딱시 꺼 똣 헌 콩'], ['¿Sería mejor tomar un taxi?','세리아 메호르 또마르 운 딱시'], ['Apakah lebih baik naik taksi?','아빠까 르비 바익 나익 딱시']),
+      tp('몇 시에 출발해야 하나요?', ['What time should I leave?','왓 타임 슈드 아이 리브'], ['何時に出発すればいいですか。','난지니 슛빠츠 스레바 이이데스카'], ['应该几点出发？','잉가이 지디엔 추파'], ['應該幾點出發？','잉가이 지디엔 추파'], ['ควรออกกี่โมง','쿠언 억 끼몽'], ['Tôi nên xuất phát lúc mấy giờ?','또이 넨 쑤엇 팟 룩 머이 저'], ['¿A qué hora debería salir?','아 께 오라 데베리아 살리르'], ['Jam berapa saya harus berangkat?','잠 버라빠 사야 하루스 버랑깟']),
+      tp('어느 터미널로 가야 하나요?', ['Which terminal should I go to?','위치 터미널 슈드 아이 고 투'], ['どのターミナルに行けばいいですか。','도노 타-미나루니 이케바 이이데스카'], ['应该去哪个航站楼？','잉가이 취 나거 항짠러우'], ['應該去哪個航廈？','잉가이 취 나거 항샤'], ['ควรไปเทอร์มินอลไหน','쿠언 빠이 터미날 나이'], ['Tôi nên đến nhà ga nào?','또이 넨 덴 냐 가 나오'], ['¿A qué terminal debo ir?','아 께 떼르미날 데보 이르'], ['Saya harus ke terminal mana?','사야 하루스 꺼 떼르미날 마나']),
+      tp('공항까지 요금이 얼마인가요?', ['How much is the fare to the airport?','하우 머치 이즈 더 페어 투 디 에어포트'], ['空港までの料金はいくらですか。','쿠-코-마데노 료-킨와 이쿠라데스카'], ['到机场的费用是多少？','따오 지창더 페이용 스 뚜오샤오'], ['到機場的費用是多少？','따오 지창더 페이용 스 뚜오샤오'], ['ค่าโดยสารไปสนามบินเท่าไหร่','카도이산 빠이 사남빈 타오라이'], ['Giá đến sân bay là bao nhiêu?','자 덴 선 바이 라 바오 니에우'], ['¿Cuánto cuesta ir al aeropuerto?','꾸안또 꾸에스따 이르 알 아에로뿌에르또'], ['Berapa tarif ke bandara?','버라빠 따리프 꺼 반다라']),
+      tp('기차로도 갈 수 있나요?', ['Can I get there by train?','캔 아이 겟 데어 바이 트레인'], ['電車でも行けますか。','덴샤데모 이케마스카'], ['也可以坐火车去吗？','예 커이 쭈오 훠처 취 마'], ['也可以搭火車去嗎？','예 커이 다 훠처 취 마'], ['นั่งรถไฟไปได้ไหม','낭 롯파이 빠이 다이 마이'], ['Tôi có thể đi bằng tàu hỏa không?','또이 꺼 테 디 방 따우 화 콩'], ['¿Puedo llegar en tren?','뿌에도 예가르 엔 뜨렌'], ['Bisakah saya naik kereta?','비사까 사야 나익 꺼레따']),
+      tp('짐이 많은데 괜찮을까요?', ['I have a lot of luggage, is that okay?','아이 해브 어 랏 오브 러기지 이즈 댓 오케이'], ['荷物が多いですが大丈夫ですか。','니모츠가 오오이데스가 다이죠-부데스카'], ['我行李很多，可以吗？','워 싱리 헌뚜오, 커이 마'], ['我行李很多，可以嗎？','워 싱리 헌뚜오, 커이 마'], ['กระเป๋าเยอะ ไม่เป็นไรใช่ไหม','끄라빠오 여, 마이뻰라이 차이마이'], ['Tôi có nhiều hành lý, có sao không?','또이 꺼 니에우 하잉 리, 꺼 사오 콩'], ['Tengo mucho equipaje, ¿está bien?','뗑고 무초 에끼빠헤, 에스따 비엔'], ['Koper saya banyak, apakah tidak apa-apa?','꼬뻐르 사야 바냑, 아빠까 띠닥 아빠아빠']),
+      tp('가장 빠른 방법을 알려주세요.', ['Please tell me the fastest way.','플리즈 텔 미 더 패스티스트 웨이'], ['一番速い方法を教えてください。','이치반 하야이 호-호-오 오시에떼 쿠다사이'], ['请告诉我最快的方法。','칭 까오쑤 워 쭈이콰이더 팡파'], ['請告訴我最快的方法。','칭 까오쑤 워 쭈이콰이더 팡파'], ['บอกวิธีที่เร็วที่สุดหน่อย','벅 위티 티 레오티쑫 너이'], ['Cho tôi biết cách nhanh nhất.','쪼 또이 비엣 까익 냐잉 녓'], ['Dígame la forma más rápida, por favor.','디가메 라 포르마 마스 라피다 뽀르 파보르'], ['Tolong beri tahu cara tercepat.','똘롱 버리 따후 짜라 떠르쯔빳']),
+    ],
+    ticketing: [
+      tp('체크인은 어디서 하나요?', ['Where do I check in?','웨어 두 아이 체크 인'], ['チェックインはどこですか。','첵쿠인와 도코데스카'], ['在哪里办理登机手续？','짜이 나리 빤리 떵지쇼우쉬'], ['在哪裡辦理登機手續？','짜이 나리 빤리 떵지쇼우쉬'], ['เช็คอินได้ที่ไหน','첵인 다이 티나이'], ['Tôi làm thủ tục check-in ở đâu?','또이 람 투 뚝 첵인 어 더우'], ['¿Dónde hago el check-in?','돈데 아고 엘 첵인'], ['Di mana saya check in?','디 마나 사야 첵인']),
+      tp('여권과 항공권 여기 있습니다.', ["Here's my passport and ticket.",'히얼즈 마이 패스포트 앤 티켓'], ['パスポートと航空券です。','파스포-토또 코-쿠-켄데스'], ['这是我的护照和机票。','쩌 스 워더 후자오 허 지퍄오'], ['這是我的護照和機票。','쩌 스 워더 후자오 허 지퍄오'], ['นี่คือพาสปอร์ตและตั๋วของฉัน','니 크 파스뽀 래 뚜어 컹 찬'], ['Đây là hộ chiếu và vé của tôi.','더이 라 호 찌에우 바 베 꾸어 또이'], ['Aquí está mi pasaporte y boleto.','아끼 에스따 미 빠사뽀르떼 이 볼레또'], ['Ini paspor dan tiket saya.','이니 빠스뽀르 단 띠껫 사야']),
+      tp('창가 자리로 주세요.', ["I'd like a window seat, please.",'아이드 라이크 어 윈도우 씨트 플리즈'], ['窓側の席をお願いします。','마도가와노 세키오 오네가이시마스'], ['请给我靠窗的座位。','칭 게이 워 카오촹더 쭈오웨이'], ['請給我靠窗的座位。','칭 게이 워 카오촹더 쭈오웨이'], ['ขอที่นั่งริมหน้าต่าง','커 티낭 림나땅'], ['Cho tôi ghế cạnh cửa sổ.','쪼 또이 게 까잉 끄어 소'], ['Un asiento junto a la ventana, por favor.','운 아시엔또 훈또 아 라 벤따나 뽀르 파보르'], ['Saya mau kursi dekat jendela.','사야 마우 꾸르시 드깟 즌델라']),
+      tp('통로 자리로 주세요.', ["I'd like an aisle seat, please.",'아이드 라이크 언 아일 씨트 플리즈'], ['通路側の席をお願いします。','츠-로가와노 세키오 오네가이시마스'], ['请给我靠走廊的座位。','칭 게이 워 카오조우랑더 쭈오웨이'], ['請給我靠走道的座位。','칭 게이 워 카오조우따오더 쭈오웨이'], ['ขอที่นั่งริมทางเดิน','커 티낭 림탕던'], ['Cho tôi ghế cạnh lối đi.','쪼 또이 게 까잉 로이 디'], ['Un asiento de pasillo, por favor.','운 아시엔또 데 빠시요 뽀르 파보르'], ['Saya mau kursi dekat lorong.','사야 마우 꾸르시 드깟 로롱']),
+      tp('수하물은 몇 개까지 되나요?', ['How many bags can I check in?','하우 매니 백스 캔 아이 체크 인'], ['預け荷物は何個までですか。','아즈케니모츠와 난코마데데스카'], ['可以托运几件行李？','커이 투오윈 지지엔 싱리'], ['可以託運幾件行李？','커이 퉈윈 지지엔 싱리'], ['เช็คอินกระเป๋าได้กี่ใบ','첵인 끄라빠오 다이 끼 바이'], ['Tôi có thể ký gửi bao nhiêu kiện hành lý?','또이 꺼 테 끼 그이 바오 니에우 끼엔 하잉 리'], ['¿Cuántas maletas puedo facturar?','꾸안따스 말레따스 뿌에도 팍뚜라르'], ['Berapa banyak bagasi yang bisa saya check in?','버라빠 바냑 바가시 양 비사 사야 첵인']),
+      tp('이 가방은 기내에 들고 탈 수 있나요?', ['Can I carry this bag on the plane?','캔 아이 캐리 디스 백 온 더 플레인'], ['この鞄は機内に持ち込めますか。','코노 카반와 키나이니 모치코메마스카'], ['这个包可以带上飞机吗？','쩌거 빠오 커이 따이샹 페이지 마'], ['這個包可以帶上飛機嗎？','쩌거 빠오 커이 따이샹 페이지 마'], ['กระเป๋าใบนี้ถือขึ้นเครื่องได้ไหม','끄라빠오 바이니 트 큰 크르엉 다이 마이'], ['Tôi có thể mang túi này lên máy bay không?','또이 꺼 테 망 뚜이 나이 렌 마이 바이 콩'], ['¿Puedo llevar esta bolsa como equipaje de mano?','뿌에도 예바르 에스따 볼사 꼬모 에끼빠헤 데 마노'], ['Bisakah saya membawa tas ini ke kabin?','비사까 사야 멈바와 따스 이니 꺼 까빈']),
+      tp('몇 번 게이트인가요?', ['Which gate is it?','위치 게이트 이즈 잇'], ['何番ゲートですか。','난반 게-토데스카'], ['是几号登机口？','스 지하오 떵지커우'], ['是幾號登機口？','스 지하오 떵지커우'], ['เกทไหน','겟 나이'], ['Là cổng số mấy?','라 꽁 소 머이'], ['¿Cuál es la puerta de embarque?','꾸알 에스 라 뿌에르따 데 엠바르께'], ['Gate berapa?','게이트 버라빠']),
+      tp('탑승은 몇 시부터인가요?', ['What time does boarding start?','왓 타임 더즈 보딩 스타트'], ['搭乗は何時からですか。','토-죠-와 난지카라데스카'], ['几点开始登机？','지디엔 카이스 떵지'], ['幾點開始登機？','지디엔 카이스 떵지'], ['เริ่มขึ้นเครื่องกี่โมง','름 큰크르엉 끼몽'], ['Mấy giờ bắt đầu lên máy bay?','머이 저 밧 더우 렌 마이 바이'], ['¿A qué hora empieza el embarque?','아 께 오라 엠삐에사 엘 엠바르께'], ['Jam berapa boarding dimulai?','잠 버라빠 보딩 디물라이']),
+      tp('좌석을 변경할 수 있나요?', ['Can I change my seat?','캔 아이 체인지 마이 씨트'], ['座席を変更できますか。','자세키오 헨코- 데키마스카'], ['可以换座位吗？','커이 환쭈오웨이 마'], ['可以換座位嗎？','커이 환쭈오웨이 마'], ['เปลี่ยนที่นั่งได้ไหม','쁠리얀 티낭 다이 마이'], ['Tôi có thể đổi chỗ ngồi không?','또이 꺼 테 도이 쪼 응오이 콩'], ['¿Puedo cambiar de asiento?','뿌에도 깜비아르 데 아시엔또'], ['Bisakah saya mengganti kursi?','비사까 사야 멍간띠 꾸르시']),
+      tp('온라인 체크인은 어떻게 하나요?', ['How do I check in online?','하우 두 아이 체크 인 온라인'], ['オンラインチェックインはどうすればいいですか。','온라인 첵쿠인와 도- 스레바 이이데스카'], ['怎么在网上办理登机手续？','전머 짜이 왕상 빤리 떵지쇼우쉬'], ['怎麼在網路上辦理登機手續？','전머 짜이 왕루상 빤리 떵지쇼우쉬'], ['เช็คอินออนไลน์ยังไง','첵인 온라인 양응아이'], ['Tôi check-in online như thế nào?','또이 첵인 온라인 니으 테 나오'], ['¿Cómo hago el check-in en línea?','꼬모 아고 엘 첵인 엔 리네아'], ['Bagaimana cara check in online?','바가이마나 짜라 첵인 온라인']),
+    ],
+  };
+
+  let travelState = { langIdx: 0, situationIdx: 0 };
+
+  function buildTravelLangGrid(){
+    const wrap = document.getElementById('travelLangGrid');
+    wrap.innerHTML = '';
+    TRAVEL_LANGS.forEach((lang, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = '<span class="emoji">'+lang.flag+'</span><span class="name">'+lang.label+'</span>';
+      div.addEventListener('click', ()=>{
+        travelState.langIdx = idx;
+        buildTravelSituationGrid();
+        showScreen('screen-travel-situation');
+      });
+      wrap.appendChild(div);
+    });
+  }
+
+  function buildTravelSituationGrid(){
+    const lang = TRAVEL_LANGS[travelState.langIdx];
+    document.getElementById('travelSituationTitle').textContent = lang.flag+' '+lang.label;
+    const wrap = document.getElementById('travelSituationGrid');
+    wrap.innerHTML = '';
+    TRAVEL_SITUATIONS.forEach((sit, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = '<span class="emoji">'+sit.emoji+'</span><span class="name">'+(idx+1)+'. '+sit.label+'</span>';
+      div.addEventListener('click', ()=>{
+        travelState.situationIdx = idx;
+        recordPlayToday();
+        renderTravelPhraseList();
+        showScreen('screen-travel-list');
+      });
+      wrap.appendChild(div);
+    });
+  }
+
+  function renderTravelPhraseList(){
+    const lang = TRAVEL_LANGS[travelState.langIdx];
+    const sit = TRAVEL_SITUATIONS[travelState.situationIdx];
+    const phrases = TRAVEL_PHRASES[sit.id];
+    document.getElementById('travelListInfo').textContent = sit.emoji+' '+sit.label+' · '+lang.flag;
+    const wrap = document.getElementById('travelPhraseList');
+    wrap.innerHTML = '';
+    phrases.forEach((phrase, i)=>{
+      const entry = phrase[lang.id];
+      const card = document.createElement('div');
+      card.className = 'travel-card';
+      card.innerHTML =
+        '<div class="travel-num">'+(i+1)+'</div>'+
+        '<div class="travel-text">'+
+          '<div class="travel-ko">'+phrase.ko+'</div>'+
+          '<div class="travel-foreign">'+entry[0]+'</div>'+
+          '<div class="travel-read">'+entry[1]+'</div>'+
+        '</div>'+
+        '<button class="travel-speak">🔊</button>';
+      card.querySelector('.travel-speak').addEventListener('click', ()=> speak(entry[0], lang.speechLang));
+      wrap.appendChild(card);
+    });
+  }
+
+  document.getElementById('btnTravelLangBack').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnTravelSituationBack').addEventListener('click', ()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); });
+  document.getElementById('btnTravelListHome').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnTravelListLang').addEventListener('click', ()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); });
+  document.getElementById('btnTravelListBack').addEventListener('click', ()=>{ buildTravelSituationGrid(); showScreen('screen-travel-situation'); });
 
 })();
 </script>
