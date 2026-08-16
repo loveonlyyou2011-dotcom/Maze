@@ -1585,7 +1585,7 @@
       return '<span style="display:inline-block;width:0.85em;height:0.85em;border-radius:50%;background:'+item.hex+';border:3px solid rgba(255,255,255,.45);box-shadow:0 4px 10px rgba(0,0,0,.35);vertical-align:middle;"></span>';
     }
     if(topicId==='number'){
-      return '<span style="display:inline-flex;align-items:center;justify-content:center;width:1.3em;height:1.3em;border-radius:22%;background:rgba(255,255,255,.12);font-size:0.55em;font-weight:800;vertical-align:middle;">'+item.n+'</span>';
+      return '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:1.6em;min-height:1.6em;padding:0 0.15em;border-radius:22%;background:rgba(255,255,255,.12);font-size:clamp(13px, 0.55em, 44px);font-weight:800;line-height:1.2;vertical-align:middle;">'+item.n+'</span>';
     }
     return item.emoji;
   }
