@@ -156,6 +156,36 @@
   }
   .travel-card .travel-speak:active{ background:rgba(255,255,255,.25); }
 
+  .color-subject-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .color-subject-card{
+    background:var(--ui-card); border:2px solid rgba(255,255,255,.12); border-radius:14px;
+    padding:12px 4px; text-align:center; font-size:34px; cursor:pointer;
+  }
+  .color-subject-card:active{ transform:scale(.95); }
+  .color-subject-card .csc-label{ display:block; font-size:11px; margin-top:4px; opacity:.85; }
+
+  #colorSvgWrap{ display:flex; justify-content:center; margin:10px 0; }
+  #colorSvgWrap svg{ width:min(78vw,300px); height:min(78vw,300px); touch-action:none; background:#fff; border-radius:20px; }
+  #colorSvg [data-region]{ cursor:pointer; }
+  #colorRasterWrap{ position:relative; width:min(78vw,300px); height:min(78vw,300px); touch-action:none; border-radius:20px; overflow:hidden; }
+  #colorRasterWrap canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  #colorPaintCanvas{ background:#fff; }
+  #colorLineCanvas{ pointer-events:none; }
+
+  #colorToolRow{ display:flex; gap:10px; width:100%; max-width:380px; margin-top:10px; }
+  .color-tool-btn{
+    flex:1; padding:12px 6px; border-radius:14px; border:3px solid rgba(255,255,255,.15);
+    background:var(--ui-card); color:#fff; font-size:14px; font-weight:700; cursor:pointer;
+  }
+  .color-tool-btn.selected{ border-color:#fff; box-shadow:0 0 0 3px #ffd93d; }
+  .color-tool-btn.magic{ background:linear-gradient(135deg,#ff9fb2,#a06bff,#4d96ff); }
+
+  #colorPalette{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; width:100%; max-width:380px; margin-top:12px; }
+  .color-swatch{
+    aspect-ratio:1/1; border-radius:50%; border:3px solid rgba(255,255,255,.2); cursor:pointer; position:relative;
+  }
+  .color-swatch.selected{ border-color:#fff; box-shadow:0 0 0 3px #ffd93d; }
+
   footer.credit{ margin-top:auto; padding-top:16px; font-size:11px; opacity:.4; text-align:center; }
 
   #screen-game{ position:relative; transition:background .3s ease; }
@@ -184,7 +214,7 @@
     <h1 class="title">🎮 아이들 놀이터</h1>
     <p class="sub">하고 싶은 놀이를 골라보세요!</p>
     <p class="sub" id="streakLine" style="margin-top:-10px; min-height:18px;"></p>
-    <div class="grid" id="gameHubGrid" style="max-width:320px; grid-template-columns:1fr;"></div>
+    <div class="grid" id="gameHubGrid" style="max-width:420px;"></div>
     <footer class="credit">가로/세로로 돌려도 괜찮아요</footer>
   </section>
 
@@ -222,6 +252,43 @@
     </div>
     <div id="travelPhraseList"></div>
     <button class="icon-btn" style="margin:14px 0 4px" id="btnTravelListBack">◀ 다른 상황 보기</button>
+  </section>
+
+  <!-- COLORING: category select -->
+  <section id="screen-color-select" class="screen">
+    <h1 class="title">🎨 색칠놀이</h1>
+    <p class="sub">어떤 그림을 색칠할까요?</p>
+    <div class="grid" id="colorCategoryGrid"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnColorSelectHome">◀ 뒤로</button>
+  </section>
+
+  <!-- COLORING: item select within category -->
+  <section id="screen-color-items" class="screen">
+    <h1 class="title" id="colorItemsTitle">그림 고르기</h1>
+    <p class="sub">색칠할 그림을 골라보세요</p>
+    <div class="color-subject-grid" id="colorItemsGrid" style="width:100%; max-width:420px;"></div>
+    <button class="icon-btn" style="margin-top:20px" id="btnColorItemsBack">◀ 뒤로</button>
+  </section>
+
+  <!-- COLORING: canvas -->
+  <section id="screen-color-canvas" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnColorCanvasHome">🏠</button>
+      <div class="info" id="colorCanvasInfo">로켓 친구</div>
+      <button class="icon-btn" id="btnColorClear">🗑️</button>
+    </div>
+    <div id="colorSvgWrap">
+      <svg id="colorSvg" viewBox="0 0 300 300"></svg>
+      <div id="colorRasterWrap">
+        <canvas id="colorPaintCanvas" width="300" height="300"></canvas>
+        <canvas id="colorLineCanvas" width="300" height="300"></canvas>
+      </div>
+    </div>
+    <div id="colorToolRow">
+      <button class="color-tool-btn" id="btnColorEraserTool">🧹 지우개</button>
+      <button class="color-tool-btn magic" id="btnColorMagicTool">✨ 마스터 색</button>
+    </div>
+    <div id="colorPalette"></div>
   </section>
 
   <!-- THEME SELECT -->
@@ -977,6 +1044,7 @@
       {emoji:'🗣️', label:'단어놀이', gradient:'linear-gradient(160deg,#6d2e8f,#3a0f52)', onClick:()=>{ buildWordLangGrid(); showScreen('screen-word-lang'); }},
       {emoji:'🏆', label:'스티커판', gradient:'linear-gradient(160deg,#8b6d2e,#3b2b10)', onClick:()=>{ buildStickerBoard(); showScreen('screen-stickers'); }},
       {emoji:'✈️', label:'여행 회화', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)', onClick:()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); }},
+      {emoji:'🎨', label:'색칠놀이', gradient:'linear-gradient(160deg,#a83279,#3a0f52)', onClick:()=>{ buildColorCategoryGrid(); showScreen('screen-color-select'); }},
     ];
     games.forEach(g=>{
       const div = document.createElement('div');
@@ -2585,6 +2653,683 @@
   document.getElementById('btnTravelListHome').addEventListener('click', ()=> showScreen('screen-home'));
   document.getElementById('btnTravelListLang').addEventListener('click', ()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); });
   document.getElementById('btnTravelListBack').addEventListener('click', ()=>{ buildTravelSituationGrid(); showScreen('screen-travel-situation'); });
+
+  // =====================================================================
+  // COLORING BOOK
+  // =====================================================================
+  const COLORING_PALETTE = [
+    '#ff5c5c','#ff8c3d','#ffb020','#ffe066','#d4e157','#7ed957','#2fa84f','#4dd0c4',
+    '#4d96ff','#2b5fd9','#7b6bff','#a06bff','#d96bff','#ff6bcb','#ff9fb2','#ffcad4',
+    '#c69c6d','#8a5a34','#5c3a21','#9e9e9e','#4a4a4a','#1a1a1a','#ffffff','#f5e6ca',
+  ];
+
+  // 그림 240장(카테고리 10개 x 항목 24개 내외)을 coloring/ 폴더의 PNG/JPG 원본 선그림으로 색칠한다.
+  const RASTER_COLORING_CATEGORIES = [
+    { id:"동물", emoji:"🐶", label:"동물", ext:"jpg", items:["강아지", "고양이", "곰", "기린", "늑대", "다람쥐", "돼지", "말", "사슴", "사자", "소", "양", "얼룩말", "여우", "염소", "원숭이", "캥거루", "코끼리", "코뿔소", "코알라", "토끼", "판다", "하마", "호랑이"] },
+    { id:"바다생물", emoji:"🐠", label:"바다 생물", ext:"png", items:["가오리", "게", "고래", "나비고기", "돌고래", "랍스터", "물개", "물고기", "바다거북", "바다사자", "복어", "불가사리", "산호", "상어", "새우", "소라", "수달", "오징어", "조개", "펭귄", "해마", "해파리", "흰동가리"] },
+    { id:"공룡", emoji:"🦖", label:"공룡", ext:"png", items:["공룡 알", "디플로도쿠스", "딜로포사우루스", "마이아사우라", "벨로키랍토르", "브라키오사우루스", "스테고사우루스", "스피노사우루스", "아파토사우루스", "안킬로사우루스", "알로사우루스", "엘라스모사우루스", "오비랍토르", "이구아노돈", "카르노타우루스", "코리토사우루스", "테리지노사우루스", "트리케라톱스", "티라노사우루스", "파라사우롤로푸스", "파키케팔로사우루스", "프테라노돈", "프테로닥틸루스"] },
+    { id:"교통수단", emoji:"🚗", label:"교통수단", ext:"png", items:["견인차", "경찰차", "구급차", "굴착기", "기차", "레미콘", "로켓", "배", "버스", "비행기", "소방차", "열기구", "오토바이", "요트", "유조선", "자동차", "자전거", "잠수함", "지하철", "택시", "트랙터", "트럭", "헬리콥터"] },
+    { id:"과일", emoji:"🍎", label:"과일", ext:"png", items:["감", "귤", "딸기", "레몬", "망고", "멜론", "무화과", "바나나", "배", "복숭아", "블루베리", "사과", "석류", "아보카도", "오렌지", "용과", "자두", "체리", "코코넛", "키위", "파인애플", "파파야", "포도"] },
+    { id:"채소", emoji:"🥕", label:"채소", ext:"png", items:["가지", "감자", "고구마", "고추", "당근", "마늘", "무", "배추", "버섯", "브로콜리", "상추", "시금치", "양배추", "양파", "연근", "오이", "옥수수", "완두콩", "우엉", "콩", "토마토", "파", "피망", "호박"] },
+    { id:"곤충", emoji:"🐛", label:"곤충", ext:"png", items:["개미", "거미", "귀뚜라미", "꿀벌집", "나방", "나비", "달팽이", "딱정벌레", "매미", "메뚜기", "무당벌레", "물방개", "반딧불이", "벌", "사마귀", "사슴벌레", "애벌레", "잠자리", "장수풍뎅이", "지네", "집게벌레", "파리", "하늘소"] },
+    { id:"우주", emoji:"🚀", label:"우주", ext:"png", items:["UFO", "금성", "달", "로켓", "망원경", "목성", "별", "별자리", "수성", "외계인", "우주복", "우주비행사", "우주선", "우주정거장", "운석", "은하", "인공위성", "지구", "천왕성", "태양", "토성", "해왕성", "혜성", "화성"] },
+    { id:"꽃과식물", emoji:"🌷", label:"꽃과 식물", ext:"png", items:["국화", "나무", "나팔꽃", "대나무", "데이지", "라벤더", "무궁화", "민들레", "벚꽃", "새싹", "선인장", "수선화", "야자수", "연꽃", "이끼", "잎사귀", "장미", "진달래", "카네이션", "코스모스", "클로버", "튤립", "해바라기", "화분"] },
+    { id:"학용품장난감", emoji:"🎒", label:"학용품·장난감", ext:"png", items:["가방", "가위", "곰인형", "공", "그림책", "기차장난감", "로봇장난감", "블록", "비눗방울", "색종이", "시계", "연", "연필", "인형", "자", "자동차장난감", "지우개", "책", "크레파스", "팽이", "퍼즐", "풀", "풍선", "필통"] },
+  ];
+
+  function cr(id, tag, attrs, correct, strokeWidth){
+    return {id, tag, attrs, correct, strokeWidth};
+  }
+  function fx(tag, attrs, fill){
+    return {tag, attrs, fill};
+  }
+
+  const COLORING_SUBJECTS = [
+    { id:'rocket', category:'theme', emoji:'🚀', label:'로켓 친구',
+      regions:[
+        cr('body','rect',{x:112,y:100,width:76,height:118,rx:14},'#e6e6e6'),
+        cr('nose','polygon',{points:'150,40 113,102 187,102'},'#ff5c5c'),
+        cr('finL','polygon',{points:'112,178 76,226 112,212'},'#ff5c5c'),
+        cr('finR','polygon',{points:'188,178 224,226 188,212'},'#ff5c5c'),
+        cr('flame','path',{d:'M133,214 Q150,262 167,214 Z'},'#ffb020'),
+        cr('window','circle',{cx:150,cy:150,r:24},'#4d96ff'),
+      ]},
+    { id:'fish', category:'theme', emoji:'🐠', label:'아기 물고기',
+      regions:[
+        cr('tailFin','polygon',{points:'100,150 50,110 50,190'},'#ff8c3d'),
+        cr('body','ellipse',{cx:175,cy:150,rx:70,ry:50},'#ffa552'),
+        cr('topFin','polygon',{points:'165,105 190,70 205,110'},'#ffe066'),
+        cr('bottomFin','polygon',{points:'165,195 185,232 205,192'},'#ffe066'),
+        cr('cheek','circle',{cx:198,cy:162,r:11},'#ff9fb2'),
+        cr('eyeWhite','circle',{cx:212,cy:135,r:14},'#ffffff'),
+      ],
+      fixed:[ fx('circle',{cx:216,cy:135,r:6},'#2b2b2b') ]},
+    { id:'dino', category:'theme', emoji:'🦕', label:'아기 공룡',
+      regions:[
+        cr('legL','ellipse',{cx:120,cy:248,rx:20,ry:24},'#7ed957'),
+        cr('legR','ellipse',{cx:200,cy:248,rx:20,ry:24},'#7ed957'),
+        cr('body','ellipse',{cx:160,cy:190,rx:80,ry:58},'#7ed957'),
+        cr('head','circle',{cx:92,cy:140,r:44},'#7ed957'),
+        cr('belly','ellipse',{cx:168,cy:208,rx:44,ry:28},'#fff3b0'),
+        cr('spike1','polygon',{points:'108,112 122,82 138,112'},'#ffb020'),
+        cr('spike2','polygon',{points:'150,140 165,105 180,140'},'#ffb020'),
+        cr('spike3','polygon',{points:'196,160 211,126 226,160'},'#ffb020'),
+        cr('eyeWhite','circle',{cx:78,cy:126,r:12},'#ffffff'),
+      ],
+      fixed:[ fx('circle',{cx:74,cy:126,r:5},'#2b2b2b') ]},
+    { id:'cow', category:'theme', emoji:'🐮', label:'아기 소',
+      regions:[
+        cr('legL','rect',{x:126,y:228,width:18,height:42,rx:6},'#fdf6ec'),
+        cr('legR','rect',{x:184,y:228,width:18,height:42,rx:6},'#fdf6ec'),
+        cr('body','ellipse',{cx:155,cy:188,rx:74,ry:54},'#fdf6ec'),
+        cr('spot1','circle',{cx:120,cy:178,r:22},'#5c3a21'),
+        cr('spot2','circle',{cx:192,cy:208,r:17},'#5c3a21'),
+        cr('earL','ellipse',{cx:108,cy:92,rx:17,ry:24},'#fdf6ec'),
+        cr('earR','ellipse',{cx:212,cy:92,rx:17,ry:24},'#fdf6ec'),
+        cr('head','circle',{cx:160,cy:112,r:48},'#fdf6ec'),
+        cr('nose','ellipse',{cx:160,cy:140,rx:26,ry:17},'#ff9fb2'),
+        cr('eyeWhiteL','circle',{cx:140,cy:100,r:9},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:180,cy:100,r:9},'#ffffff'),
+      ],
+      fixed:[ fx('circle',{cx:140,cy:100,r:4},'#2b2b2b'), fx('circle',{cx:180,cy:100,r:4},'#2b2b2b') ]},
+    { id:'car', category:'theme', emoji:'🚗', label:'꼬마 자동차',
+      regions:[
+        cr('body','rect',{x:58,y:150,width:184,height:68,rx:24},'#ff5c5c'),
+        cr('cabin','rect',{x:100,y:100,width:100,height:58,rx:18},'#ff9fb2'),
+        cr('windowF','rect',{x:110,y:110,width:38,height:34,rx:8},'#4d96ff'),
+        cr('windowB','rect',{x:154,y:110,width:38,height:34,rx:8},'#4d96ff'),
+        cr('wheelL','circle',{cx:100,cy:224,r:27},'#4a4a4a'),
+        cr('wheelR','circle',{cx:200,cy:224,r:27},'#4a4a4a'),
+        cr('headlight','circle',{cx:226,cy:174,r:10},'#ffe066'),
+      ]},
+    { id:'candy', category:'theme', emoji:'🍭', label:'막대사탕 친구',
+      regions:[
+        cr('stick','rect',{x:140,y:190,width:20,height:92,rx:8},'#f5e6ca'),
+        cr('candyBase','circle',{cx:150,cy:128,r:76},'#ff9fb2'),
+        cr('candyRing','circle',{cx:150,cy:128,r:50},'#ffcad4'),
+        cr('candyCenter','circle',{cx:150,cy:128,r:25},'#ff6bcb'),
+        cr('cheekL','circle',{cx:108,cy:150,r:10},'#ff9fb2'),
+        cr('cheekR','circle',{cx:192,cy:150,r:10},'#ff9fb2'),
+        cr('eyeWhiteL','circle',{cx:128,cy:120,r:9},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:172,cy:120,r:9},'#ffffff'),
+      ],
+      fixed:[ fx('circle',{cx:128,cy:120,r:4},'#2b2b2b'), fx('circle',{cx:172,cy:120,r:4},'#2b2b2b') ]},
+    { id:'lion', category:'theme', emoji:'🦁', label:'아기 사자',
+      regions:[
+        cr('body','ellipse',{cx:150,cy:255,rx:62,ry:38},'#ffe0a3'),
+        cr('mane','circle',{cx:150,cy:142,r:86},'#ffb020'),
+        cr('earL','circle',{cx:98,cy:96,r:19},'#ffe0a3'),
+        cr('earR','circle',{cx:202,cy:96,r:19},'#ffe0a3'),
+        cr('face','circle',{cx:150,cy:148,r:56},'#ffe0a3'),
+        cr('nose','polygon',{points:'140,166 160,166 150,180'},'#5c3a21'),
+        cr('eyeWhiteL','circle',{cx:130,cy:135,r:9},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:170,cy:135,r:9},'#ffffff'),
+      ],
+      fixed:[ fx('circle',{cx:130,cy:135,r:4},'#2b2b2b'), fx('circle',{cx:170,cy:135,r:4},'#2b2b2b') ]},
+    { id:'snowman', category:'theme', emoji:'⛄', label:'눈사람',
+      regions:[
+        cr('armL','path',{d:'M100,155 L55,135 M100,155 L60,160'},'#8a5a34',6),
+        cr('armR','path',{d:'M200,155 L245,135 M200,155 L240,160'},'#8a5a34',6),
+        cr('bottomBall','ellipse',{cx:150,cy:230,rx:66,ry:54},'#f0f8ff'),
+        cr('middleBall','circle',{cx:150,cy:155,r:47},'#f0f8ff'),
+        cr('button1','circle',{cx:150,cy:140,r:7},'#2b2b2b'),
+        cr('button2','circle',{cx:150,cy:160,r:7},'#2b2b2b'),
+        cr('button3','circle',{cx:150,cy:180,r:7},'#2b2b2b'),
+        cr('topBall','circle',{cx:150,cy:85,r:34},'#f0f8ff'),
+        cr('scarf','rect',{x:116,y:108,width:68,height:17,rx:6},'#ff5c5c'),
+        cr('scarfTail','polygon',{points:'150,125 138,148 160,148'},'#ff5c5c'),
+        cr('hatBrim','rect',{x:112,y:56,width:76,height:10,rx:4},'#2b2b2b'),
+        cr('hatTop','polygon',{points:'126,58 140,20 160,20 174,58'},'#2b2b2b'),
+        cr('nose','polygon',{points:'150,88 150,100 176,94'},'#ff8c3d'),
+        cr('eyeWhiteL','circle',{cx:135,cy:78,r:7},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:165,cy:78,r:7},'#ffffff'),
+      ],
+      fixed:[ fx('circle',{cx:135,cy:78,r:3},'#2b2b2b'), fx('circle',{cx:165,cy:78,r:3},'#2b2b2b') ]},
+    { id:'dog', category:'word', emoji:'🐶', label:'강아지',
+      regions:[
+        cr('tail','path',{d:'M205,238 C230,233 246,213 240,192 C238,185 227,187 228,196 C231,211 220,227 201,231 Z'},'#f2cf87'),
+        cr('body','path',{d:'M95,208 C88,244 90,272 112,292 C128,302 172,302 188,292 C210,272 212,244 205,208 C193,197 178,192 150,192 C122,192 107,197 95,208 Z'},'#f2cf87'),
+        cr('pawL','ellipse',{cx:124,cy:289,rx:16,ry:11},'#fff3d6'),
+        cr('pawR','ellipse',{cx:176,cy:289,rx:16,ry:11},'#fff3d6'),
+        cr('earL','path',{d:'M86,112 C58,102 46,152 62,193 C71,209 93,201 94,177 C95,155 94,128 86,112 Z'},'#caa572'),
+        cr('earR','path',{d:'M214,112 C242,102 254,152 238,193 C229,209 207,201 206,177 C205,155 206,128 214,112 Z'},'#caa572'),
+        cr('head','path',{d:'M150,58 C112,58 86,88 86,128 C86,154 97,175 112,188 C122,196 136,200 150,200 C164,200 178,196 188,188 C203,175 214,154 214,128 C214,88 188,58 150,58 Z'},'#f2cf87'),
+        cr('innerEarL','path',{d:'M82,132 C70,128 64,156 74,182 C79,192 90,187 90,173 C90,159 88,142 82,132 Z'},'#ffcad4'),
+        cr('innerEarR','path',{d:'M218,132 C230,128 236,156 226,182 C221,192 210,187 210,173 C210,159 212,142 218,132 Z'},'#ffcad4'),
+        cr('muzzle','path',{d:'M120,166 C120,153 134,146 150,146 C166,146 180,153 180,166 C180,181 167,192 150,192 C133,192 120,181 120,166 Z'},'#fff3d6'),
+        cr('collar','path',{d:'M108,193 C122,204 178,204 192,193 L192,203 C178,214 122,214 108,203 Z'},'#ff5c5c'),
+        cr('eyeWhiteL','circle',{cx:127,cy:122,r:11},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:173,cy:122,r:11},'#ffffff'),
+      ],
+      fixed:[
+        fx('ellipse',{cx:150,cy:158,rx:9,ry:7},'#2b2b2b'),
+        fx('circle',{cx:129,cy:122,r:5},'#2b2b2b'),
+        fx('circle',{cx:175,cy:122,r:5},'#2b2b2b'),
+        fx('circle',{cx:131,cy:119,r:1.6},'#ffffff'),
+        fx('circle',{cx:177,cy:119,r:1.6},'#ffffff'),
+        fx('circle',{cx:150,cy:200,r:5},'#ffd23f'),
+      ]},
+    { id:'cat', category:'word', emoji:'🐱', label:'고양이',
+      regions:[
+        cr('tail','path',{d:'M212,232 Q258,222 252,172 Q248,152 230,162 Q244,190 208,214 Z'},'#ff9d5c'),
+        cr('earL','polygon',{points:'100,90 80,40 130,95'},'#ff9d5c'),
+        cr('earR','polygon',{points:'200,90 220,40 170,95'},'#ff9d5c'),
+        cr('body','ellipse',{cx:150,cy:248,rx:64,ry:48},'#ff9d5c'),
+        cr('head','circle',{cx:150,cy:140,r:64},'#ff9d5c'),
+        cr('muzzle','ellipse',{cx:150,cy:162,rx:30,ry:18},'#fff3d6'),
+        cr('eyeWhiteL','circle',{cx:128,cy:128,r:9},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:172,cy:128,r:9},'#ffffff'),
+      ],
+      fixed:[ fx('polygon',{points:'150,158 145,166 155,166'},'#2b2b2b'), fx('circle',{cx:128,cy:128,r:4},'#2b2b2b'), fx('circle',{cx:172,cy:128,r:4},'#2b2b2b') ]},
+    { id:'rabbit', category:'word', emoji:'🐰', label:'토끼',
+      regions:[
+        cr('earL','ellipse',{cx:125,cy:55,rx:19,ry:58},'#f0eefc'),
+        cr('earR','ellipse',{cx:175,cy:55,rx:19,ry:58},'#f0eefc'),
+        cr('innerEarL','ellipse',{cx:125,cy:60,rx:8,ry:40},'#ffb6c1'),
+        cr('innerEarR','ellipse',{cx:175,cy:60,rx:8,ry:40},'#ffb6c1'),
+        cr('tailPuff','circle',{cx:205,cy:270,r:17},'#f0eefc'),
+        cr('body','ellipse',{cx:150,cy:250,rx:60,ry:46},'#f0eefc'),
+        cr('head','circle',{cx:150,cy:155,r:58},'#f0eefc'),
+        cr('eyeWhiteL','circle',{cx:130,cy:148,r:9},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:170,cy:148,r:9},'#ffffff'),
+      ],
+      fixed:[ fx('ellipse',{cx:150,cy:172,rx:6,ry:4},'#2b2b2b'), fx('circle',{cx:130,cy:148,r:4},'#2b2b2b'), fx('circle',{cx:170,cy:148,r:4},'#2b2b2b') ]},
+    { id:'apple', category:'word', emoji:'🍎', label:'사과',
+      regions:[
+        cr('leaf','path',{d:'M170,90 Q200,68 212,94 Q190,110 170,95 Z'},'#7ed957'),
+        cr('stem','rect',{x:145,y:74,width:10,height:26,rx:4},'#8a5a34'),
+        cr('body','circle',{cx:150,cy:172,r:80},'#ff5c5c'),
+        cr('highlight','ellipse',{cx:118,cy:140,rx:16,ry:26},'#ffcad4'),
+      ]},
+    { id:'banana', category:'word', emoji:'🍌', label:'바나나',
+      regions:[
+        cr('body','path',{d:'M95,222 Q82,138 148,88 Q206,66 222,88 Q158,98 128,150 Q106,192 128,226 Z'},'#ffe066'),
+        cr('tip','polygon',{points:'140,90 156,73 163,95'},'#8a5a34'),
+      ]},
+    { id:'strawberry', category:'word', emoji:'🍓', label:'딸기',
+      regions:[
+        cr('leaf','path',{d:'M120,95 L150,58 L180,95 L150,80 Z'},'#7ed957'),
+        cr('body','path',{d:'M150,88 Q212,108 202,180 Q190,242 150,262 Q110,242 98,180 Q88,108 150,88 Z'},'#ff5c7a'),
+      ]},
+    { id:'bear', category:'word', emoji:'🐻', label:'곰',
+      regions:[
+        cr('earL','circle',{cx:100,cy:92,r:27},'#8a5a34'),
+        cr('earR','circle',{cx:200,cy:92,r:27},'#8a5a34'),
+        cr('body','ellipse',{cx:150,cy:262,rx:74,ry:48},'#8a5a34'),
+        cr('bellyPatch','ellipse',{cx:150,cy:266,rx:44,ry:30},'#d9b48a'),
+        cr('head','circle',{cx:150,cy:150,r:74},'#8a5a34'),
+        cr('snout','ellipse',{cx:150,cy:176,rx:36,ry:26},'#d9b48a'),
+        cr('eyeWhiteL','circle',{cx:126,cy:132,r:9},'#ffffff'),
+        cr('eyeWhiteR','circle',{cx:174,cy:132,r:9},'#ffffff'),
+      ],
+      fixed:[ fx('ellipse',{cx:150,cy:174,rx:7,ry:5},'#2b2b2b'), fx('circle',{cx:126,cy:132,r:4},'#2b2b2b'), fx('circle',{cx:174,cy:132,r:4},'#2b2b2b') ]},
+    { id:'duck', category:'word', emoji:'🦆', label:'오리',
+      regions:[
+        cr('wing','ellipse',{cx:180,cy:212,rx:28,ry:38},'#ffd23f'),
+        cr('body','ellipse',{cx:150,cy:202,rx:74,ry:54},'#ffe066'),
+        cr('head','circle',{cx:150,cy:116,r:46},'#ffe066'),
+        cr('beak','path',{d:'M150,118 L196,108 Q206,120 196,132 L150,140 Z'},'#ff9d3d'),
+        cr('eyeWhite','circle',{cx:138,cy:104,r:9},'#ffffff'),
+      ],
+      fixed:[ fx('circle',{cx:135,cy:104,r:4},'#2b2b2b') ]},
+  ];
+
+  let colorState = { mode:'svg', subjectIdx: 0, rasterCat:null, rasterItemIdx:0, currentCatKey:'svg-theme' };
+  let colorTool = { type:'color', value: COLORING_PALETTE[0] };
+  let colorDragging = false;
+  let colorLastPoint = null;
+  let colorLastRegion = null;
+  const COLOR_BRUSH_SIZE = 24;
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function makeShapeEl(r){
+    const el = document.createElementNS(SVG_NS, r.tag);
+    Object.keys(r.attrs).forEach(k=> el.setAttribute(k, r.attrs[k]));
+    return el;
+  }
+
+  function renderColorSvg(subject){
+    const svg = document.getElementById('colorSvg');
+    svg.innerHTML = '';
+    const defs = document.createElementNS(SVG_NS, 'defs');
+    svg.appendChild(defs);
+
+    // 1) clipped fill layers (bottom): a white base + a group that accumulates brush strokes
+    subject.regions.forEach(r=>{
+      const clipId = 'clip-' + subject.id + '-' + r.id;
+      const clip = document.createElementNS(SVG_NS, 'clipPath');
+      clip.setAttribute('id', clipId);
+      clip.appendChild(makeShapeEl(r));
+      defs.appendChild(clip);
+
+      const g = document.createElementNS(SVG_NS, 'g');
+      g.setAttribute('clip-path', 'url(#' + clipId + ')');
+      const base = makeShapeEl(r);
+      base.setAttribute('fill', '#ffffff');
+      base.classList.add('baseFill');
+      base.setAttribute('data-region', r.id);
+      g.appendChild(base);
+      const strokeLayer = document.createElementNS(SVG_NS, 'g');
+      strokeLayer.classList.add('strokeLayer');
+      strokeLayer.setAttribute('data-region', r.id);
+      g.appendChild(strokeLayer);
+      svg.appendChild(g);
+    });
+
+    // 2) crisp black outlines on top (not interactive)
+    subject.regions.forEach(r=>{
+      const outline = makeShapeEl(r);
+      outline.setAttribute('fill', 'none');
+      outline.setAttribute('stroke', '#2b2b2b');
+      outline.setAttribute('stroke-width', r.strokeWidth || 4);
+      outline.setAttribute('stroke-linejoin', 'round');
+      outline.setAttribute('stroke-linecap', 'round');
+      outline.style.pointerEvents = 'none';
+      svg.appendChild(outline);
+    });
+
+    // 3) invisible hit-areas topmost (used for touch/drag detection)
+    subject.regions.forEach(r=>{
+      const hit = makeShapeEl(r);
+      hit.setAttribute('fill', '#000000');
+      hit.setAttribute('opacity', '0');
+      hit.style.pointerEvents = 'all';
+      hit.setAttribute('data-region', r.id);
+      svg.appendChild(hit);
+    });
+
+    (subject.fixed||[]).forEach(f=>{
+      const el = makeShapeEl(f);
+      el.setAttribute('fill', f.fill);
+      el.style.pointerEvents = 'none';
+      svg.appendChild(el);
+    });
+  }
+
+  function getSvgPoint(svg, clientX, clientY){
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const ctm = svg.getScreenCTM();
+    if(!ctm) return {x:0,y:0};
+    const loc = pt.matrixTransform(ctm.inverse());
+    return {x: loc.x, y: loc.y};
+  }
+
+  function paintStroke(regionId, p1, p2, color){
+    const layer = document.querySelector('#colorSvg .strokeLayer[data-region="'+regionId+'"]');
+    if(!layer) return;
+    const line = document.createElementNS(SVG_NS, 'line');
+    line.setAttribute('x1', p1.x); line.setAttribute('y1', p1.y);
+    line.setAttribute('x2', p2.x); line.setAttribute('y2', p2.y);
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', COLOR_BRUSH_SIZE);
+    line.setAttribute('stroke-linecap', 'round');
+    layer.appendChild(line);
+  }
+
+  function handleColorTouch(regionId, p1, p2){
+    if(!regionId) return;
+    const subject = COLORING_SUBJECTS[colorState.subjectIdx];
+    if(colorTool.type==='magic'){
+      const region = subject.regions.find(r=>r.id===regionId);
+      const baseFill = document.querySelector('#colorSvg .baseFill[data-region="'+regionId+'"]');
+      if(region && baseFill) baseFill.setAttribute('fill', region.correct);
+      return;
+    }
+    const color = colorTool.type==='eraser' ? '#ffffff' : colorTool.value;
+    paintStroke(regionId, p1, p2, color);
+  }
+
+  function regionIdAt(clientX, clientY){
+    const el = document.elementFromPoint(clientX, clientY);
+    return (el && el.dataset && el.dataset.region) ? el.dataset.region : null;
+  }
+
+  document.getElementById('colorSvg').addEventListener('pointerdown', (e)=>{
+    colorDragging = true;
+    const svg = document.getElementById('colorSvg');
+    const regionId = regionIdAt(e.clientX, e.clientY);
+    const p = getSvgPoint(svg, e.clientX, e.clientY);
+    colorLastPoint = p; colorLastRegion = regionId;
+    handleColorTouch(regionId, p, p);
+  });
+  document.addEventListener('pointermove', (e)=>{
+    if(!colorDragging) return;
+    if(e.buttons===0){ colorDragging=false; colorLastPoint=null; colorLastRegion=null; return; }
+    const svg = document.getElementById('colorSvg');
+    const regionId = regionIdAt(e.clientX, e.clientY);
+    const p = getSvgPoint(svg, e.clientX, e.clientY);
+    if(regionId){
+      const p1 = (regionId===colorLastRegion && colorLastPoint) ? colorLastPoint : p;
+      handleColorTouch(regionId, p1, p);
+    }
+    colorLastPoint = p; colorLastRegion = regionId;
+  });
+  document.addEventListener('pointerup', ()=>{ colorDragging=false; colorLastPoint=null; colorLastRegion=null; });
+  document.addEventListener('pointercancel', ()=>{ colorDragging=false; colorLastPoint=null; colorLastRegion=null; });
+
+  // ---------------------------------------------------------------------
+  // RASTER COLORING (AI-generated PNG/JPG line-art subjects)
+  // 손으로 그린 영역 데이터가 없으므로, 이미지 자체에서 검은 윤곽선을 벽으로 삼아
+  // 연결된 흰 영역을 flood-fill로 라벨링해서 SVG 버전과 같은 "영역 안에서만 칠해지는" 방식을 재현한다.
+  // ---------------------------------------------------------------------
+  const COLOR_WORK_SIZE = 300;
+  const RASTER_BRUSH_SIZE = 26;
+  const rasterSubjectCache = new Map();
+  let currentRasterSubject = null;
+  let colorRasterDragging = false;
+  let colorRasterLastPoint = null;
+  let colorRasterLastLabel = null;
+
+  function rasterFilePath(cat, item, ext){
+    return 'coloring/' + encodeURIComponent(cat + '_' + item) + '.' + ext;
+  }
+
+  function buildRasterMasks(idata){
+    const n = idata.width * idata.height;
+    const wallMask = new Uint8Array(n);
+    const lineAlpha = new Uint8ClampedArray(n);
+    const d = idata.data;
+    for(let i=0;i<n;i++){
+      const r=d[i*4], g=d[i*4+1], b=d[i*4+2];
+      const lum = 0.299*r + 0.587*g + 0.114*b;
+      if(lum < 190){ wallMask[i]=1; lineAlpha[i]=255; }
+    }
+    return { wallMask, lineAlpha };
+  }
+
+  function labelRasterRegions(wallMask, w, h){
+    const n = w*h;
+    const labelMap = new Int16Array(n);
+    const queue = new Int32Array(n);
+    let nextLabel = 1;
+    for(let start=0; start<n; start++){
+      if(wallMask[start] || labelMap[start]) continue;
+      let qHead=0, qTail=0;
+      queue[qTail++] = start;
+      labelMap[start] = nextLabel;
+      while(qHead<qTail){
+        const idx = queue[qHead++];
+        const x = idx % w, y = (idx / w) | 0;
+        if(x>0){ const ni=idx-1; if(!wallMask[ni] && !labelMap[ni]){ labelMap[ni]=nextLabel; queue[qTail++]=ni; } }
+        if(x<w-1){ const ni=idx+1; if(!wallMask[ni] && !labelMap[ni]){ labelMap[ni]=nextLabel; queue[qTail++]=ni; } }
+        if(y>0){ const ni=idx-w; if(!wallMask[ni] && !labelMap[ni]){ labelMap[ni]=nextLabel; queue[qTail++]=ni; } }
+        if(y<h-1){ const ni=idx+w; if(!wallMask[ni] && !labelMap[ni]){ labelMap[ni]=nextLabel; queue[qTail++]=ni; } }
+      }
+      nextLabel++;
+    }
+    return { labelMap, regionCount: nextLabel-1 };
+  }
+
+  function buildRasterSubject(cat, item, ext, cb){
+    const key = cat + '/' + item;
+    if(rasterSubjectCache.has(key)){ cb(rasterSubjectCache.get(key)); return; }
+    const img = new Image();
+    img.onload = ()=>{
+      const off = document.createElement('canvas');
+      off.width = COLOR_WORK_SIZE; off.height = COLOR_WORK_SIZE;
+      const octx = off.getContext('2d');
+      octx.fillStyle = '#ffffff';
+      octx.fillRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+      const scale = Math.min(COLOR_WORK_SIZE/img.width, COLOR_WORK_SIZE/img.height) * 0.94;
+      const dw = img.width*scale, dh = img.height*scale;
+      const dx = (COLOR_WORK_SIZE-dw)/2, dy = (COLOR_WORK_SIZE-dh)/2;
+      octx.drawImage(img, dx, dy, dw, dh);
+      const idata = octx.getImageData(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+      const { wallMask, lineAlpha } = buildRasterMasks(idata);
+      const { labelMap, regionCount } = labelRasterRegions(wallMask, COLOR_WORK_SIZE, COLOR_WORK_SIZE);
+      const lineCanvas = document.createElement('canvas');
+      lineCanvas.width = COLOR_WORK_SIZE; lineCanvas.height = COLOR_WORK_SIZE;
+      const lctx = lineCanvas.getContext('2d');
+      const lineImgData = lctx.createImageData(COLOR_WORK_SIZE, COLOR_WORK_SIZE);
+      for(let i=0;i<lineAlpha.length;i++){
+        lineImgData.data[i*4]=43; lineImgData.data[i*4+1]=43; lineImgData.data[i*4+2]=43; lineImgData.data[i*4+3]=lineAlpha[i];
+      }
+      lctx.putImageData(lineImgData, 0, 0);
+      const subject = { labelMap, regionCount, lineCanvas, labelMasks:new Map() };
+      rasterSubjectCache.set(key, subject);
+      cb(subject);
+    };
+    img.onerror = ()=> cb(null);
+    img.src = rasterFilePath(cat, item, ext);
+  }
+
+  function getLabelMaskCanvas(subject, label){
+    if(subject.labelMasks.has(label)) return subject.labelMasks.get(label);
+    const c = document.createElement('canvas');
+    c.width = COLOR_WORK_SIZE; c.height = COLOR_WORK_SIZE;
+    const ctx = c.getContext('2d');
+    const imgData = ctx.createImageData(COLOR_WORK_SIZE, COLOR_WORK_SIZE);
+    const lm = subject.labelMap;
+    for(let i=0;i<lm.length;i++){
+      if(lm[i]===label) imgData.data[i*4+3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+    subject.labelMasks.set(label, c);
+    return c;
+  }
+
+  function paintRasterStroke(subject, label, p1, p2, color){
+    const mask = getLabelMaskCanvas(subject, label);
+    const tmp = document.createElement('canvas');
+    tmp.width = COLOR_WORK_SIZE; tmp.height = COLOR_WORK_SIZE;
+    const tctx = tmp.getContext('2d');
+    tctx.strokeStyle = color;
+    tctx.fillStyle = color;
+    tctx.lineWidth = RASTER_BRUSH_SIZE;
+    tctx.lineCap = 'round';
+    tctx.lineJoin = 'round';
+    tctx.beginPath();
+    tctx.moveTo(p1.x, p1.y);
+    tctx.lineTo(p2.x, p2.y);
+    tctx.stroke();
+    tctx.beginPath();
+    tctx.arc(p2.x, p2.y, RASTER_BRUSH_SIZE/2, 0, Math.PI*2);
+    tctx.fill();
+    tctx.globalCompositeOperation = 'destination-in';
+    tctx.drawImage(mask, 0, 0);
+    document.getElementById('colorPaintCanvas').getContext('2d').drawImage(tmp, 0, 0);
+  }
+
+  function fillRasterRegion(subject, label, color){
+    const mask = getLabelMaskCanvas(subject, label);
+    const tmp = document.createElement('canvas');
+    tmp.width = COLOR_WORK_SIZE; tmp.height = COLOR_WORK_SIZE;
+    const tctx = tmp.getContext('2d');
+    tctx.fillStyle = color;
+    tctx.fillRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+    tctx.globalCompositeOperation = 'destination-in';
+    tctx.drawImage(mask, 0, 0);
+    document.getElementById('colorPaintCanvas').getContext('2d').drawImage(tmp, 0, 0);
+  }
+
+  function getRasterPoint(clientX, clientY){
+    const canvas = document.getElementById('colorPaintCanvas');
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (clientX - rect.left) * (COLOR_WORK_SIZE / rect.width),
+      y: (clientY - rect.top) * (COLOR_WORK_SIZE / rect.height),
+    };
+  }
+
+  function rasterLabelAt(subject, x, y){
+    const xi = Math.round(x), yi = Math.round(y);
+    if(xi<0 || yi<0 || xi>=COLOR_WORK_SIZE || yi>=COLOR_WORK_SIZE) return 0;
+    return subject.labelMap[yi*COLOR_WORK_SIZE + xi];
+  }
+
+  function handleRasterTouch(label, p1, p2){
+    if(!label || !currentRasterSubject) return;
+    if(colorTool.type==='magic'){
+      fillRasterRegion(currentRasterSubject, label, colorTool.value || COLORING_PALETTE[0]);
+      return;
+    }
+    const color = colorTool.type==='eraser' ? '#ffffff' : colorTool.value;
+    paintRasterStroke(currentRasterSubject, label, p1, p2, color);
+  }
+
+  document.getElementById('colorRasterWrap').addEventListener('pointerdown', (e)=>{
+    if(colorState.mode!=='raster' || !currentRasterSubject) return;
+    colorRasterDragging = true;
+    const p = getRasterPoint(e.clientX, e.clientY);
+    const label = rasterLabelAt(currentRasterSubject, p.x, p.y);
+    colorRasterLastPoint = p; colorRasterLastLabel = label;
+    handleRasterTouch(label, p, p);
+  });
+  document.addEventListener('pointermove', (e)=>{
+    if(!colorRasterDragging) return;
+    if(colorState.mode!=='raster' || !currentRasterSubject){ colorRasterDragging=false; return; }
+    if(e.buttons===0){ colorRasterDragging=false; colorRasterLastPoint=null; colorRasterLastLabel=null; return; }
+    const p = getRasterPoint(e.clientX, e.clientY);
+    const label = rasterLabelAt(currentRasterSubject, p.x, p.y);
+    if(label){
+      const p1 = (label===colorRasterLastLabel && colorRasterLastPoint) ? colorRasterLastPoint : p;
+      handleRasterTouch(label, p1, p);
+    }
+    colorRasterLastPoint = p; colorRasterLastLabel = label;
+  });
+  document.addEventListener('pointerup', ()=>{ colorRasterDragging=false; colorRasterLastPoint=null; colorRasterLastLabel=null; });
+  document.addEventListener('pointercancel', ()=>{ colorRasterDragging=false; colorRasterLastPoint=null; colorRasterLastLabel=null; });
+
+  function updateColorToolButtons(){
+    document.getElementById('btnColorEraserTool').classList.toggle('selected', colorTool.type==='eraser');
+    document.getElementById('btnColorMagicTool').classList.toggle('selected', colorTool.type==='magic');
+  }
+  document.getElementById('btnColorEraserTool').addEventListener('click', ()=>{
+    colorTool = {type:'eraser'};
+    updateColorToolButtons();
+    buildColorPalette();
+  });
+  document.getElementById('btnColorMagicTool').addEventListener('click', ()=>{
+    colorTool = {type:'magic'};
+    updateColorToolButtons();
+    buildColorPalette();
+  });
+
+  function buildColorPalette(){
+    const wrap = document.getElementById('colorPalette');
+    wrap.innerHTML = '';
+    COLORING_PALETTE.forEach(hex=>{
+      const sw = document.createElement('div');
+      sw.className = 'color-swatch' + (colorTool.type==='color' && colorTool.value===hex ? ' selected' : '');
+      sw.style.background = hex;
+      sw.addEventListener('click', ()=>{ colorTool = {type:'color', value:hex}; updateColorToolButtons(); buildColorPalette(); });
+      wrap.appendChild(sw);
+    });
+  }
+
+  const COLOR_CATEGORY_DEFS = [
+    { key:'svg-theme', emoji:'🎨', label:'캐릭터' },
+    { key:'svg-word', emoji:'🍎', label:'단어 그림' },
+    ...RASTER_COLORING_CATEGORIES.map(c=>({ key:c.id, emoji:c.emoji, label:c.label })),
+  ];
+
+  function buildColorCategoryGrid(){
+    const wrap = document.getElementById('colorCategoryGrid');
+    wrap.innerHTML = '';
+    COLOR_CATEGORY_DEFS.forEach(def=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = '<span class="emoji">'+def.emoji+'</span><span class="name">'+def.label+'</span>';
+      card.addEventListener('click', ()=>{
+        buildColorItemsGrid(def.key);
+        showScreen('screen-color-items');
+      });
+      wrap.appendChild(card);
+    });
+  }
+
+  function buildColorItemsGrid(catKey){
+    colorState.currentCatKey = catKey;
+    const def = COLOR_CATEGORY_DEFS.find(d=>d.key===catKey);
+    document.getElementById('colorItemsTitle').textContent = def.emoji + ' ' + def.label;
+    const wrap = document.getElementById('colorItemsGrid');
+    wrap.innerHTML = '';
+    if(catKey==='svg-theme' || catKey==='svg-word'){
+      const filterCat = catKey==='svg-theme' ? 'theme' : 'word';
+      COLORING_SUBJECTS.forEach((s, idx)=>{
+        if(s.category!==filterCat) return;
+        const card = document.createElement('div');
+        card.className = 'color-subject-card';
+        card.innerHTML = s.emoji + '<span class="csc-label">' + s.label + '</span>';
+        card.addEventListener('click', ()=>{
+          colorState.mode = 'svg';
+          colorState.subjectIdx = idx;
+          recordPlayToday();
+          openColorCanvas();
+        });
+        wrap.appendChild(card);
+      });
+    } else {
+      const cat = RASTER_COLORING_CATEGORIES.find(c=>c.id===catKey);
+      cat.items.forEach((item, idx)=>{
+        const card = document.createElement('div');
+        card.className = 'color-subject-card';
+        card.innerHTML = cat.emoji + '<span class="csc-label">' + item + '</span>';
+        card.addEventListener('click', ()=>{
+          colorState.mode = 'raster';
+          colorState.rasterCat = cat.id;
+          colorState.rasterItemIdx = idx;
+          recordPlayToday();
+          openColorCanvas();
+        });
+        wrap.appendChild(card);
+      });
+    }
+  }
+
+  function setColorCanvasMode(mode){
+    document.getElementById('colorSvg').style.display = mode==='svg' ? '' : 'none';
+    document.getElementById('colorRasterWrap').style.display = mode==='raster' ? '' : 'none';
+  }
+
+  function openColorCanvas(){
+    colorTool = {type:'color', value: COLORING_PALETTE[0]};
+    if(colorState.mode==='svg'){
+      const subject = COLORING_SUBJECTS[colorState.subjectIdx];
+      document.getElementById('colorCanvasInfo').textContent = subject.emoji + ' ' + subject.label;
+      setColorCanvasMode('svg');
+      renderColorSvg(subject);
+    } else {
+      const cat = RASTER_COLORING_CATEGORIES.find(c=>c.id===colorState.rasterCat);
+      const item = cat.items[colorState.rasterItemIdx];
+      document.getElementById('colorCanvasInfo').textContent = cat.emoji + ' ' + item;
+      setColorCanvasMode('raster');
+      currentRasterSubject = null;
+      const pctx = document.getElementById('colorPaintCanvas').getContext('2d');
+      pctx.clearRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+      pctx.fillStyle = '#ffffff';
+      pctx.fillRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+      const lctx = document.getElementById('colorLineCanvas').getContext('2d');
+      lctx.clearRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+      const requestedKey = cat.id + '/' + item;
+      buildRasterSubject(cat.id, item, cat.ext, (subject)=>{
+        // 로딩 중 다른 그림으로 전환했을 수 있으니 여전히 같은 그림을 보고 있을 때만 반영한다.
+        if(colorState.mode!=='raster' || colorState.rasterCat!==cat.id || cat.items[colorState.rasterItemIdx]!==item) return;
+        if(!subject) return;
+        currentRasterSubject = subject;
+        document.getElementById('colorLineCanvas').getContext('2d').drawImage(subject.lineCanvas, 0, 0);
+      });
+    }
+    buildColorPalette();
+    updateColorToolButtons();
+    showScreen('screen-color-canvas');
+  }
+
+  document.getElementById('btnColorClear').addEventListener('click', ()=>{
+    if(colorState.mode==='svg'){
+      document.querySelectorAll('#colorSvg .strokeLayer').forEach(g=> g.innerHTML = '');
+      document.querySelectorAll('#colorSvg .baseFill').forEach(el=> el.setAttribute('fill', '#ffffff'));
+    } else {
+      const pctx = document.getElementById('colorPaintCanvas').getContext('2d');
+      pctx.clearRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+      pctx.fillStyle = '#ffffff';
+      pctx.fillRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+    }
+  });
+  document.getElementById('btnColorSelectHome').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnColorItemsBack').addEventListener('click', ()=>{ buildColorCategoryGrid(); showScreen('screen-color-select'); });
+  document.getElementById('btnColorCanvasHome').addEventListener('click', ()=>{ buildColorItemsGrid(colorState.currentCatKey); showScreen('screen-color-items'); });
 
 })();
 </script>
