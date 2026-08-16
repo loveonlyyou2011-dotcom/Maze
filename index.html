@@ -3046,6 +3046,26 @@
     return { wallMask, lineAlpha };
   }
 
+  function dilateWallMask(wallMask, w, h, radius){
+    // 윤곽선이 옅어지거나 한두 픽셀 끊긴 지점으로 색이 옆 영역까지 새어나가지 않도록,
+    // 화면에 보이는 선(lineAlpha)은 그대로 두고 영역 분리용 벽만 살짝 두껍게 만든다.
+    let src = wallMask;
+    for(let pass=0; pass<radius; pass++){
+      const dst = new Uint8Array(w*h);
+      for(let y=0; y<h; y++){
+        for(let x=0; x<w; x++){
+          const idx = y*w + x;
+          if(src[idx]){ dst[idx]=1; continue; }
+          if((x>0 && src[idx-1]) || (x<w-1 && src[idx+1]) || (y>0 && src[idx-w]) || (y<h-1 && src[idx+w])){
+            dst[idx] = 1;
+          }
+        }
+      }
+      src = dst;
+    }
+    return src;
+  }
+
   function labelRasterRegions(wallMask, w, h){
     const n = w*h;
     const labelMap = new Int16Array(n);
@@ -3085,7 +3105,8 @@
       octx.drawImage(img, dx, dy, dw, dh);
       const idata = octx.getImageData(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
       const { wallMask, lineAlpha } = buildRasterMasks(idata);
-      const { labelMap, regionCount } = labelRasterRegions(wallMask, COLOR_WORK_SIZE, COLOR_WORK_SIZE);
+      const sealedWallMask = dilateWallMask(wallMask, COLOR_WORK_SIZE, COLOR_WORK_SIZE, 2);
+      const { labelMap, regionCount } = labelRasterRegions(sealedWallMask, COLOR_WORK_SIZE, COLOR_WORK_SIZE);
       const lineCanvas = document.createElement('canvas');
       lineCanvas.width = COLOR_WORK_SIZE; lineCanvas.height = COLOR_WORK_SIZE;
       const lctx = lineCanvas.getContext('2d');
