@@ -72,13 +72,37 @@ def detect_lines(sheet_gray, cols, rows):
     return row_lines, col_lines
 
 
-def crop_cell(sheet_rgb, row_lines, col_lines, r, c, pad=10, label_bottom_trim=0.0):
+def find_icon_bottom(gray_arr, top, bottom, left, right):
+    """셀 안에서 그림(아이콘) 내용이 끝나는 y좌표를 찾는다.
+    시트는 보통 [그림] - [빈 공백] - [라벨 텍스트] - [빈 여백] 순서라서,
+    내용이 있는 구간 다음에 나오는 첫 '연속된 공백 구간'을 그림의 아래쪽 경계로 본다."""
+    sub = gray_arr[top:bottom, left:right] < 210
+    row_frac = sub.mean(axis=1)
+    NOISE = 0.02
+    MIN_GAP = 6
+    started = False
+    blank_run = 0
+    for i, f in enumerate(row_frac):
+        is_content = f > NOISE
+        if is_content:
+            if blank_run >= MIN_GAP and started:
+                return top + i - blank_run
+            started = True
+            blank_run = 0
+        else:
+            if started:
+                blank_run += 1
+    return bottom  # 못 찾으면 원래 경계 그대로
+
+
+def crop_cell(sheet_rgb, sheet_gray_arr, row_lines, col_lines, r, c, pad=10, has_label=False):
     top = row_lines[r] + pad
     bottom = row_lines[r + 1] - pad
     left = col_lines[c] + pad
     right = col_lines[c + 1] - pad
-    if label_bottom_trim > 0:
-        bottom -= (row_lines[r + 1] - row_lines[r]) * label_bottom_trim
+    if has_label:
+        icon_bottom = find_icon_bottom(sheet_gray_arr, int(top), int(bottom), int(left), int(right))
+        bottom = min(bottom, icon_bottom + 4)
     left, top, right, bottom = int(left), int(top), int(right), int(bottom)
     if right <= left or bottom <= top:
         raise ValueError(f"bad box {(left, top, right, bottom)}")
@@ -92,15 +116,16 @@ def crop_cell(sheet_rgb, row_lines, col_lines, r, c, pad=10, label_bottom_trim=0
     return Image.fromarray(arr)
 
 
-def process(cat, filename, cols, rows, mapping, label_bottom_trim=0.0):
+def process(cat, filename, cols, rows, mapping, has_label=False):
     path = os.path.join(IMAGE_DIR, filename)
     sheet_rgb = Image.open(path).convert("RGB")
     sheet_gray = sheet_rgb.convert("L")
+    sheet_gray_arr = np.array(sheet_gray)
     row_lines, col_lines = detect_lines(sheet_gray, cols, rows)
 
     saved = 0
     for (r, c), name in mapping.items():
-        cell = crop_cell(sheet_rgb, row_lines, col_lines, r, c, pad=10, label_bottom_trim=label_bottom_trim)
+        cell = crop_cell(sheet_rgb, sheet_gray_arr, row_lines, col_lines, r, c, pad=10, has_label=has_label)
         out_path = os.path.join(COLORING_DIR, f"{cat}_{name}.png")
         cell.save(out_path)
         saved += 1
@@ -188,11 +213,11 @@ SUPPLY = {(r, c): name for r, row in enumerate(SUPPLY_ROWS) for c, name in enume
 if __name__ == "__main__":
     process("바다생물", "Generated Image August 16, 2026 - 6_54PM.jpg", 5, 5, SEA)
     process("공룡", "Generated Image August 16, 2026 - 6_56PM.jpg", 5, 5, DINO)
-    process("교통수단", "Generated Image August 16, 2026 - 7_07PM.jpg", 5, 6, VEHICLE, label_bottom_trim=0.30)
+    process("교통수단", "Generated Image August 16, 2026 - 7_07PM.jpg", 5, 6, VEHICLE, has_label=True)
     process("과일", "Generated Image August 16, 2026 - 7_08PM.jpg", 5, 5, FRUIT)
-    process("채소", "Generated Image August 16, 2026 - 7_09PM.jpg", 6, 4, VEG, label_bottom_trim=0.24)
+    process("채소", "Generated Image August 16, 2026 - 7_09PM.jpg", 6, 4, VEG, has_label=True)
     process("곤충", "Generated Image August 16, 2026 - 7_11PM.jpg", 5, 5, INSECT)
-    process("우주", "Generated Image August 16, 2026 - 7_41PM.jpg", 6, 4, SPACE, label_bottom_trim=0.32)
-    process("꽃과식물", "Generated Image August 16, 2026 - 7_13PM.jpg", 6, 4, FLOWER, label_bottom_trim=0.26)
-    process("학용품장난감", "Generated Image August 16, 2026 - 7_14PM.jpg", 6, 4, SUPPLY, label_bottom_trim=0.26)
+    process("우주", "Generated Image August 16, 2026 - 7_41PM.jpg", 6, 4, SPACE, has_label=True)
+    process("꽃과식물", "Generated Image August 16, 2026 - 7_13PM.jpg", 6, 4, FLOWER, has_label=True)
+    process("학용품장난감", "Generated Image August 16, 2026 - 7_14PM.jpg", 6, 4, SUPPLY, has_label=True)
     print("done")
