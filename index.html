@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0b1030">
+<meta name="color-scheme" content="dark">
 <title>손가락 미로 탐험</title>
 <style>
   :root{
+    color-scheme: dark;
     --bg:#0b1030; --path:#1c2456; --wall:#7bd8ff; --trail:#ffd93d; --accent:#7bd8ff;
     --ui-bg:#151a3d; --ui-card:#1f2657;
   }
@@ -2874,7 +2876,7 @@
       fixed:[ fx('circle',{cx:135,cy:104,r:4},'#2b2b2b') ]},
   ];
 
-  let colorState = { mode:'svg', subjectIdx: 0, rasterCat:null, rasterItemIdx:0, currentCatKey:'svg-theme' };
+  let colorState = { mode:'raster', subjectIdx: 0, rasterCat:null, rasterItemIdx:0, currentCatKey:'동물' };
   let colorTool = { type:'color', value: COLORING_PALETTE[0] };
   let colorDragging = false;
   let colorLastPoint = null;
@@ -3218,11 +3220,7 @@
     });
   }
 
-  const COLOR_CATEGORY_DEFS = [
-    { key:'svg-theme', emoji:'🎨', label:'캐릭터' },
-    { key:'svg-word', emoji:'🍎', label:'단어 그림' },
-    ...RASTER_COLORING_CATEGORIES.map(c=>({ key:c.id, emoji:c.emoji, label:c.label })),
-  ];
+  const COLOR_CATEGORY_DEFS = RASTER_COLORING_CATEGORIES.map(c=>({ key:c.id, emoji:c.emoji, label:c.label }));
 
   function buildColorCategoryGrid(){
     const wrap = document.getElementById('colorCategoryGrid');
@@ -3245,37 +3243,20 @@
     document.getElementById('colorItemsTitle').textContent = def.emoji + ' ' + def.label;
     const wrap = document.getElementById('colorItemsGrid');
     wrap.innerHTML = '';
-    if(catKey==='svg-theme' || catKey==='svg-word'){
-      const filterCat = catKey==='svg-theme' ? 'theme' : 'word';
-      COLORING_SUBJECTS.forEach((s, idx)=>{
-        if(s.category!==filterCat) return;
-        const card = document.createElement('div');
-        card.className = 'color-subject-card';
-        card.innerHTML = s.emoji + '<span class="csc-label">' + s.label + '</span>';
-        card.addEventListener('click', ()=>{
-          colorState.mode = 'svg';
-          colorState.subjectIdx = idx;
-          recordPlayToday();
-          openColorCanvas();
-        });
-        wrap.appendChild(card);
+    const cat = RASTER_COLORING_CATEGORIES.find(c=>c.id===catKey);
+    cat.items.forEach((item, idx)=>{
+      const card = document.createElement('div');
+      card.className = 'color-subject-card';
+      card.innerHTML = cat.emoji + '<span class="csc-label">' + item + '</span>';
+      card.addEventListener('click', ()=>{
+        colorState.mode = 'raster';
+        colorState.rasterCat = cat.id;
+        colorState.rasterItemIdx = idx;
+        recordPlayToday();
+        openColorCanvas();
       });
-    } else {
-      const cat = RASTER_COLORING_CATEGORIES.find(c=>c.id===catKey);
-      cat.items.forEach((item, idx)=>{
-        const card = document.createElement('div');
-        card.className = 'color-subject-card';
-        card.innerHTML = cat.emoji + '<span class="csc-label">' + item + '</span>';
-        card.addEventListener('click', ()=>{
-          colorState.mode = 'raster';
-          colorState.rasterCat = cat.id;
-          colorState.rasterItemIdx = idx;
-          recordPlayToday();
-          openColorCanvas();
-        });
-        wrap.appendChild(card);
-      });
-    }
+      wrap.appendChild(card);
+    });
   }
 
   function setColorCanvasMode(mode){
