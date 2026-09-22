@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0b1030">
 <meta name="color-scheme" content="dark">
+<meta name="description" content="미로찾기, 숫자놀이, 단어놀이, 색칠놀이 등을 모은 아이들 학습 놀이 앱">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="놀이터">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
 <title>손가락 미로 탐험</title>
 <style>
   :root{
@@ -3463,6 +3470,15 @@
   document.getElementById('btnColorCanvasHome').addEventListener('click', ()=>{ buildColorItemsGrid(colorState.currentCatKey); showScreen('screen-color-items'); });
 
 })();
+</script>
+<script>
+  // 홈 화면에 앱처럼 설치하고, 오프라인에서도 색칠놀이 그림을 쓸 수 있게 서비스 워커 등록
+  // (file://로 직접 열었을 때는 서비스 워커가 동작하지 않으므로 안전하게 건너뜀)
+  if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){
+    window.addEventListener('load', ()=>{
+      navigator.serviceWorker.register('sw.js').catch(()=>{});
+    });
+  }
 </script>
 </body>
 </html>
