@@ -292,7 +292,10 @@
     <div class="topbar">
       <button class="icon-btn" id="btnColorCanvasHome">🏠</button>
       <div class="info" id="colorCanvasInfo">로켓 친구</div>
-      <button class="icon-btn" id="btnColorClear">🗑️</button>
+      <div style="display:flex; gap:6px;">
+        <button class="icon-btn" id="btnColorUndo" title="되돌리기">↩️</button>
+        <button class="icon-btn" id="btnColorClear" title="전체 지우기">🗑️</button>
+      </div>
     </div>
     <div id="colorSvgWrap">
       <svg id="colorSvg" viewBox="0 0 300 300"></svg>
@@ -306,6 +309,7 @@
       <button class="color-tool-btn magic" id="btnColorMagicTool">✨ 마스터 색</button>
     </div>
     <div id="colorPalette"></div>
+    <button class="icon-btn" id="btnColorSave" style="margin-top:14px; width:100%; max-width:380px; font-size:16px; padding:12px;">💾 그림 저장하기</button>
   </section>
 
   <!-- THEME SELECT -->
@@ -2989,6 +2993,11 @@
     return {x: loc.x, y: loc.y};
   }
 
+  // 되돌리기: 손가락을 뗄 때까지(한 번의 드래그/탭) 그려진 내용을 한 묶음으로 모아뒀다가
+  // 되돌리기 한 번에 그 묶음 전체를 되돌린다.
+  let svgUndoStack = [];
+  let svgGestureBatch = null;
+
   function paintStroke(regionId, p1, p2, color){
     const layer = document.querySelector('#colorSvg .strokeLayer[data-region="'+regionId+'"]');
     if(!layer) return;
@@ -2999,6 +3008,7 @@
     line.setAttribute('stroke-width', COLOR_BRUSH_SIZE);
     line.setAttribute('stroke-linecap', 'round');
     layer.appendChild(line);
+    if(svgGestureBatch) svgGestureBatch.push({type:'stroke', el:line});
   }
 
   function handleColorTouch(regionId, p1, p2){
@@ -3007,11 +3017,25 @@
     if(colorTool.type==='magic'){
       const region = subject.regions.find(r=>r.id===regionId);
       const baseFill = document.querySelector('#colorSvg .baseFill[data-region="'+regionId+'"]');
-      if(region && baseFill) baseFill.setAttribute('fill', region.correct);
+      if(region && baseFill){
+        const prev = baseFill.getAttribute('fill');
+        baseFill.setAttribute('fill', region.correct);
+        if(svgGestureBatch) svgGestureBatch.push({type:'fill', el:baseFill, prev});
+      }
       return;
     }
     const color = colorTool.type==='eraser' ? '#ffffff' : colorTool.value;
     paintStroke(regionId, p1, p2, color);
+  }
+
+  function undoSvgStroke(){
+    const batch = svgUndoStack.pop();
+    if(!batch) return;
+    for(let i=batch.length-1; i>=0; i--){
+      const action = batch[i];
+      if(action.type==='stroke') action.el.remove();
+      else if(action.type==='fill') action.el.setAttribute('fill', action.prev);
+    }
   }
 
   function regionIdAt(clientX, clientY){
@@ -3021,6 +3045,7 @@
 
   document.getElementById('colorSvg').addEventListener('pointerdown', (e)=>{
     colorDragging = true;
+    svgGestureBatch = [];
     const svg = document.getElementById('colorSvg');
     const regionId = regionIdAt(e.clientX, e.clientY);
     const p = getSvgPoint(svg, e.clientX, e.clientY);
@@ -3039,8 +3064,13 @@
     }
     colorLastPoint = p; colorLastRegion = regionId;
   });
-  document.addEventListener('pointerup', ()=>{ colorDragging=false; colorLastPoint=null; colorLastRegion=null; });
-  document.addEventListener('pointercancel', ()=>{ colorDragging=false; colorLastPoint=null; colorLastRegion=null; });
+  function endSvgGesture(){
+    colorDragging=false; colorLastPoint=null; colorLastRegion=null;
+    if(svgGestureBatch && svgGestureBatch.length){ svgUndoStack.push(svgGestureBatch); }
+    svgGestureBatch = null;
+  }
+  document.addEventListener('pointerup', endSvgGesture);
+  document.addEventListener('pointercancel', endSvgGesture);
 
   // ---------------------------------------------------------------------
   // RASTER COLORING (AI-generated PNG/JPG line-art subjects)
@@ -3054,6 +3084,8 @@
   let colorRasterDragging = false;
   let colorRasterLastPoint = null;
   let colorRasterLastLabel = null;
+  let rasterUndoStack = []; // 제스처(드래그 한 번/탭 한 번) 시작 시점의 캔버스 스냅샷
+  const RASTER_UNDO_MAX = 20;
 
   function rasterFilePath(cat, item, ext){
     return 'coloring/' + encodeURIComponent(cat + '_' + item) + '.' + ext;
@@ -3223,12 +3255,25 @@
     paintRasterStroke(currentRasterSubject, label, p1, p2, color);
   }
 
+  function snapshotRasterUndo(){
+    const pctx = document.getElementById('colorPaintCanvas').getContext('2d');
+    rasterUndoStack.push(pctx.getImageData(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE));
+    if(rasterUndoStack.length > RASTER_UNDO_MAX) rasterUndoStack.shift();
+  }
+
+  function undoRasterStroke(){
+    const snapshot = rasterUndoStack.pop();
+    if(!snapshot) return;
+    document.getElementById('colorPaintCanvas').getContext('2d').putImageData(snapshot, 0, 0);
+  }
+
   document.getElementById('colorRasterWrap').addEventListener('pointerdown', (e)=>{
     if(colorState.mode!=='raster' || !currentRasterSubject) return;
     colorRasterDragging = true;
     const p = getRasterPoint(e.clientX, e.clientY);
     const label = rasterLabelAt(currentRasterSubject, p.x, p.y);
     colorRasterLastPoint = p; colorRasterLastLabel = label;
+    snapshotRasterUndo();
     handleRasterTouch(label, p, p);
   });
   document.addEventListener('pointermove', (e)=>{
@@ -3319,6 +3364,8 @@
 
   function openColorCanvas(){
     colorTool = {type:'color', value: COLORING_PALETTE[0]};
+    svgUndoStack = []; svgGestureBatch = null;
+    rasterUndoStack = [];
     if(colorState.mode==='svg'){
       const subject = COLORING_SUBJECTS[colorState.subjectIdx];
       document.getElementById('colorCanvasInfo').textContent = subject.emoji + ' ' + subject.label;
@@ -3354,13 +3401,52 @@
     if(colorState.mode==='svg'){
       document.querySelectorAll('#colorSvg .strokeLayer').forEach(g=> g.innerHTML = '');
       document.querySelectorAll('#colorSvg .baseFill').forEach(el=> el.setAttribute('fill', '#ffffff'));
+      svgUndoStack = []; svgGestureBatch = null;
     } else {
       const pctx = document.getElementById('colorPaintCanvas').getContext('2d');
       pctx.clearRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
       pctx.fillStyle = '#ffffff';
       pctx.fillRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+      rasterUndoStack = [];
     }
   });
+  document.getElementById('btnColorUndo').addEventListener('click', ()=>{
+    if(colorState.mode==='svg') undoSvgStroke();
+    else undoRasterStroke();
+  });
+  document.getElementById('btnColorSave').addEventListener('click', ()=>{
+    const out = document.createElement('canvas');
+    out.width = COLOR_WORK_SIZE; out.height = COLOR_WORK_SIZE;
+    const octx = out.getContext('2d');
+    octx.fillStyle = '#ffffff';
+    octx.fillRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
+    if(colorState.mode==='svg'){
+      const svgEl = document.getElementById('colorSvg').cloneNode(true);
+      svgEl.setAttribute('width', COLOR_WORK_SIZE);
+      svgEl.setAttribute('height', COLOR_WORK_SIZE);
+      const svgText = new XMLSerializer().serializeToString(svgEl);
+      const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
+      const img = new Image();
+      img.onload = ()=>{
+        octx.drawImage(img, 0, 0, COLOR_WORK_SIZE, COLOR_WORK_SIZE);
+        downloadCanvasPng(out);
+      };
+      img.src = svgUrl;
+    } else {
+      octx.drawImage(document.getElementById('colorPaintCanvas'), 0, 0);
+      octx.drawImage(document.getElementById('colorLineCanvas'), 0, 0);
+      downloadCanvasPng(out);
+    }
+  });
+  function downloadCanvasPng(canvas){
+    const name = (document.getElementById('colorCanvasInfo').textContent || '색칠그림').replace(/[^\p{L}\p{N}]/gu, '');
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = name + '.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
   document.getElementById('btnColorSelectHome').addEventListener('click', ()=> showScreen('screen-home'));
   document.getElementById('btnColorItemsBack').addEventListener('click', ()=>{ buildColorCategoryGrid(); showScreen('screen-color-select'); });
   document.getElementById('btnColorCanvasHome').addEventListener('click', ()=>{ buildColorItemsGrid(colorState.currentCatKey); showScreen('screen-color-items'); });
