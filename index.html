@@ -3196,11 +3196,24 @@
     return c;
   }
 
+  // 드래그 중 매 포인터 이동마다 새 canvas를 만들면 저사양 기기에서 버벅일 수 있어서,
+  // 재사용 가능한 스크래치 캔버스 하나를 만들어두고 매번 지우고 다시 쓴다.
+  let rasterScratchCanvas = null;
+  function getRasterScratchCanvas(){
+    if(!rasterScratchCanvas){
+      rasterScratchCanvas = document.createElement('canvas');
+      rasterScratchCanvas.width = COLOR_WORK_SIZE;
+      rasterScratchCanvas.height = COLOR_WORK_SIZE;
+    }
+    const ctx = rasterScratchCanvas.getContext('2d');
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, COLOR_WORK_SIZE, COLOR_WORK_SIZE);
+    return { canvas: rasterScratchCanvas, ctx };
+  }
+
   function paintRasterStroke(subject, label, p1, p2, color){
     const mask = getLabelMaskCanvas(subject, label);
-    const tmp = document.createElement('canvas');
-    tmp.width = COLOR_WORK_SIZE; tmp.height = COLOR_WORK_SIZE;
-    const tctx = tmp.getContext('2d');
+    const { canvas: tmp, ctx: tctx } = getRasterScratchCanvas();
     tctx.strokeStyle = color;
     tctx.fillStyle = color;
     tctx.lineWidth = RASTER_BRUSH_SIZE;
@@ -3220,9 +3233,7 @@
 
   function fillRasterRegion(subject, label, color){
     const mask = getLabelMaskCanvas(subject, label);
-    const tmp = document.createElement('canvas');
-    tmp.width = COLOR_WORK_SIZE; tmp.height = COLOR_WORK_SIZE;
-    const tctx = tmp.getContext('2d');
+    const { canvas: tmp, ctx: tctx } = getRasterScratchCanvas();
     tctx.fillStyle = color;
     tctx.fillRect(0,0,COLOR_WORK_SIZE,COLOR_WORK_SIZE);
     tctx.globalCompositeOperation = 'destination-in';
