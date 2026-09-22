@@ -60,7 +60,7 @@
     width:100%; max-width:480px; display:flex; align-items:center; justify-content:space-between;
     margin-bottom:10px; flex-shrink:0;
   }
-  .topbar .info{ font-size:15px; font-weight:700; }
+  .topbar .info{ font-size:15px; font-weight:700; flex:1; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 6px; }
   .icon-btn{
     background:rgba(255,255,255,.12); border:none; border-radius:12px; color:#fff;
     font-size:20px; padding:8px 14px; cursor:pointer;
@@ -222,27 +222,36 @@
 
   <!-- STICKERS -->
   <section id="screen-stickers" class="screen">
-    <h1 class="title">🏆 스티커판</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnStickerHome">◀ 뒤로</button>
+      <div class="info">🏆 스티커판</div>
+      <span style="width:44px"></span>
+    </div>
     <div id="stickerTotal" style="font-size:20px; font-weight:800; margin-bottom:2px;">⭐ 0개 모았어요</div>
     <div id="stickerBadge" style="font-size:44px; margin-bottom:10px;"></div>
     <div id="stickerBoard" style="width:100%; max-width:420px;"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnStickerHome">◀ 뒤로</button>
   </section>
 
   <!-- TRAVEL: language select -->
   <section id="screen-travel-lang" class="screen">
-    <h1 class="title">✈️ 여행 회화</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnTravelLangBack">◀ 뒤로</button>
+      <div class="info">✈️ 여행 회화</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">어느 나라 말로 볼까요?</p>
     <div class="grid" id="travelLangGrid"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnTravelLangBack">◀ 뒤로</button>
   </section>
 
   <!-- TRAVEL: situation select -->
   <section id="screen-travel-situation" class="screen">
-    <h1 class="title" id="travelSituationTitle">어떤 상황인가요?</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnTravelSituationBack">◀ 언어</button>
+      <div class="info" id="travelSituationTitle">어떤 상황인가요?</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">여행 순서대로 정리했어요</p>
     <div class="grid" id="travelSituationGrid"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnTravelSituationBack">◀ 언어 다시 고르기</button>
   </section>
 
   <!-- TRAVEL: phrase list -->
@@ -301,10 +310,13 @@
 
   <!-- THEME SELECT -->
   <section id="screen-theme" class="screen">
-    <h1 class="title">어떤 미로로 갈까요?</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnThemeBack">◀ 뒤로</button>
+      <div class="info">🧭 어떤 미로로 갈까요?</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">테마를 골라주세요</p>
     <div class="grid" id="themeGrid"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnThemeBack">◀ 뒤로</button>
   </section>
 
   <!-- LEVEL SELECT -->
@@ -345,10 +357,13 @@
 
   <!-- MATH: operation select -->
   <section id="screen-math-op" class="screen">
-    <h1 class="title">🔢 숫자 놀이</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnMathOpBack">◀ 뒤로</button>
+      <div class="info">🔢 숫자 놀이</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">어떤 계산을 연습할까요?</p>
     <div class="grid" id="mathOpGrid"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnMathOpBack">◀ 뒤로</button>
   </section>
 
   <!-- MATH: level select -->
@@ -389,25 +404,34 @@
 
   <!-- WORD: language select -->
   <section id="screen-word-lang" class="screen">
-    <h1 class="title">🗣️ 단어 놀이</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnWordLangBack">◀ 뒤로</button>
+      <div class="info">🗣️ 단어 놀이</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">어떤 언어를 배워볼까요?</p>
     <div class="grid" id="wordLangGrid"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnWordLangBack">◀ 뒤로</button>
   </section>
 
   <!-- WORD: topic select -->
   <section id="screen-word-topic" class="screen">
-    <h1 class="title" id="wordTopicTitle">주제 선택</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnWordTopicBack">◀ 언어</button>
+      <div class="info" id="wordTopicTitle">주제 선택</div>
+      <span style="width:44px"></span>
+    </div>
     <p class="sub">배우고 싶은 주제를 골라보세요</p>
     <div class="grid" id="wordTopicGrid"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnWordTopicBack">◀ 언어 다시 고르기</button>
   </section>
 
   <!-- WORD: mode select -->
   <section id="screen-word-mode" class="screen">
-    <h1 class="title" id="wordModeTitle">어떻게 배워볼까요?</h1>
+    <div class="topbar">
+      <button class="icon-btn" id="btnWordModeBack">◀ 주제</button>
+      <div class="info" id="wordModeTitle">어떻게 배워볼까요?</div>
+      <span style="width:44px"></span>
+    </div>
     <div class="grid" id="wordModeGrid" style="max-width:340px;"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnWordModeBack">◀ 주제 다시 고르기</button>
   </section>
 
   <!-- WORD: flashcard mode -->
@@ -605,6 +629,7 @@
     ensureAudio();
     muted = !muted;
     localStorage.setItem('fingerMazeMuted', muted?'1':'0');
+    if(muted && 'speechSynthesis' in window) window.speechSynthesis.cancel();
     updateMuteBtn();
   });
   updateMuteBtn();
@@ -1902,6 +1927,7 @@
   function speak(text, lang){
     try{
       if(!('speechSynthesis' in window)) return;
+      if(muted) return;
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = lang;
