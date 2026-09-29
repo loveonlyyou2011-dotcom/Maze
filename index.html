@@ -68,6 +68,8 @@
     margin-bottom:10px; flex-shrink:0;
   }
   .topbar .info{ font-size:15px; font-weight:700; flex:1; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 6px; }
+  /* 폰 화면에서는 오른쪽 위에 고정된 음소거 버튼이 topbar 오른쪽 끝(진행 표시·🗑️ 등)을 가려서, 그만큼 비워 둔다 */
+  @media (max-width:560px){ .topbar{ padding-right:50px; } }
   .icon-btn{
     background:rgba(255,255,255,.12); border:none; border-radius:12px; color:#fff;
     font-size:20px; padding:8px 14px; cursor:pointer;
@@ -195,6 +197,69 @@
   }
   .color-swatch.selected{ border-color:#fff; box-shadow:0 0 0 3px #ffd93d; }
 
+  /* ---------- 퍼즐 · 그림자 찾기 · 그림책 공용 ---------- */
+  .seg{ display:flex; gap:8px; margin:2px 0 12px; justify-content:center; }
+  .seg button{
+    background:rgba(255,255,255,.1); border:3px solid transparent; color:#fff; border-radius:14px;
+    padding:9px 16px; font-size:15px; font-weight:700; cursor:pointer;
+  }
+  .seg button.selected{ border-color:#ffd93d; background:rgba(255,217,61,.18); }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; width:100%; max-width:420px; margin-bottom:12px; }
+  .chip-row button{
+    background:var(--ui-card); border:2px solid rgba(255,255,255,.15); color:#fff; border-radius:999px;
+    padding:6px 12px; font-size:13px; font-weight:700; cursor:pointer;
+  }
+  .chip-row button.selected{ border-color:#7bd8ff; background:#26306b; }
+  .thumb-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; width:100%; max-width:420px; }
+  .thumb-card{
+    position:relative; background:#fff; border-radius:12px; aspect-ratio:1/1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:4px; cursor:pointer; color-scheme:light;
+  }
+  .thumb-card:active{ transform:scale(.95); }
+  .thumb-card img{ width:100%; height:74%; object-fit:contain; }
+  .thumb-card span{ font-size:11px; color:#222; font-weight:700; margin-top:2px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .thumb-card .thumb-star{ position:absolute; top:2px; right:4px; font-size:11px; }
+
+  #puzzleBoardWrap{ position:relative; margin-top:6px; width:fit-content; }
+  #puzzleBoard{ display:grid; gap:2px; background:rgba(255,255,255,.18); padding:2px; border-radius:10px; touch-action:none; user-select:none; -webkit-user-select:none; }
+  #puzzleBoard.solved{ gap:0; }
+  .puzzle-piece{ background-color:#fff; background-repeat:no-repeat; cursor:grab; outline:2px solid transparent; outline-offset:-2px; color-scheme:light; }
+  .puzzle-piece.selected{ outline:3px solid #ffd93d; }
+  .puzzle-piece.drop-target{ outline:3px dashed #7bd8ff; }
+  .puzzle-piece.locked{ cursor:default; }
+  .puzzle-piece.just-locked{ animation:pulseGood .35s ease; }
+  #puzzleGhost{ position:absolute; inset:2px; background-repeat:no-repeat; background-size:100% 100%; opacity:0; pointer-events:none; transition:opacity .2s; border-radius:8px; }
+  #puzzleGhost.show{ opacity:.6; }
+  .puzzle-drag{ position:fixed; pointer-events:none; z-index:50; box-shadow:0 10px 22px rgba(0,0,0,.55); opacity:.93; background-color:#fff; background-repeat:no-repeat; }
+
+  #shadowStage{
+    width:min(62vw,230px); height:min(62vw,230px); background:#fff; border-radius:20px; margin:8px auto 6px;
+    display:flex; align-items:center; justify-content:center; color-scheme:light;
+  }
+  /* 앱 전체의 canvas{background:남색} 규칙이 여기에도 먹으면 남색 그림자가 남색 위에 그려져 안 보인다 */
+  #shadowStage canvas{ width:92%; height:92%; background:transparent; box-shadow:none; border-radius:0; }
+  #shadowOptions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:340px; margin-top:6px; }
+  .shadow-opt{
+    background:#fff; border:4px solid transparent; border-radius:16px; aspect-ratio:1/1; padding:8px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; color-scheme:light;
+  }
+  .shadow-opt img{ width:100%; height:100%; object-fit:contain; }
+  .shadow-opt.correct{ border-color:#5fa82f; animation:pulseGood .4s ease; }
+  .shadow-opt.wrong{ border-color:#ff6f59; animation:flashWall .3s ease; }
+
+  #bookPage{
+    background:var(--ui-card); border-radius:24px; padding:16px; width:100%; max-width:380px; text-align:center;
+    border:3px solid rgba(255,255,255,.15); margin-top:6px;
+  }
+  #bookPic{ background:#fff; border-radius:16px; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; cursor:pointer; color-scheme:light; }
+  #bookPic img{ width:86%; height:86%; object-fit:contain; }
+  #bookTextMain{ font-size:21px; font-weight:800; line-height:1.45; margin-top:14px; word-break:keep-all; }
+  #bookTextSub{ font-size:15px; opacity:.72; margin-top:8px; line-height:1.4; }
+
+  #echoRow{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+  #echoRow .icon-btn{ font-size:16px; }
+  #echoHint{ font-size:13px; opacity:.75; min-height:18px; margin-top:6px; }
+
   footer.credit{ margin-top:auto; padding-top:16px; font-size:11px; opacity:.4; text-align:center; }
 
   #screen-game{ position:relative; transition:background .3s ease; }
@@ -223,7 +288,7 @@
     <h1 class="title">🎮 아이들 놀이터</h1>
     <p class="sub">하고 싶은 놀이를 골라보세요!</p>
     <p class="sub" id="streakLine" style="margin-top:-10px; min-height:18px;"></p>
-    <div class="grid" id="gameHubGrid" style="max-width:420px;"></div>
+    <div class="grid" id="gameHubGrid" style="max-width:420px; grid-template-columns:repeat(3,1fr); gap:10px;"></div>
     <footer class="credit">가로/세로로 돌려도 괜찮아요</footer>
   </section>
 
@@ -317,6 +382,106 @@
     </div>
     <div id="colorPalette"></div>
     <button class="icon-btn" id="btnColorSave" style="margin-top:14px; width:100%; max-width:380px; font-size:16px; padding:12px;">💾 그림 저장하기</button>
+  </section>
+
+  <!-- PUZZLE: select -->
+  <section id="screen-puzzle-select" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnPuzzleSelectBack">◀ 뒤로</button>
+      <div class="info">🧩 퍼즐</div>
+      <span style="width:44px"></span>
+    </div>
+    <div class="seg" id="puzzleDiffSeg">
+      <button data-diff="easy">쉬움 · 12조각</button>
+      <button data-diff="hard">어려움 · 24조각</button>
+    </div>
+    <div class="chip-row" id="puzzleCatRow"></div>
+    <div class="thumb-grid" id="puzzleThumbGrid"></div>
+  </section>
+
+  <!-- PUZZLE: game -->
+  <section id="screen-puzzle-game" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnPuzzleGameBack">🏠</button>
+      <div class="info" id="puzzleInfo">퍼즐</div>
+      <div class="info" id="puzzleProgress" style="flex:0 0 auto;">0 / 12</div>
+    </div>
+    <p class="sub" id="puzzleHint" style="margin-bottom:4px;">조각을 끌거나 두 조각을 차례로 눌러 자리를 바꿔요</p>
+    <div id="puzzleBoardWrap">
+      <div id="puzzleBoard"></div>
+      <div id="puzzleGhost"></div>
+    </div>
+    <div class="game-actions">
+      <button id="btnPuzzlePeek">👀 원본 보기</button>
+      <button id="btnPuzzleShuffle">🔀 다시 섞기</button>
+    </div>
+  </section>
+
+  <!-- SHADOW: select -->
+  <section id="screen-shadow-select" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnShadowSelectBack">◀ 뒤로</button>
+      <div class="info">👤 그림자 찾기</div>
+      <span style="width:44px"></span>
+    </div>
+    <p class="sub">그림자를 보고 누구인지 맞혀보세요</p>
+    <div class="grid" id="shadowCatGrid"></div>
+  </section>
+
+  <!-- SHADOW: game -->
+  <section id="screen-shadow-game" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnShadowGameBack">🏠</button>
+      <div class="info" id="shadowInfo">그림자 찾기</div>
+      <div class="info" id="shadowProgress" style="flex:0 0 auto;">1 / 8</div>
+    </div>
+    <div id="shadowStage"><canvas id="shadowCanvas" width="200" height="200"></canvas></div>
+    <p class="sub" id="shadowQuestion" style="margin-bottom:4px;">이 그림자는 누구일까요?</p>
+    <div id="shadowOptions"></div>
+  </section>
+
+  <!-- BOOK: list -->
+  <section id="screen-book-list" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnBookListBack">◀ 뒤로</button>
+      <div class="info">📖 그림책</div>
+      <span style="width:44px"></span>
+    </div>
+    <p class="sub" style="margin-bottom:8px;">어떤 말로 읽어줄까요?</p>
+    <div class="seg" id="bookLangSeg">
+      <button data-lang="ko">🇰🇷 한국어</button>
+      <button data-lang="en">🇬🇧 English</button>
+    </div>
+    <div class="grid" id="bookGrid"></div>
+  </section>
+
+  <!-- BOOK: reading -->
+  <section id="screen-book-read" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnBookReadBack">🏠</button>
+      <div class="info" id="bookTitle">그림책</div>
+      <div class="info" id="bookProgress" style="flex:0 0 auto;">1 / 6</div>
+    </div>
+    <div id="bookPage">
+      <div id="bookPic"><img id="bookImg" alt=""></div>
+      <div id="bookTextMain"></div>
+      <div id="bookTextSub"></div>
+    </div>
+    <div class="game-actions">
+      <button id="btnBookPrev">◀ 이전</button>
+      <button id="btnBookRead">🔊 다시 읽기</button>
+      <button id="btnBookNext">다음 ▶</button>
+    </div>
+  </section>
+
+  <!-- 퍼즐·그림자 찾기 공용 결과 화면 -->
+  <section id="screen-fun-result" class="screen">
+    <h1 class="title" id="funResultTitle">🎉 완료!</h1>
+    <div class="stars" id="funResultStars">⭐⭐⭐</div>
+    <div class="result-time" id="funResultMsg"></div>
+    <div class="result-best" id="funResultBest"></div>
+    <button class="big-btn" id="btnFunRetry" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 하기</button>
+    <button class="icon-btn" id="btnFunBack" style="margin-top:10px">◀ 목록으로</button>
   </section>
 
   <!-- THEME SELECT -->
@@ -458,6 +623,11 @@
       <div id="flashRead">도그</div>
       <div id="flashKo">강아지</div>
       <button class="icon-btn" id="btnFlashSpeak" style="margin-top:16px; font-size:22px;">🔊 듣기</button>
+      <div id="echoRow">
+        <button class="icon-btn" id="btnEchoRec">🎤 따라 말하기</button>
+        <button class="icon-btn" id="btnEchoPlay" style="display:none;">▶ 내 목소리</button>
+      </div>
+      <div id="echoHint"></div>
     </div>
     <div class="game-actions" style="margin-top:20px;">
       <button id="btnFlashPrev">◀ 이전</button>
@@ -1089,6 +1259,9 @@
       {emoji:'🏆', label:'스티커판', gradient:'linear-gradient(160deg,#8b6d2e,#3b2b10)', onClick:()=>{ buildStickerBoard(); showScreen('screen-stickers'); }},
       {emoji:'✈️', label:'여행 회화', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)', onClick:()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); }},
       {emoji:'🎨', label:'색칠놀이', gradient:'linear-gradient(160deg,#a83279,#3a0f52)', onClick:()=>{ buildColorCategoryGrid(); showScreen('screen-color-select'); }},
+      {emoji:'🧩', label:'퍼즐', gradient:'linear-gradient(160deg,#1f7a6b,#0b2b27)', onClick:()=>{ buildPuzzleSelect(); showScreen('screen-puzzle-select'); }},
+      {emoji:'👤', label:'그림자 찾기', gradient:'linear-gradient(160deg,#4b4f6b,#171a2e)', onClick:()=>{ buildShadowSelect(); showScreen('screen-shadow-select'); }},
+      {emoji:'📖', label:'그림책', gradient:'linear-gradient(160deg,#b5652a,#3b1f0a)', onClick:()=>{ buildBookList(); showScreen('screen-book-list'); }},
     ];
     games.forEach(g=>{
       const div = document.createElement('div');
@@ -1141,6 +1314,26 @@
       });
     });
     if(wordChips.length) sections.push({title:'🗣️ 단어놀이', chips:wordChips});
+
+    const puzzleStars = loadPuzzleStars();
+    const puzzleChips = [];
+    RASTER_COLORING_CATEGORIES.forEach(cat=>{
+      cat.items.forEach(item=>{
+        ['easy','hard'].forEach(diff=>{
+          const s = puzzleStars[puzzleKey(cat.id, item, diff)];
+          if(s!==undefined){ total += s; puzzleChips.push({icon:cat.emoji, label:item+(diff==='hard'?' (어려움)':' (쉬움)'), stars:s}); }
+        });
+      });
+    });
+    if(puzzleChips.length) sections.push({title:'🧩 퍼즐', chips:puzzleChips});
+
+    const shadowStars = loadShadowStars();
+    const shadowChips = [];
+    RASTER_COLORING_CATEGORIES.forEach(cat=>{
+      const s = shadowStars[cat.id];
+      if(s!==undefined){ total += s; shadowChips.push({icon:cat.emoji, label:cat.label, stars:s}); }
+    });
+    if(shadowChips.length) sections.push({title:'👤 그림자 찾기', chips:shadowChips});
 
     document.getElementById('stickerTotal').textContent = '⭐ '+total+'개 모았어요';
     let badge = '';
@@ -1628,8 +1821,13 @@
     }
     return item.emoji;
   }
-  // coloring/ 폴더의 AI 선그림을 단어놀이 그림카드로도 재사용한다 (카테고리_이름.png)
-  function wordImg(category, name){ return 'coloring/' + encodeURIComponent(category+'_'+name) + '.png'; }
+  // 단어 카드·퍼즐·그림자 찾기·그림책이 함께 쓰는 그림 경로.
+  // 지금은 색칠놀이용 선그림을 재사용하지만, 나중에 실제 사진으로 바꿀 때 이 함수 한 곳만
+  // 고치면 네 기능이 한꺼번에 바뀐다. (색칠놀이는 선이 있어야 칠할 수 있어서 rasterFilePath를 따로 쓴다)
+  function pictureSrc(category, name){
+    return 'coloring/' + encodeURIComponent(category+'_'+name) + (category==='동물' ? '.jpg' : '.png');
+  }
+  function wordImg(category, name){ return pictureSrc(category, name); }
   function buildImgWordData(category, rows){
     // rows: [ko, enWord, enRead, jaWord, jaRead, zhWord, zhRead]
     return rows.map(([ko,enWord,enRead,jaWord,jaRead,zhWord,zhRead]) => ({
@@ -2249,6 +2447,7 @@
   }
 
   function renderFlashcard(){
+    resetEcho(); // 카드를 넘기면 이전 단어의 녹음은 의미가 없으니 지운다
     const lang = currentWordLang(), topic = currentWordTopic();
     const items = currentWordItems();
     const item = items[wordState.cardIndex];
@@ -3691,6 +3890,792 @@
   document.getElementById('btnColorSelectHome').addEventListener('click', ()=> showScreen('screen-home'));
   document.getElementById('btnColorItemsBack').addEventListener('click', ()=>{ buildColorCategoryGrid(); showScreen('screen-color-select'); });
   document.getElementById('btnColorCanvasHome').addEventListener('click', ()=>{ buildColorItemsGrid(colorState.currentCatKey); showScreen('screen-color-items'); });
+
+  // =====================================================================
+  // 🎤 따라 말하기 (단어 카드)
+  // 아이 목소리를 녹음해서 바로 들려주기만 한다. 발음 채점은 아이 발음·주변 소음 때문에
+  // 정확도를 보장하기 어려워서, 틀렸다고 잘못 판정해 의욕을 꺾을 바에는 넣지 않기로 했다.
+  // =====================================================================
+  const ECHO_SECONDS = 3;
+  const echo = { rec:null, stream:null, url:null, timer:null, left:0, audio:null, token:0 };
+
+  function setEchoHint(text){ document.getElementById('echoHint').textContent = text || ''; }
+  function setEchoRecBtn(recording){
+    document.getElementById('btnEchoRec').textContent = recording ? ('🔴 듣는 중… '+echo.left) : '🎤 따라 말하기';
+  }
+  function releaseEchoStream(){
+    if(echo.stream){ echo.stream.getTracks().forEach(t=>t.stop()); echo.stream = null; }
+  }
+  function stopEchoRecording(discard){
+    clearInterval(echo.timer); echo.timer = null;
+    const rec = echo.rec;
+    echo.rec = null;
+    if(rec && rec.state !== 'inactive'){ rec._discard = !!discard; rec.stop(); }
+    else releaseEchoStream();
+    setEchoRecBtn(false);
+  }
+  function resetEcho(){
+    echo.token++; // 마이크 권한 창이 떠 있는 사이 카드를 넘겼다면, 그 뒤에 녹음이 시작되지 않게 한다
+    stopEchoRecording(true);
+    if(echo.audio){ echo.audio.pause(); echo.audio = null; }
+    if(echo.url){ URL.revokeObjectURL(echo.url); echo.url = null; }
+    document.getElementById('btnEchoPlay').style.display = 'none';
+    setEchoHint('');
+  }
+  function playEcho(){
+    if(!echo.url) return;
+    if(muted){ setEchoHint('🔇 소리가 꺼져 있어요. 오른쪽 위 버튼으로 켜 주세요.'); return; }
+    if(echo.audio) echo.audio.pause();
+    echo.audio = new Audio(echo.url);
+    echo.audio.play().catch(()=>{});
+    setEchoHint('내 목소리예요! 🔊 듣기와 비교해 보세요.');
+  }
+  async function startEchoRecording(){
+    if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)){
+      setEchoHint('이 브라우저에서는 녹음을 쓸 수 없어요.');
+      return;
+    }
+    stopSpeaking(); // 단어 읽어주는 소리가 녹음에 섞이지 않게
+    if(echo.audio) echo.audio.pause();
+    const token = echo.token;
+    let stream;
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ setEchoHint('마이크 사용을 허락해야 녹음할 수 있어요.'); return; }
+    if(token !== echo.token){ stream.getTracks().forEach(t=>t.stop()); return; }
+    echo.stream = stream;
+    const chunks = [];
+    const rec = new MediaRecorder(stream);
+    rec.ondataavailable = (e)=>{ if(e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop = ()=>{
+      releaseEchoStream();
+      if(rec._discard || !chunks.length) return;
+      if(echo.url) URL.revokeObjectURL(echo.url);
+      echo.url = URL.createObjectURL(new Blob(chunks, {type: rec.mimeType || 'audio/webm'}));
+      document.getElementById('btnEchoPlay').style.display = '';
+      playEcho();
+    };
+    echo.rec = rec;
+    rec.start();
+    echo.left = ECHO_SECONDS;
+    setEchoRecBtn(true);
+    setEchoHint('단어를 따라 말해 보세요!');
+    echo.timer = setInterval(()=>{
+      echo.left--;
+      if(echo.left <= 0) stopEchoRecording(false);
+      else setEchoRecBtn(true);
+    }, 1000);
+  }
+  function stopSpeaking(){ try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} }
+  document.getElementById('btnEchoRec').addEventListener('click', ()=>{
+    if(echo.rec) stopEchoRecording(false); // 녹음 중에 다시 누르면 바로 끝내고 들려준다
+    else startEchoRecording();
+  });
+  document.getElementById('btnEchoPlay').addEventListener('click', playEcho);
+  document.getElementById('btnWordCardHome').addEventListener('click', resetEcho);
+
+  // =====================================================================
+  // 퍼즐·그림자 찾기·그림책 공용
+  // =====================================================================
+  function pictureCategories(){ return RASTER_COLORING_CATEGORIES; }
+  function loadImage(src){
+    return new Promise((resolve, reject)=>{
+      const img = new Image();
+      img.onload = ()=> resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+  function starsFromMistakes(n){ return n===0 ? 3 : (n<=2 ? 2 : 1); }
+  function starText(n){ return '⭐'.repeat(n)+'☆'.repeat(3-n); }
+  function hasBatchim(word){
+    const ch = word.charCodeAt(word.length-1);
+    if(ch < 0xAC00 || ch > 0xD7A3) return false;
+    return (ch-0xAC00) % 28 !== 0;
+  }
+
+  let funRetryAction = null, funBackAction = null;
+  function showFunResult(opts){
+    document.getElementById('funResultTitle').textContent = opts.title;
+    document.getElementById('funResultStars').textContent = starText(opts.stars);
+    document.getElementById('funResultMsg').textContent = opts.msg;
+    document.getElementById('funResultBest').textContent = opts.best;
+    funRetryAction = opts.onRetry;
+    funBackAction = opts.onBack;
+    sfxWin();
+    setTimeout(()=>{ showScreen('screen-fun-result'); launchConfetti(['#ffd93d','#7bd8ff','#8bd450','#ffffff']); }, 300);
+  }
+  document.getElementById('btnFunRetry').addEventListener('click', ()=>{ if(funRetryAction) funRetryAction(); });
+  document.getElementById('btnFunBack').addEventListener('click', ()=>{ if(funBackAction) funBackAction(); });
+
+  // =====================================================================
+  // 🧩 퍼즐
+  // 흩어진 조각을 빈 판에 옮기는 방식은 24조각이면 폰 화면에 조각을 둘 자리가 모자라서,
+  // 판 위에서 두 조각의 자리를 바꾸는 방식으로 만들었다(끌어서 놓거나, 두 조각을 차례로 누름).
+  // =====================================================================
+  const PUZZLE_STARS_KEY = 'fingerMazePuzzleStars_v1';
+  const PUZZLE_DIFF_KEY = 'fingerMazePuzzleDiff';
+  const PUZZLE_PIECES = { easy:12, hard:24 };
+  function loadPuzzleStars(){ try{ return JSON.parse(localStorage.getItem(PUZZLE_STARS_KEY)||'{}'); }catch(e){ return {}; } }
+  function savePuzzleStars(map){ try{ localStorage.setItem(PUZZLE_STARS_KEY, JSON.stringify(map)); }catch(e){} }
+  function puzzleKey(catId, item, diff){ return catId+'|'+item+'|'+diff; }
+
+  const puzzleSel = { catId:null, diff:'easy' };
+  try{ const d = localStorage.getItem(PUZZLE_DIFF_KEY); if(d==='easy' || d==='hard') puzzleSel.diff = d; }catch(e){}
+  let puzzle = null;
+  let puzzleToken = 0;
+  let puzzleDrag = null;
+
+  function buildPuzzleSelect(){
+    const cats = pictureCategories();
+    if(!puzzleSel.catId) puzzleSel.catId = cats[0].id;
+    document.querySelectorAll('#puzzleDiffSeg button').forEach(b=> b.classList.toggle('selected', b.dataset.diff===puzzleSel.diff));
+    const row = document.getElementById('puzzleCatRow');
+    row.innerHTML = '';
+    cats.forEach(cat=>{
+      const b = document.createElement('button');
+      b.textContent = cat.emoji+' '+cat.label;
+      if(cat.id===puzzleSel.catId) b.classList.add('selected');
+      b.addEventListener('click', ()=>{ puzzleSel.catId = cat.id; buildPuzzleSelect(); });
+      row.appendChild(b);
+    });
+    const grid = document.getElementById('puzzleThumbGrid');
+    grid.innerHTML = '';
+    const cat = cats.find(c=>c.id===puzzleSel.catId);
+    const stars = loadPuzzleStars();
+    cat.items.forEach(item=>{
+      const card = document.createElement('div');
+      card.className = 'thumb-card';
+      const s = stars[puzzleKey(cat.id, item, puzzleSel.diff)];
+      card.innerHTML = '<img loading="lazy" alt="" src="'+pictureSrc(cat.id, item)+'"><span>'+item+'</span>'
+        + (s ? '<div class="thumb-star">'+'⭐'.repeat(s)+'</div>' : '');
+      card.addEventListener('click', ()=>{ recordPlayToday(); startPuzzle(cat.id, item); });
+      grid.appendChild(card);
+    });
+  }
+  document.querySelectorAll('#puzzleDiffSeg button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      puzzleSel.diff = b.dataset.diff;
+      try{ localStorage.setItem(PUZZLE_DIFF_KEY, puzzleSel.diff); }catch(e){}
+      buildPuzzleSelect();
+    });
+  });
+
+  // 선그림은 가장자리 흰 여백이 넓어서 그대로 자르면 빈 조각이 너무 많아진다.
+  // 내용이 있는 부분만 남기고, 판이 지나치게 길쭉해지지 않게 가로:세로를 0.6~1.67 안으로 맞춘다.
+  function trimPictureForPuzzle(img){
+    const MAX = 900; // 나중에 큰 사진으로 바꿔도 폰에서 가볍게 다루도록 긴 변을 제한
+    const scale = Math.min(1, MAX/Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.max(1, Math.round(img.naturalWidth*scale));
+    const h = Math.max(1, Math.round(img.naturalHeight*scale));
+    const src = document.createElement('canvas'); src.width = w; src.height = h;
+    const sctx = src.getContext('2d');
+    sctx.fillStyle = '#fff'; sctx.fillRect(0,0,w,h);
+    sctx.drawImage(img, 0, 0, w, h);
+    const d = sctx.getImageData(0,0,w,h).data;
+    let minX=w, minY=h, maxX=-1, maxY=-1;
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const i = (y*w+x)*4;
+        if(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2] < 235){
+          if(x<minX) minX=x; if(x>maxX) maxX=x; if(y<minY) minY=y; if(y>maxY) maxY=y;
+        }
+      }
+    }
+    if(maxX<0){ minX=0; minY=0; maxX=w-1; maxY=h-1; }
+    const pad = Math.round(Math.max(maxX-minX, maxY-minY)*0.04);
+    const cx0 = Math.max(0, minX-pad), cy0 = Math.max(0, minY-pad);
+    const cw = Math.min(w-1, maxX+pad) - cx0 + 1, ch = Math.min(h-1, maxY+pad) - cy0 + 1;
+    let outW = cw, outH = ch;
+    if(outW/outH > 1.67) outH = Math.round(outW/1.67);
+    if(outW/outH < 0.6) outW = Math.round(outH*0.6);
+    const out = document.createElement('canvas'); out.width = outW; out.height = outH;
+    const octx = out.getContext('2d');
+    octx.fillStyle = '#fff'; octx.fillRect(0,0,outW,outH);
+    octx.drawImage(src, cx0, cy0, cw, ch, Math.round((outW-cw)/2), Math.round((outH-ch)/2), cw, ch);
+    return out;
+  }
+
+  // 조각이 최대한 정사각형에 가깝도록 가로·세로 칸 수를 고른다 (12조각이면 3×4 또는 4×3 등)
+  function choosePuzzleGrid(pieces, aspect){
+    let best = null;
+    for(let cols=2; cols<=pieces; cols++){
+      if(pieces % cols) continue;
+      const rows = pieces/cols;
+      const score = Math.abs(Math.log(aspect*rows/cols));
+      if(!best || score < best.score) best = {cols, rows, score};
+    }
+    return best;
+  }
+
+  // 조각마다 내용을 6×6으로 줄인 "지문"을 만든다. 선그림의 빈 흰 조각처럼 생김새가 똑같은
+  // 조각끼리는 어느 자리에 들어가도 정답으로 쳐야 해서, 조각 번호 대신 이 지문으로 비교한다.
+  function computePieceSigs(canvas, cols, rows){
+    const s = document.createElement('canvas'); s.width = 6; s.height = 6;
+    const sx = s.getContext('2d');
+    const pw = canvas.width/cols, ph = canvas.height/rows;
+    const sigs = [];
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        sx.clearRect(0,0,6,6);
+        sx.drawImage(canvas, c*pw, r*ph, pw, ph, 0, 0, 6, 6);
+        const d = sx.getImageData(0,0,6,6).data;
+        let sig = '';
+        for(let i=0;i<d.length;i+=4) sig += (d[i]>>5)+'.'+(d[i+1]>>5)+'.'+(d[i+2]>>5)+',';
+        sigs.push(sig);
+      }
+    }
+    return sigs;
+  }
+  function canvasToObjectURL(canvas){
+    return new Promise((resolve, reject)=>{
+      canvas.toBlob(b=> b ? resolve(URL.createObjectURL(b)) : reject(new Error('toBlob failed')), 'image/png');
+    });
+  }
+
+  async function startPuzzle(catId, item){
+    const token = ++puzzleToken;
+    const pieces = PUZZLE_PIECES[puzzleSel.diff];
+    showScreen('screen-puzzle-game');
+    document.getElementById('puzzleInfo').textContent = item;
+    document.getElementById('puzzleProgress').textContent = '준비 중…';
+    document.getElementById('puzzleBoard').innerHTML = '';
+    document.getElementById('puzzleGhost').classList.remove('show');
+    let img;
+    try{ img = await loadImage(pictureSrc(catId, item)); }
+    catch(e){ document.getElementById('puzzleProgress').textContent = '그림을 못 불러왔어요'; return; }
+    if(token !== puzzleToken) return;
+    let url, imgW, imgH, sigs = null, grid;
+    try{
+      const trimmed = trimPictureForPuzzle(img);
+      imgW = trimmed.width; imgH = trimmed.height;
+      grid = choosePuzzleGrid(pieces, imgW/imgH);
+      sigs = computePieceSigs(trimmed, grid.cols, grid.rows);
+      url = await canvasToObjectURL(trimmed);
+    }catch(e){
+      // file://로 직접 열면 캔버스 픽셀을 읽을 수 없다. 이때는 원본을 그대로 쓰고 조각 번호로만 정답을 판단한다.
+      imgW = img.naturalWidth; imgH = img.naturalHeight;
+      grid = choosePuzzleGrid(pieces, imgW/imgH);
+      url = img.src;
+    }
+    if(token !== puzzleToken){ if(url.startsWith('blob:')) URL.revokeObjectURL(url); return; }
+    if(puzzle && puzzle.url && puzzle.url.startsWith('blob:')) URL.revokeObjectURL(puzzle.url);
+    puzzle = {
+      catId, item, diff:puzzleSel.diff, cols:grid.cols, rows:grid.rows, n:pieces, url, imgW, imgH,
+      sigs: sigs || Array.from({length:pieces}, (_,i)=>String(i)),
+      order:[], locked:new Set(), moves:0, selected:-1, done:false, pw:0, ph:0,
+    };
+    shufflePuzzle();
+  }
+
+  function puzzleCorrectAt(slot){ return puzzle.sigs[puzzle.order[slot]] === puzzle.sigs[slot]; }
+
+  function shufflePuzzle(){
+    const n = puzzle.n;
+    // 처음부터 제자리인 조각이 가장 적은 배치를 고른다 (제자리 조각은 바로 고정돼서 할 일이 줄어든다)
+    let bestOrder = null, bestFixed = Infinity;
+    for(let t=0; t<40; t++){
+      const order = shuffle(Array.from({length:n}, (_,i)=>i));
+      let fixed = 0;
+      for(let s=0;s<n;s++) if(puzzle.sigs[order[s]] === puzzle.sigs[s]) fixed++;
+      if(fixed < bestFixed){ bestFixed = fixed; bestOrder = order; if(fixed===0) break; }
+    }
+    puzzle.order = bestOrder;
+    puzzle.locked = new Set();
+    for(let s=0;s<n;s++) if(puzzleCorrectAt(s)) puzzle.locked.add(s);
+    puzzle.moves = 0; puzzle.selected = -1; puzzle.done = false;
+    document.getElementById('puzzleGhost').classList.remove('show');
+    renderPuzzle();
+  }
+
+  function layoutPuzzleBoard(){
+    const aspect = puzzle.imgW/puzzle.imgH;
+    const maxW = Math.min(window.innerWidth-32, 440);
+    const maxH = Math.max(220, window.innerHeight-250); // 위쪽 제목·안내문과 아래 버튼 자리를 뺀 높이
+    let bw = maxW, bh = bw/aspect;
+    if(bh > maxH){ bh = maxH; bw = bh*aspect; }
+    puzzle.pw = Math.floor(bw/puzzle.cols);
+    puzzle.ph = Math.floor(bh/puzzle.rows);
+  }
+
+  function renderPuzzle(){
+    layoutPuzzleBoard();
+    const {cols, rows, pw, ph} = puzzle;
+    const board = document.getElementById('puzzleBoard');
+    board.classList.toggle('solved', puzzle.done);
+    board.style.gridTemplateColumns = 'repeat('+cols+','+pw+'px)';
+    board.style.gridTemplateRows = 'repeat('+rows+','+ph+'px)';
+    board.innerHTML = '';
+    const bgImage = 'url("'+puzzle.url+'")';
+    const bgSize = (pw*cols)+'px '+(ph*rows)+'px';
+    for(let s=0; s<puzzle.n; s++){
+      const p = puzzle.order[s];
+      const el = document.createElement('div');
+      el.className = 'puzzle-piece';
+      el.dataset.slot = s;
+      el.style.width = pw+'px';
+      el.style.height = ph+'px';
+      el.style.backgroundImage = bgImage;
+      el.style.backgroundSize = bgSize;
+      el.style.backgroundPosition = (-(p%cols)*pw)+'px '+(-Math.floor(p/cols)*ph)+'px';
+      if(puzzle.locked.has(s)) el.classList.add('locked');
+      if(puzzle.selected===s) el.classList.add('selected');
+      board.appendChild(el);
+    }
+    document.getElementById('puzzleGhost').style.backgroundImage = bgImage;
+    document.getElementById('puzzleProgress').textContent = puzzle.locked.size+' / '+puzzle.n;
+  }
+
+  function swapPuzzle(a, b){
+    if(a===b || puzzle.locked.has(a) || puzzle.locked.has(b)){ renderPuzzle(); return; }
+    const o = puzzle.order;
+    [o[a], o[b]] = [o[b], o[a]];
+    puzzle.moves++;
+    const newly = [];
+    [a, b].forEach(s=>{ if(puzzleCorrectAt(s)){ puzzle.locked.add(s); newly.push(s); } });
+    if(newly.length) sfxCorrect(); else sfxTick();
+    renderPuzzle();
+    newly.forEach(s=>{
+      const el = document.querySelector('#puzzleBoard .puzzle-piece[data-slot="'+s+'"]');
+      if(el) el.classList.add('just-locked');
+    });
+    if(puzzle.locked.size === puzzle.n) finishPuzzle();
+  }
+
+  function finishPuzzle(){
+    puzzle.done = true;
+    renderPuzzle();
+    const done = puzzle;
+    const n = done.n;
+    const stars = done.moves <= n+2 ? 3 : (done.moves <= Math.round(n*1.6) ? 2 : 1);
+    const map = loadPuzzleStars();
+    const key = puzzleKey(done.catId, done.item, done.diff);
+    const prev = map[key];
+    if(prev===undefined || stars>prev){ map[key] = stars; savePuzzleStars(map); }
+    const best = Math.max(prev||0, stars);
+    speak(done.item, 'ko-KR');
+    const token = puzzleToken;
+    setTimeout(()=>{
+      if(token !== puzzleToken) return; // 그 사이 다른 퍼즐로 넘어갔으면 결과 화면을 띄우지 않는다
+      showFunResult({
+        title:'🧩 완성!', stars,
+        msg: done.item+' 퍼즐을 '+done.moves+'번 만에 맞췄어요',
+        best: '최고 기록: '+starText(best),
+        onRetry: ()=>{ puzzleSel.diff = done.diff; startPuzzle(done.catId, done.item); },
+        onBack: ()=>{ buildPuzzleSelect(); showScreen('screen-puzzle-select'); },
+      });
+    }, 1100);
+  }
+
+  document.getElementById('puzzleBoard').addEventListener('pointerdown', (e)=>{
+    if(!puzzle || puzzle.done) return;
+    const el = e.target.closest('.puzzle-piece');
+    if(!el) return;
+    const slot = Number(el.dataset.slot);
+    if(puzzle.locked.has(slot)) return;
+    e.preventDefault();
+    puzzleDrag = { slot, startX:e.clientX, startY:e.clientY, clone:null, moved:false, target:-1, pointerId:e.pointerId, offX:0, offY:0 };
+  });
+  document.addEventListener('pointermove', (e)=>{
+    if(!puzzleDrag || e.pointerId !== puzzleDrag.pointerId) return;
+    const dx = e.clientX-puzzleDrag.startX, dy = e.clientY-puzzleDrag.startY;
+    if(!puzzleDrag.moved && Math.hypot(dx, dy) < 8) return; // 살짝 떨린 건 끌기가 아니라 누름으로 본다
+    if(!puzzleDrag.moved){
+      const src = document.querySelector('#puzzleBoard .puzzle-piece[data-slot="'+puzzleDrag.slot+'"]');
+      if(!src){ puzzleDrag = null; return; }
+      puzzleDrag.moved = true;
+      const rect = src.getBoundingClientRect();
+      const clone = document.createElement('div');
+      clone.className = 'puzzle-drag';
+      clone.style.width = rect.width+'px';
+      clone.style.height = rect.height+'px';
+      clone.style.backgroundImage = src.style.backgroundImage;
+      clone.style.backgroundSize = src.style.backgroundSize;
+      clone.style.backgroundPosition = src.style.backgroundPosition;
+      document.body.appendChild(clone);
+      puzzleDrag.clone = clone;
+      puzzleDrag.offX = puzzleDrag.startX-rect.left;
+      puzzleDrag.offY = puzzleDrag.startY-rect.top;
+      src.style.opacity = '.35';
+      if(puzzle.selected >= 0){ puzzle.selected = -1; document.querySelectorAll('#puzzleBoard .selected').forEach(x=>x.classList.remove('selected')); }
+    }
+    puzzleDrag.clone.style.left = (e.clientX-puzzleDrag.offX)+'px';
+    puzzleDrag.clone.style.top = (e.clientY-puzzleDrag.offY)+'px';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    const tEl = under && under.closest ? under.closest('#puzzleBoard .puzzle-piece') : null;
+    const t = tEl ? Number(tEl.dataset.slot) : -1;
+    const target = (t>=0 && t!==puzzleDrag.slot && !puzzle.locked.has(t)) ? t : -1;
+    if(target !== puzzleDrag.target){
+      document.querySelectorAll('#puzzleBoard .drop-target').forEach(x=>x.classList.remove('drop-target'));
+      puzzleDrag.target = target;
+      if(target >= 0) tEl.classList.add('drop-target');
+    }
+  });
+  document.addEventListener('pointerup', (e)=>{
+    if(!puzzleDrag || e.pointerId !== puzzleDrag.pointerId) return;
+    const d = puzzleDrag;
+    puzzleDrag = null;
+    if(d.clone) d.clone.remove();
+    if(!puzzle || puzzle.done) return;
+    if(d.moved){
+      if(d.target >= 0) swapPuzzle(d.slot, d.target);
+      else renderPuzzle();
+      return;
+    }
+    // 끌지 않고 톡 누른 경우: 첫 번째로 누른 조각을 고르고, 두 번째로 누른 조각과 자리를 바꾼다
+    if(puzzle.selected < 0){ puzzle.selected = d.slot; renderPuzzle(); }
+    else if(puzzle.selected === d.slot){ puzzle.selected = -1; renderPuzzle(); }
+    else { const a = puzzle.selected; puzzle.selected = -1; swapPuzzle(a, d.slot); }
+  });
+  document.addEventListener('pointercancel', (e)=>{
+    if(!puzzleDrag || e.pointerId !== puzzleDrag.pointerId) return;
+    if(puzzleDrag.clone) puzzleDrag.clone.remove();
+    puzzleDrag = null;
+    if(puzzle) renderPuzzle();
+  });
+  document.getElementById('btnPuzzlePeek').addEventListener('click', ()=>{
+    document.getElementById('puzzleGhost').classList.toggle('show');
+  });
+  document.getElementById('btnPuzzleShuffle').addEventListener('click', ()=>{ if(puzzle && !puzzle.done) shufflePuzzle(); });
+  document.getElementById('btnPuzzleGameBack').addEventListener('click', ()=>{ puzzleToken++; buildPuzzleSelect(); showScreen('screen-puzzle-select'); });
+  document.getElementById('btnPuzzleSelectBack').addEventListener('click', ()=> showScreen('screen-home'));
+  window.addEventListener('resize', ()=>{
+    if(puzzle && screens['screen-puzzle-game'].classList.contains('active') && !puzzleDrag) renderPuzzle();
+  });
+
+  // =====================================================================
+  // 👤 그림자 찾기
+  // =====================================================================
+  const SHADOW_STARS_KEY = 'fingerMazeShadowStars_v1';
+  const SHADOW_ROUNDS = 8;
+  const SHADOW_MASK_SIZE = 160;
+  function loadShadowStars(){ try{ return JSON.parse(localStorage.getItem(SHADOW_STARS_KEY)||'{}'); }catch(e){ return {}; } }
+  function saveShadowStars(map){ try{ localStorage.setItem(SHADOW_STARS_KEY, JSON.stringify(map)); }catch(e){} }
+  const shadowMaskCache = new Map();
+  let shadow = null;
+  let shadowToken = 0;
+
+  // 그림에서 그림자 모양(배경이 아닌 부분)을 뽑는다.
+  // 배경을 지운 투명 PNG(나중에 사진으로 바꿀 때)는 투명도를 그대로 쓰고, 선그림처럼 흰 배경이면
+  // 가장자리부터 흰 영역을 채워 나가 배경을 찾는다. 윤곽선의 작은 틈으로 안쪽까지 새지 않게 선을 2px 두껍게 본다.
+  function buildShadowMask(img){
+    const S = SHADOW_MASK_SIZE;
+    const c = document.createElement('canvas'); c.width = S; c.height = S;
+    const x = c.getContext('2d');
+    const sc = Math.min(S/img.naturalWidth, S/img.naturalHeight)*0.92;
+    const w = img.naturalWidth*sc, h = img.naturalHeight*sc;
+    const ox = (S-w)/2, oy = (S-h)/2;
+    x.drawImage(img, ox, oy, w, h);
+    const d = x.getImageData(0,0,S,S).data;
+    const n = S*S;
+    const mask = new Uint8Array(n);
+    let transparent = 0, inside = 0;
+    for(let yy=Math.ceil(oy)+1; yy<=Math.floor(oy+h)-2; yy+=2){
+      for(let xx=Math.ceil(ox)+1; xx<=Math.floor(ox+w)-2; xx+=2){
+        inside++;
+        if(d[(yy*S+xx)*4+3] < 200) transparent++;
+      }
+    }
+    if(inside && transparent/inside > 0.05){
+      for(let i=0;i<n;i++) mask[i] = d[i*4+3] > 128 ? 1 : 0;
+      return mask;
+    }
+    let wall = new Uint8Array(n);
+    for(let i=0;i<n;i++){
+      if(d[i*4+3] >= 10 && (0.299*d[i*4]+0.587*d[i*4+1]+0.114*d[i*4+2]) < 200) wall[i] = 1;
+    }
+    wall = dilateWallMask(wall, S, S, 2);
+    const bg = new Uint8Array(n);
+    const q = new Int32Array(n);
+    let qh = 0, qt = 0;
+    const push = (i)=>{ if(!bg[i] && !wall[i]){ bg[i] = 1; q[qt++] = i; } };
+    for(let i=0;i<S;i++){ push(i); push((S-1)*S+i); push(i*S); push(i*S+S-1); }
+    while(qh < qt){
+      const i = q[qh++], px = i%S, py = (i/S)|0;
+      if(px>0) push(i-1);
+      if(px<S-1) push(i+1);
+      if(py>0) push(i-S);
+      if(py<S-1) push(i+S);
+    }
+    for(let i=0;i<n;i++) mask[i] = bg[i] ? 0 : 1;
+    return mask;
+  }
+  function maskIoU(a, b){
+    let inter = 0, uni = 0;
+    for(let i=0;i<a.length;i++){
+      if(a[i] && b[i]) inter++;
+      if(a[i] || b[i]) uni++;
+    }
+    return uni ? inter/uni : 1;
+  }
+  function drawShadow(mask){
+    const S = SHADOW_MASK_SIZE;
+    const cv = document.getElementById('shadowCanvas');
+    cv.width = S; cv.height = S;
+    const x = cv.getContext('2d');
+    const id = x.createImageData(S, S);
+    for(let i=0;i<S*S;i++){
+      if(mask[i]){ id.data[i*4] = 29; id.data[i*4+1] = 33; id.data[i*4+2] = 64; id.data[i*4+3] = 255; }
+    }
+    x.putImageData(id, 0, 0);
+  }
+  function revealShadow(img){
+    const S = SHADOW_MASK_SIZE;
+    const x = document.getElementById('shadowCanvas').getContext('2d');
+    x.clearRect(0,0,S,S);
+    const sc = Math.min(S/img.naturalWidth, S/img.naturalHeight)*0.92;
+    const w = img.naturalWidth*sc, h = img.naturalHeight*sc;
+    x.drawImage(img, (S-w)/2, (S-h)/2, w, h);
+  }
+
+  function buildShadowSelect(){
+    const wrap = document.getElementById('shadowCatGrid');
+    wrap.innerHTML = '';
+    const stars = loadShadowStars();
+    pictureCategories().forEach(cat=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      const s = stars[cat.id];
+      const starLine = s!==undefined ? '<span style="font-size:13px; opacity:.85; display:block; margin-top:2px;">'+starText(s)+'</span>' : '';
+      div.innerHTML = '<span class="emoji">'+cat.emoji+'</span><span class="name">'+cat.label+'</span>'+starLine;
+      div.addEventListener('click', ()=>{ recordPlayToday(); startShadow(cat.id); });
+      wrap.appendChild(div);
+    });
+  }
+
+  async function startShadow(catId){
+    const token = ++shadowToken;
+    const cat = pictureCategories().find(c=>c.id===catId);
+    showScreen('screen-shadow-game');
+    document.getElementById('shadowInfo').textContent = cat.emoji+' '+cat.label;
+    document.getElementById('shadowProgress').textContent = '';
+    document.getElementById('shadowQuestion').textContent = '그림자를 준비하고 있어요…';
+    document.getElementById('shadowOptions').innerHTML = '';
+    const cv = document.getElementById('shadowCanvas');
+    cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+    const entries = await Promise.all(cat.items.map(async name=>{
+      const key = catId+'|'+name;
+      try{
+        const img = await loadImage(pictureSrc(catId, name));
+        if(!shadowMaskCache.has(key)) shadowMaskCache.set(key, buildShadowMask(img));
+        return {name, img, mask:shadowMaskCache.get(key)};
+      }catch(e){ return null; }
+    }));
+    if(token !== shadowToken) return;
+    const pool = entries.filter(Boolean);
+    if(pool.length < 4){
+      document.getElementById('shadowQuestion').textContent = '그림을 불러오지 못했어요. 잠시 뒤 다시 해 주세요.';
+      return;
+    }
+    shadow = {
+      catId, pool,
+      order: shuffle(pool.map((_,i)=>i)).slice(0, Math.min(SHADOW_ROUNDS, pool.length)),
+      idx:0, roundMistakes:0, mistakesThisQ:0, locked:false,
+    };
+    nextShadowRound();
+  }
+
+  function nextShadowRound(){
+    if(shadow.idx >= shadow.order.length){ finishShadow(); return; }
+    shadow.locked = false;
+    shadow.mistakesThisQ = 0;
+    const target = shadow.pool[shadow.order[shadow.idx]];
+    document.getElementById('shadowProgress').textContent = (shadow.idx+1)+' / '+shadow.order.length;
+    document.getElementById('shadowQuestion').textContent = '이 그림자는 누구일까요?';
+    drawShadow(target.mask);
+    // 그림자가 거의 똑같은 보기(동그란 과일끼리 등)는 아이가 구분할 수 없으니 되도록 빼고 고른다
+    const others = shuffle(shadow.pool.filter(p=>p!==target));
+    const picks = others.filter(p=>maskIoU(p.mask, target.mask) < 0.72).slice(0, 3);
+    for(const p of others){ if(picks.length >= 3) break; if(!picks.includes(p)) picks.push(p); }
+    const wrap = document.getElementById('shadowOptions');
+    wrap.innerHTML = '';
+    shuffle([target, ...picks]).forEach(opt=>{
+      const b = document.createElement('div');
+      b.className = 'shadow-opt';
+      const im = document.createElement('img');
+      im.src = opt.img.src;
+      im.alt = '';
+      b.appendChild(im);
+      b.addEventListener('click', ()=> answerShadow(opt, target, b));
+      wrap.appendChild(b);
+    });
+  }
+
+  function answerShadow(opt, target, el){
+    if(!shadow || shadow.locked) return;
+    if(opt === target){
+      shadow.locked = true;
+      el.classList.add('correct');
+      revealShadow(target.img);
+      sfxCorrect();
+      speak(target.name, 'ko-KR');
+      document.getElementById('shadowQuestion').textContent = '정답! '+target.name+(hasBatchim(target.name) ? '이었어요' : '였어요');
+      if(shadow.mistakesThisQ > 0) shadow.roundMistakes++;
+      const token = shadowToken;
+      setTimeout(()=>{
+        if(token !== shadowToken) return;
+        shadow.idx++;
+        nextShadowRound();
+      }, 1300);
+    } else {
+      shadow.mistakesThisQ++;
+      el.classList.add('wrong');
+      setTimeout(()=> el.classList.remove('wrong'), 300);
+      wallFeedback();
+    }
+  }
+
+  function finishShadow(){
+    const done = shadow;
+    const stars = starsFromMistakes(done.roundMistakes);
+    const map = loadShadowStars();
+    const prev = map[done.catId];
+    if(prev===undefined || stars>prev){ map[done.catId] = stars; saveShadowStars(map); }
+    const best = Math.max(prev||0, stars);
+    showFunResult({
+      title:'👤 다 찾았어요!', stars,
+      msg: done.order.length+'개 그림자를 모두 맞혔어요',
+      best: '최고 기록: '+starText(best),
+      onRetry: ()=> startShadow(done.catId),
+      onBack: ()=>{ buildShadowSelect(); showScreen('screen-shadow-select'); },
+    });
+  }
+  document.getElementById('btnShadowSelectBack').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnShadowGameBack').addEventListener('click', ()=>{ shadowToken++; buildShadowSelect(); showScreen('screen-shadow-select'); });
+
+  // =====================================================================
+  // 📖 미니 그림책 — 그림 카드를 짧은 이야기로 엮어 한 장씩 읽어준다.
+  // 한국어/영어 중 고른 말로 읽어주고, 다른 말은 작게 함께 보여줘서 두 언어를 나란히 익히게 했다.
+  // =====================================================================
+  const BOOK_LANG_KEY = 'fingerMazeBookLang';
+  function pg(cat, item, ko, en){ return {cat, item, ko, en}; }
+  const BOOKS = [
+    { emoji:'🍎', title:'과일 가게에 가요', titleEn:'At the Fruit Shop', gradient:'linear-gradient(160deg,#d6336c,#4a0e2a)', pages:[
+      pg('과일','사과','빨간 사과가 있어요. 사과는 아삭아삭 맛있어요.','Here is a red apple. Apples are crunchy and yummy.'),
+      pg('과일','바나나','노란 바나나는 껍질을 벗겨서 먹어요.','We peel the yellow banana before we eat it.'),
+      pg('과일','포도','포도는 알알이 동글동글 모여 있어요.','Grapes grow together in round little bunches.'),
+      pg('과일','딸기','딸기에는 작은 씨가 콕콕 박혀 있어요.','Strawberries have tiny seeds all over them.'),
+      pg('과일','파인애플','파인애플은 뾰족뾰족 왕관을 썼어요.','The pineapple wears a spiky crown.'),
+      pg('과일','귤','새콤달콤 귤을 친구와 나눠 먹어요. 끝!','Let\'s share a sweet tangerine with a friend. The end!'),
+    ]},
+    { emoji:'🐠', title:'바닷속 친구들', titleEn:'Friends Under the Sea', gradient:'linear-gradient(160deg,#0f5372,#04324d)', pages:[
+      pg('바다생물','물고기','바닷속으로 풍덩! 물고기가 반갑게 인사해요.','Splash into the sea! A fish says hello.'),
+      pg('바다생물','돌고래','돌고래는 물 위로 높이 뛰어올라요.','The dolphin jumps high out of the water.'),
+      pg('바다생물','바다거북','바다거북은 천천히 헤엄치며 먼 길을 여행해요.','The sea turtle swims slowly on a long trip.'),
+      pg('바다생물','해파리','해파리는 둥실둥실 물에 떠다녀요.','The jellyfish floats gently in the water.'),
+      pg('바다생물','게','게는 옆으로 옆으로 걸어요.','The crab walks sideways, step by step.'),
+      pg('바다생물','고래','커다란 고래가 물을 뿜으며 인사해요. 끝!','The big whale sprays water to say goodbye. The end!'),
+    ]},
+    { emoji:'🦕', title:'공룡 시대로!', titleEn:'Back to the Dinosaurs!', gradient:'linear-gradient(160deg,#3d5a1c,#131f09)', pages:[
+      pg('공룡','공룡 알','커다란 알이 흔들흔들, 톡! 누가 나올까요?','A big egg wobbles and cracks. Who is inside?'),
+      pg('공룡','트리케라톱스','뿔이 세 개 달린 트리케라톱스예요.','It is Triceratops, with three horns.'),
+      pg('공룡','브라키오사우루스','목이 긴 브라키오사우루스는 높은 나뭇잎을 먹어요.','Long-necked Brachiosaurus eats leaves from tall trees.'),
+      pg('공룡','스테고사우루스','스테고사우루스 등에는 판이 줄줄이 있어요.','Stegosaurus has a row of plates on its back.'),
+      pg('공룡','프테라노돈','프테라노돈은 하늘을 훨훨 날아요.','Pteranodon flies high in the sky.'),
+      pg('공룡','티라노사우루스','쿵쿵! 티라노사우루스가 크아앙 소리쳐요. 끝!','Stomp, stomp! T-Rex gives a big roar. The end!'),
+    ]},
+    { emoji:'🚀', title:'우주 여행', titleEn:'A Trip to Space', gradient:'linear-gradient(160deg,#232b66,#0b1030)', pages:[
+      pg('우주','우주비행사','우주비행사가 우주복을 입고 준비해요.','The astronaut puts on a space suit and gets ready.'),
+      pg('우주','로켓','셋, 둘, 하나, 발사! 로켓이 하늘로 날아올라요.','Three, two, one, blast off! The rocket flies up.'),
+      pg('우주','지구','창밖으로 파랗고 둥근 지구가 보여요.','Out the window we see the round blue Earth.'),
+      pg('우주','달','달에 내려서 폴짝폴짝 뛰어 봐요.','We land on the Moon and hop around.'),
+      pg('우주','토성','토성은 멋진 고리를 두르고 있어요.','Saturn wears beautiful rings.'),
+      pg('우주','별','반짝이는 별들에게 인사하고 집으로 돌아와요. 끝!','We wave to the twinkling stars and fly home. The end!'),
+    ]},
+    { emoji:'🦁', title:'동물원 나들이', titleEn:'A Day at the Zoo', gradient:'linear-gradient(160deg,#6d461f,#3b2412)', pages:[
+      pg('동물','사자','동물원에 왔어요. 사자가 멋진 갈기를 흔들어요.','We are at the zoo. The lion shakes its mane.'),
+      pg('동물','기린','기린은 목이 길어서 먼 곳까지 잘 보여요.','The giraffe\'s long neck helps it see far away.'),
+      pg('동물','코끼리','코끼리는 긴 코로 물을 뿌려요.','The elephant sprays water with its long trunk.'),
+      pg('동물','원숭이','원숭이가 나무에 매달려 놀아요.','The monkey swings from the trees.'),
+      pg('동물','판다','판다는 대나무를 냠냠 먹어요.','The panda munches on bamboo.'),
+      pg('동물','캥거루','캥거루가 깡충깡충 뛰며 인사해요. 끝!','The kangaroo hops over to say goodbye. The end!'),
+    ]},
+    { emoji:'🚗', title:'부릉부릉 탈것', titleEn:'Things That Go', gradient:'linear-gradient(160deg,#4a4a4a,#161616)', pages:[
+      pg('교통수단','자동차','부릉부릉, 자동차를 타고 출발해요.','Vroom, vroom! We ride off in the car.'),
+      pg('교통수단','버스','버스에는 많은 사람이 함께 타요.','Many people ride the bus together.'),
+      pg('교통수단','소방차','삐뽀삐뽀! 소방차가 불을 끄러 가요.','Nee-naw! The fire truck rushes to put out a fire.'),
+      pg('교통수단','기차','칙칙폭폭, 기다란 기차가 달려요.','Choo-choo! The long train rolls along.'),
+      pg('교통수단','비행기','비행기는 구름 위를 날아요.','The airplane flies above the clouds.'),
+      pg('교통수단','배','배를 타고 바다를 건너 집에 도착! 끝!','We sail across the sea and arrive home. The end!'),
+    ]},
+    { emoji:'🦋', title:'꽃밭의 곤충 친구', titleEn:'Bugs in the Garden', gradient:'linear-gradient(160deg,#8a9a2e,#2a3010)', pages:[
+      pg('꽃과식물','해바라기','해님을 닮은 해바라기가 활짝 피었어요.','A sunflower blooms like a little sun.'),
+      pg('곤충','나비','나비가 팔랑팔랑 꽃을 찾아와요.','A butterfly flutters over to the flowers.'),
+      pg('곤충','벌','벌은 윙윙 날며 꿀을 모아요.','The bee buzzes around collecting honey.'),
+      pg('곤충','무당벌레','무당벌레 등에는 까만 점이 있어요.','The ladybug has black spots on its back.'),
+      pg('곤충','달팽이','달팽이는 집을 등에 지고 느릿느릿 가요.','The snail carries its house and moves slowly.'),
+      pg('곤충','개미','개미들이 줄지어 집으로 돌아가요. 끝!','The ants march home in a line. The end!'),
+    ]},
+    { emoji:'🥕', title:'쑥쑥 자라는 채소', titleEn:'Growing Vegetables', gradient:'linear-gradient(160deg,#2e9e5b,#0d2b1d)', pages:[
+      pg('채소','당근','주황색 당근은 땅속에서 자라요.','Orange carrots grow under the ground.'),
+      pg('채소','토마토','빨간 토마토가 동글동글 익었어요.','The round red tomato is ripe.'),
+      pg('채소','옥수수','옥수수 알갱이가 가지런히 줄을 섰어요.','Corn kernels line up in neat rows.'),
+      pg('채소','브로콜리','브로콜리는 작은 나무처럼 생겼어요.','Broccoli looks like a tiny tree.'),
+      pg('채소','호박','커다란 호박은 무거워서 둘이 함께 들어요.','The big pumpkin is so heavy we lift it together.'),
+      pg('채소','감자','감자를 캐서 맛있는 요리를 해요. 끝!','We dig up potatoes and cook something yummy. The end!'),
+    ]},
+  ];
+  let bookLang = 'ko';
+  try{ const v = localStorage.getItem(BOOK_LANG_KEY); if(v==='ko' || v==='en') bookLang = v; }catch(e){}
+  let book = null;
+
+  function buildBookList(){
+    document.querySelectorAll('#bookLangSeg button').forEach(b=> b.classList.toggle('selected', b.dataset.lang===bookLang));
+    const wrap = document.getElementById('bookGrid');
+    wrap.innerHTML = '';
+    BOOKS.forEach(bk=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.background = bk.gradient;
+      div.innerHTML = '<span class="emoji">'+bk.emoji+'</span><span class="name">'+(bookLang==='en' ? bk.titleEn : bk.title)+'</span>';
+      div.addEventListener('click', ()=>{ recordPlayToday(); openBook(bk); });
+      wrap.appendChild(div);
+    });
+  }
+  document.querySelectorAll('#bookLangSeg button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      bookLang = b.dataset.lang;
+      try{ localStorage.setItem(BOOK_LANG_KEY, bookLang); }catch(e){}
+      buildBookList();
+    });
+  });
+  function openBook(bk){
+    book = { bk, page:0, celebrated:false };
+    showScreen('screen-book-read');
+    renderBookPage();
+  }
+  function readBookPage(){
+    const p = book.bk.pages[book.page];
+    if(bookLang==='en') speak(p.en, 'en-US'); else speak(p.ko, 'ko-KR');
+  }
+  function renderBookPage(){
+    const bk = book.bk, p = bk.pages[book.page];
+    const last = book.page === bk.pages.length-1;
+    document.getElementById('bookTitle').textContent = bk.emoji+' '+(bookLang==='en' ? bk.titleEn : bk.title);
+    document.getElementById('bookProgress').textContent = (book.page+1)+' / '+bk.pages.length;
+    const img = document.getElementById('bookImg');
+    img.src = pictureSrc(p.cat, p.item);
+    img.alt = p.item;
+    // 읽어주는 말을 크게, 다른 말은 작게 함께 보여준다
+    document.getElementById('bookTextMain').textContent = bookLang==='en' ? p.en : p.ko;
+    document.getElementById('bookTextSub').textContent = bookLang==='en' ? p.ko : p.en;
+    document.getElementById('btnBookPrev').style.visibility = book.page===0 ? 'hidden' : '';
+    document.getElementById('btnBookNext').textContent = last ? '📚 다른 책' : '다음 ▶';
+    readBookPage();
+    if(last && !book.celebrated){
+      book.celebrated = true;
+      setTimeout(()=>{ sfxWin(); launchConfetti(['#ffd93d','#ff9fb2','#7bd8ff','#ffffff']); }, 600);
+    }
+  }
+  document.getElementById('btnBookPrev').addEventListener('click', ()=>{ if(book && book.page>0){ book.page--; renderBookPage(); } });
+  document.getElementById('btnBookNext').addEventListener('click', ()=>{
+    if(!book) return;
+    if(book.page < book.bk.pages.length-1){ book.page++; renderBookPage(); }
+    else { stopSpeaking(); buildBookList(); showScreen('screen-book-list'); }
+  });
+  document.getElementById('btnBookRead').addEventListener('click', ()=>{ if(book) readBookPage(); });
+  document.getElementById('bookPic').addEventListener('click', ()=>{ if(book) readBookPage(); });
+  document.getElementById('btnBookReadBack').addEventListener('click', ()=>{ stopSpeaking(); buildBookList(); showScreen('screen-book-list'); });
+  document.getElementById('btnBookListBack').addEventListener('click', ()=> showScreen('screen-home'));
 
 })();
 </script>
