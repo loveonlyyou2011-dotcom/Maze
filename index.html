@@ -138,16 +138,30 @@
   .match-card.flipped{ background:#26306b; border-color:#7bd8ff; }
   .match-card.matched{ background:#2e7d32; border-color:#8bd450; opacity:.85; pointer-events:none; }
 
+  /* 줄긋기: 사진으로 바꾼 뒤 그림이 46px로 작아 구분이 어렵다는 의견(2026-10-11)에 따라,
+     5줄이 화면 높이를 꽉 채우도록 칸 높이를 화면에 맞춰 키우고 그림·글씨도 함께 키웠다.
+     120px = 상단 바·안내문·여백 높이 (실측) */
   #connectArea{
-    position:relative; width:100%; max-width:360px; margin-top:16px;
+    --connect-row: clamp(72px, calc((100vh - 120px) / 5 - 12px), 130px);
+    --connect-row: clamp(72px, calc((100dvh - 120px) / 5 - 12px), 130px);
+    position:relative; width:100%; max-width:440px; margin-top:10px;
     display:flex; justify-content:space-between; touch-action:none;
   }
   #connectSvg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-  #connectLeftCol, #connectRightCol{ display:flex; flex-direction:column; gap:12px; width:46%; }
+  #connectLeftCol, #connectRightCol{ display:flex; flex-direction:column; gap:12px; width:44%; }
   .connect-tile{
     background:var(--ui-card); border:3px solid rgba(255,255,255,.15); border-radius:14px;
-    padding:12px 8px; text-align:center; font-size:15px; font-weight:700; cursor:pointer;
-    touch-action:none; min-height:24px; display:flex; align-items:center; justify-content:center;
+    padding:6px 8px; text-align:center; font-size:21px; font-weight:800; cursor:pointer;
+    touch-action:none; height:var(--connect-row); box-sizing:border-box;
+    display:flex; align-items:center; justify-content:center;
+    word-break:keep-all; line-height:1.2;
+  }
+  .connect-tile.one-line{ white-space:nowrap; }
+  /* 왼쪽 그림 칸: 이모지는 글자 크기로 키우고, 사진·선그림은 칸을 가득 채운다
+     (가로로 긴 칸에 맞춰 위아래가 조금 잘리지만 주인공이 가운데라 알아보기가 훨씬 쉽다) */
+  #connectLeftCol .connect-tile{ font-size:calc(var(--connect-row) * 0.6); padding:3px; overflow:hidden; }
+  #connectLeftCol .connect-tile img{
+    width:100% !important; height:100% !important; object-fit:cover; border-radius:10px !important; background:#fff;
   }
   .connect-tile.matched{ background:#2e7d32; border-color:#8bd450; }
 
@@ -773,7 +787,7 @@
     <div class="topbar">
       <button class="icon-btn" id="btnWordConnectHome">🏠</button>
       <div class="info" id="wordConnectInfo">영어 · 동물</div>
-      <div class="info" id="wordConnectProgress">0 / 6</div>
+      <div class="info" id="wordConnectProgress">0 / 5</div>
     </div>
     <p class="sub" style="margin-bottom:4px;">손가락으로 그림과 단어를 이어보세요</p>
     <div id="connectArea">
@@ -3054,16 +3068,18 @@
     return { x: r.left + r.width/2 - containerRect.left, y: r.top + r.height/2 - containerRect.top };
   }
 
+  // 6쌍이면 폰 화면에서 그림이 너무 작아져서(2026-10-11) 5쌍으로 줄이고 그만큼 칸을 키웠다
+  const CONNECT_PAIRS = 5;
   function startWordConnect(){
     const items = currentWordItems();
     const topic = currentWordTopic(), lang = currentWordLang();
-    const picks = shuffle(items.map((_,i)=>i)).slice(0,6);
+    const picks = shuffle(items.map((_,i)=>i)).slice(0,CONNECT_PAIRS);
     wordState.connectPairs = picks;
     wordState.connectRightOrder = shuffle(picks.slice());
     wordState.connectMatched = new Set();
     wordState.connectMistakes = 0;
     document.getElementById('wordConnectInfo').textContent = lang.label+' · '+topic.label;
-    document.getElementById('wordConnectProgress').textContent = '0 / 6';
+    document.getElementById('wordConnectProgress').textContent = '0 / '+CONNECT_PAIRS;
     renderConnect();
   }
 
@@ -3088,12 +3104,31 @@
       const el = document.createElement('div');
       el.className = 'connect-tile';
       el.dataset.pairId = pairId;
-      el.textContent = wordEntry(item, lang.id).word;
+      const word = wordEntry(item, lang.id).word;
+      el.textContent = word;
+      if(!word.includes(' ')) el.classList.add('one-line');
       if(wordState.connectMatched.has(pairId)) el.classList.add('matched');
       rightWrap.appendChild(el);
     });
     drawConnectLines();
+    // 화면이 보인 뒤에야 글자 폭을 잴 수 있어서 다음 프레임에 맞춘다
+    requestAnimationFrame(()=> rightWrap.querySelectorAll('.connect-tile').forEach(fitConnectWord));
   }
+  // 티라노사우루스처럼 긴 낱말이 중간에서 끊기지 않도록, 한 줄에 들어갈 때까지 글자를 줄인다.
+  // 칸의 scrollWidth는 넘치지 않으면 칸 폭과 같아서, 글자만 감싼 span의 폭으로 잰다
+  function fitConnectWord(el){
+    if(!el.firstElementChild){ const sp = document.createElement('span'); sp.textContent = el.textContent; el.textContent = ''; el.appendChild(sp); }
+    const sp = el.firstElementChild;
+    el.style.fontSize = '';
+    const cs = getComputedStyle(el);
+    const room = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 6; // 6px: 양옆 여백
+    let f = parseFloat(cs.fontSize);
+    while(f > 12 && (sp.offsetWidth > room || el.scrollHeight > el.clientHeight + 1)){
+      f -= 1;
+      el.style.fontSize = f+'px';
+    }
+  }
+
 
   function drawConnectLines(){
     const svg = document.getElementById('connectSvg');
@@ -3168,8 +3203,8 @@
         wordState.connectMatched.add(pairId);
         sfxCorrect();
         renderConnect();
-        document.getElementById('wordConnectProgress').textContent = wordState.connectMatched.size+' / 6';
-        if(wordState.connectMatched.size>=6) finishWordConnect();
+        document.getElementById('wordConnectProgress').textContent = wordState.connectMatched.size+' / '+CONNECT_PAIRS;
+        if(wordState.connectMatched.size>=CONNECT_PAIRS) finishWordConnect();
       } else {
         wordState.connectMistakes++;
         wallFeedback();
