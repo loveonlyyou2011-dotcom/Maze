@@ -35,6 +35,11 @@
 
   h1.title{ font-size:clamp(24px,7vw,34px); margin:12px 0 4px; text-align:center; }
   p.sub{ margin:0 0 20px; opacity:.8; font-size:15px; text-align:center; }
+  /* 누르면 안내를 다시 읽어주는 글 */
+  p.sub.guide-tap{ cursor:pointer; }
+  /* 연속 기록이 없을 때 빈 줄이 홈 화면 위쪽에 큰 여백을 만들어서 숨긴다 */
+  #streakLine:empty{ display:none; }
+  p.sub.guide-tap::before{ content:'🔊 '; }
 
   .big-btn{
     width:100%; max-width:340px; padding:18px; margin:8px 0; border:none; border-radius:20px;
@@ -51,6 +56,9 @@
   .card:active{ transform:scale(.95); }
   .card .emoji{ font-size:44px; display:block; margin-bottom:6px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4)); }
   .card .name{ font-size:16px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,.5); }
+  /* 홈 화면 마지막 줄에 스티커판만 혼자 남지 않도록 가로로 길게 */
+  .card.card-wide{ grid-column:1 / -1; display:flex; align-items:center; justify-content:center; gap:12px; padding:12px 8px; }
+  .card.card-wide .emoji{ margin-bottom:0; font-size:36px; }
 
   .level-list{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:420px; }
   .level-row{
@@ -67,9 +75,12 @@
     width:100%; max-width:480px; display:flex; align-items:center; justify-content:space-between;
     margin-bottom:10px; flex-shrink:0;
   }
-  .topbar .info{ font-size:15px; font-weight:700; flex:1; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 6px; }
-  /* 폰 화면에서는 오른쪽 위에 고정된 음소거 버튼이 topbar 오른쪽 끝(진행 표시·🗑️ 등)을 가려서, 그만큼 비워 둔다 */
-  @media (max-width:560px){ .topbar{ padding-right:50px; } }
+  /* 제목이 "우주 탐험 · 1…"처럼 잘리지 않도록 두 줄까지 허용한다 */
+  .topbar .info{ font-size:15px; font-weight:700; flex:1; text-align:center; overflow:hidden; padding:0 6px; line-height:1.2;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:keep-all; }
+  /* 폰 화면에서는 오른쪽 위에 고정된 음소거 버튼(폭 약 52px, 오른쪽 14px)이 topbar 오른쪽 끝(객관식·🗑️·🌐 등)을
+     가려서 그만큼 비워 둔다. 50px로는 버튼끼리 맞닿아 잘못 누르기 쉬웠다(2026-10-11 화면 점검) */
+  @media (max-width:560px){ .topbar{ padding-right:62px; } }
   .icon-btn{
     background:rgba(255,255,255,.12); border:none; border-radius:12px; color:#fff;
     font-size:20px; padding:8px 14px; cursor:pointer;
@@ -110,18 +121,25 @@
     font-size:32px; font-weight:800; min-height:20px; background:rgba(255,255,255,.08);
     border-radius:12px; padding:10px 24px; min-width:140px; text-align:center; letter-spacing:2px;
   }
-  #mathPadKeys{ display:grid; grid-template-columns:repeat(3,64px); gap:10px; }
+  #mathPadKeys{ display:grid; grid-template-columns:repeat(3,76px); gap:10px; }
   #mathPadKeys button{
-    width:64px; height:56px; border-radius:14px; border:none; background:rgba(255,255,255,.12);
-    color:#fff; font-size:22px; font-weight:700; cursor:pointer;
+    width:76px; height:64px; border-radius:16px; border:none; background:rgba(255,255,255,.12);
+    color:#fff; font-size:28px; font-weight:800; cursor:pointer;
   }
+  /* 아이 손가락으로 누르기 쉽게 답 버튼과 숫자를 크게 (화면 아래가 비어 있었다) */
+  #mathChoiceArea .choice-btn{ font-size:40px; padding:28px 8px; border-radius:20px; }
   #mathPadKeys button:active{ background:rgba(255,255,255,.25); }
 
   #flashcard{
     margin-top:16px; background:var(--ui-card); border-radius:24px; padding:30px 20px;
     text-align:center; width:100%; max-width:320px; border:3px solid rgba(255,255,255,.15);
   }
-  #flashEmoji{ font-size:80px; }
+  #flashEmoji{ font-size:96px; }
+  /* 사진은 카드 폭에 맞춰 크게 */
+  #flashEmoji img, #wordQuizEmoji img{ width:min(58vw,220px) !important; height:min(58vw,220px) !important; border-radius:20px !important; }
+  #wordQuizEmoji{ font-size:110px !important; line-height:1.1; }
+  /* 이전·다음: 아이 손가락 크기에 맞춘 큰 버튼 (옆으로 밀어서 넘기기도 된다) */
+  #screen-word-card .game-actions button{ font-size:20px; padding:16px 30px; border-radius:18px; font-weight:800; }
   #flashWord{ font-size:30px; font-weight:800; margin-top:10px; }
   #flashRead{ font-size:16px; opacity:.75; margin-top:2px; }
   #flashKo{ font-size:15px; opacity:.6; margin-top:8px; }
@@ -135,7 +153,12 @@
     display:flex; align-items:center; justify-content:center; text-align:center;
     font-size:15px; font-weight:800; cursor:pointer; padding:4px; overflow:hidden; word-break:keep-all;
   }
-  .match-card.flipped{ background:#26306b; border-color:#7bd8ff; }
+  /* 뒷면: 작은 ❓ 대신 크고 알록달록한 별 무늬 */
+  .match-card.back{ background:linear-gradient(145deg,#4b5bd6,#7a3fb0); border-color:rgba(255,255,255,.35); font-size:40px; }
+  .match-card.flipped{ background:#26306b; border-color:#7bd8ff; font-size:19px; }
+  .match-card.flipped.pic{ font-size:56px; padding:3px; }
+  .match-card.pic img{ width:100% !important; height:100% !important; object-fit:cover; border-radius:10px !important; background:#fff; }
+  .match-card.one-line{ white-space:nowrap; }
   .match-card.matched{ background:#2e7d32; border-color:#8bd450; opacity:.85; pointer-events:none; }
 
   /* 줄긋기: 사진으로 바꾼 뒤 그림이 46px로 작아 구분이 어렵다는 의견(2026-10-11)에 따라,
@@ -187,7 +210,10 @@
     padding:12px 4px; text-align:center; font-size:34px; cursor:pointer;
   }
   .color-subject-card:active{ transform:scale(.95); }
-  .color-subject-card .csc-label{ display:block; font-size:11px; margin-top:4px; opacity:.85; }
+  .color-subject-card .csc-label{ display:block; font-size:13px; margin-top:4px; opacity:.9; font-weight:700; }
+  /* 글을 못 읽는 아이도 고를 수 있게 실제 색칠할 선그림을 보여준다 */
+  .color-subject-card img{ display:block; width:100%; aspect-ratio:1/1; object-fit:contain; background:#fff; border-radius:10px; }
+  .color-subject-card.has-pic{ padding:6px; }
 
   #colorSvgWrap{ display:flex; justify-content:center; margin:10px 0; color-scheme:light; }
   #colorSvgWrap svg{ width:min(78vw,300px); height:min(78vw,300px); touch-action:none; background:#ffffff; border-radius:20px; }
@@ -224,14 +250,14 @@
     padding:6px 12px; font-size:13px; font-weight:700; cursor:pointer;
   }
   .chip-row button.selected{ border-color:#7bd8ff; background:#26306b; }
-  .thumb-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; width:100%; max-width:420px; }
+  .thumb-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:420px; }
   .thumb-card{
     position:relative; background:#fff; border-radius:12px; aspect-ratio:1/1; display:flex; flex-direction:column;
     align-items:center; justify-content:center; padding:4px; cursor:pointer; color-scheme:light;
   }
   .thumb-card:active{ transform:scale(.95); }
-  .thumb-card img{ width:100%; height:74%; object-fit:contain; }
-  .thumb-card span{ font-size:11px; color:#222; font-weight:700; margin-top:2px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .thumb-card img{ width:100%; height:78%; object-fit:cover; border-radius:8px; }
+  .thumb-card span{ font-size:13px; color:#222; font-weight:700; margin-top:2px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .thumb-card .thumb-star{ position:absolute; top:2px; right:4px; font-size:11px; }
 
   #puzzleBoardWrap{ position:relative; margin-top:6px; width:fit-content; }
@@ -1021,7 +1047,34 @@
     Object.values(screens).forEach(el => el.classList.remove('active'));
     screens[id].classList.add('active');
     if(id==='screen-home') updateStreakDisplay();
+    playGuideOnce(id);
   }
+
+  // ---------- 소리 안내 ----------
+  // 글을 아직 못 읽는 아이도 혼자 할 수 있게, 놀이를 처음 열 때 무엇을 하면 되는지 짧게 읽어준다.
+  // 같은 놀이는 앱을 켤 때마다 한 번만 읽고(계속 들으면 귀찮다), 안내 글을 누르면 다시 들을 수 있다.
+  // 단어 퀴즈·따라쓰기·그림책처럼 시작하자마자 낱말을 읽어주는 화면은 겹치지 않게 넣지 않았다.
+  const SCREEN_GUIDES = {
+    'screen-game':'손가락으로 길을 따라 별까지 가 보세요',
+    'screen-puzzle-game':'조각을 끌어서 알맞은 자리에 놓아 보세요',
+    'screen-shadow-game':'까만 그림자를 보고 누구인지 골라 보세요',
+    'screen-word-match':'카드를 두 장씩 뒤집어서 같은 짝을 찾아보세요',
+    'screen-word-connect':'그림을 누른 채로 맞는 낱말까지 손가락으로 이어 보세요',
+    'screen-color-canvas':'색을 고르고 손가락으로 문질러 색칠해 보세요',
+  };
+  const guideSpoken = new Set();
+  function playGuide(id){ if(SCREEN_GUIDES[id]) speak(SCREEN_GUIDES[id], 'ko-KR'); }
+  function playGuideOnce(id){
+    if(!SCREEN_GUIDES[id] || guideSpoken.has(id)) return;
+    guideSpoken.add(id);
+    setTimeout(()=>{ if(screens[id].classList.contains('active')) playGuide(id); }, 350);
+  }
+  Object.keys(SCREEN_GUIDES).forEach(id=>{
+    const sub = screens[id] && screens[id].querySelector('p.sub');
+    if(!sub) return;
+    sub.classList.add('guide-tap');
+    sub.addEventListener('click', ()=> playGuide(id));
+  });
 
   // ---------- Maze generation (recursive backtracker) ----------
   function generateMaze(cols, rows){
@@ -1385,11 +1438,11 @@
       {emoji:'🧩', label:'퍼즐', gradient:'linear-gradient(160deg,#1f7a6b,#0b2b27)', onClick:()=>{ buildPuzzleSelect(); showScreen('screen-puzzle-select'); }},
       {emoji:'👤', label:'그림자 찾기', gradient:'linear-gradient(160deg,#4b4f6b,#171a2e)', onClick:()=>{ buildShadowSelect(); showScreen('screen-shadow-select'); }},
       {emoji:'📖', label:'그림책', gradient:'linear-gradient(160deg,#b5652a,#3b1f0a)', onClick:()=>{ buildBookList(); showScreen('screen-book-list'); }},
-      {emoji:'🏆', label:'스티커판', gradient:'linear-gradient(160deg,#8b6d2e,#3b2b10)', onClick:()=>{ buildStickerBoard(); showScreen('screen-stickers'); }},
+      {emoji:'🏆', label:'스티커판', wide:true, gradient:'linear-gradient(160deg,#8b6d2e,#3b2b10)', onClick:()=>{ buildStickerBoard(); showScreen('screen-stickers'); }},
     ];
     games.forEach(g=>{
       const div = document.createElement('div');
-      div.className = 'card';
+      div.className = 'card' + (g.wide ? ' card-wide' : '');
       div.style.background = g.gradient;
       div.innerHTML = '<span class="emoji">'+g.emoji+'</span><span class="name">'+g.label+'</span>';
       div.addEventListener('click', g.onClick);
@@ -2188,6 +2241,11 @@
   function lineArtSrc(category, name){
     return 'coloring/' + encodeURIComponent(category+'_'+name) + (category==='동물' ? '.jpg' : '.png');
   }
+  // 목록·그림자 찾기처럼 여러 장을 한꺼번에 띄우는 곳에 쓰는 작은 선그림 (동물 선그림만 커서 thumbs/에 줄여 둠)
+  function lineArtThumbSrc(category, name){
+    if(category==='동물') return 'thumbs/' + encodeURIComponent(category+'_'+name) + '.jpg';
+    return lineArtSrc(category, name);
+  }
   function pictureSrc(category, name){
     if(PHOTO_CREDITS[category+'/'+name]) return 'photos/' + encodeURIComponent(category+'_'+name) + '.jpg';
     return lineArtSrc(category, name);
@@ -2689,6 +2747,8 @@
       {emoji:'ㅡ', ko:'으'}, {emoji:'ㅣ', ko:'이'},
     ],
   };
+  // 동물 주제만 이모지로 남아 다른 주제(사진)와 섞여 보여서, 실제 사진이 있는 동물(24종)은 사진으로 바꾼다
+  WORD_DATA.animal.forEach(it=>{ if(PHOTO_CREDITS['동물/'+it.ko]) it.img = pictureSrc('동물', it.ko); });
   const WORD_STORE_KEY = 'fingerMazeWordStars_v1';
 
   let wordState = {
@@ -3001,14 +3061,20 @@
       if(isOpen){
         el.classList.add('flipped');
         const item = items[card.pairId];
-        if(card.type==='visual') el.innerHTML = visualHTML(item, topic.id);
-        else el.textContent = wordEntry(item, lang.id).word;
+        if(card.type==='visual'){ el.classList.add('pic'); el.innerHTML = visualHTML(item, topic.id); }
+        else {
+          const word = wordEntry(item, lang.id).word;
+          el.textContent = word;
+          if(!word.includes(' ')) el.classList.add('one-line');
+        }
       } else {
-        el.textContent = '❓';
+        el.classList.add('back');
+        el.textContent = '⭐';
       }
       el.addEventListener('click', ()=> onMatchCardClick(i));
       wrap.appendChild(el);
     });
+    requestAnimationFrame(()=> wrap.querySelectorAll('.match-card.flipped:not(.pic)').forEach(fitWordInBox));
   }
 
   function onMatchCardClick(i){
@@ -3112,11 +3178,11 @@
     });
     drawConnectLines();
     // 화면이 보인 뒤에야 글자 폭을 잴 수 있어서 다음 프레임에 맞춘다
-    requestAnimationFrame(()=> rightWrap.querySelectorAll('.connect-tile').forEach(fitConnectWord));
+    requestAnimationFrame(()=> rightWrap.querySelectorAll('.connect-tile').forEach(fitWordInBox));
   }
-  // 티라노사우루스처럼 긴 낱말이 중간에서 끊기지 않도록, 한 줄에 들어갈 때까지 글자를 줄인다.
+  // 티라노사우루스처럼 긴 낱말이 중간에서 끊기지 않도록, 한 줄에 들어갈 때까지 글자를 줄인다 (줄긋기·짝맞추기).
   // 칸의 scrollWidth는 넘치지 않으면 칸 폭과 같아서, 글자만 감싼 span의 폭으로 잰다
-  function fitConnectWord(el){
+  function fitWordInBox(el){
     if(!el.firstElementChild){ const sp = document.createElement('span'); sp.textContent = el.textContent; el.textContent = ''; el.appendChild(sp); }
     const sp = el.firstElementChild;
     el.style.fontSize = '';
@@ -3219,6 +3285,22 @@
     const item = currentWordItems()[wordState.cardIndex];
     speak(wordEntry(item, lang.id).word, lang.speechLang);
   });
+  // 카드를 옆으로 밀어서 넘기기 (버튼을 찾지 않아도 되게)
+  (function(){
+    const fc = document.getElementById('flashcard');
+    let sx = null, sy = 0;
+    fc.style.touchAction = 'pan-y';
+    fc.addEventListener('pointerdown', e=>{ sx = e.clientX; sy = e.clientY; });
+    fc.addEventListener('pointerup', e=>{
+      if(sx===null) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      sx = null;
+      if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)*1.5){
+        document.getElementById(dx < 0 ? 'btnFlashNext' : 'btnFlashPrev').click();
+      }
+    });
+    fc.addEventListener('pointercancel', ()=>{ sx = null; });
+  })();
   document.getElementById('btnFlashPrev').addEventListener('click', ()=>{
     const items = currentWordItems();
     wordState.cardIndex = (wordState.cardIndex - 1 + items.length) % items.length;
@@ -4170,8 +4252,8 @@
     const cat = RASTER_COLORING_CATEGORIES.find(c=>c.id===catKey);
     cat.items.forEach((item, idx)=>{
       const card = document.createElement('div');
-      card.className = 'color-subject-card';
-      card.innerHTML = cat.emoji + '<span class="csc-label">' + item + '</span>';
+      card.className = 'color-subject-card has-pic';
+      card.innerHTML = '<img loading="lazy" alt="" src="'+lineArtThumbSrc(cat.id, item)+'"><span class="csc-label">' + item + '</span>';
       card.addEventListener('click', ()=>{
         colorState.mode = 'raster';
         colorState.rasterCat = cat.id;
@@ -4843,7 +4925,7 @@
       try{
         // 그림자는 선그림의 윤곽(흰 바탕 + 검은 선)으로 만들기 때문에, 사진 대신 선그림을 쓴다.
         // 사진은 배경이 있어서 모양만 깔끔하게 오려내기 어렵다.
-        const img = await loadImage(lineArtSrc(catId, name));
+        const img = await loadImage(lineArtThumbSrc(catId, name));
         if(!shadowMaskCache.has(key)) shadowMaskCache.set(key, buildShadowMask(img));
         return {name, img, mask:shadowMaskCache.get(key)};
       }catch(e){ return null; }
@@ -5836,7 +5918,30 @@
       list.appendChild(li);
     });
   }
-  document.getElementById('lnkCredits').addEventListener('click', (e)=>{ e.preventDefault(); buildCredits(); showScreen('screen-credits'); });
+  // 출처 화면에는 바깥 사이트(Pexels 등)로 나가는 링크가 많아서, 아이가 실수로 들어가지 않게
+  // 보호자만 아는 방법(1.5초 꾹 누르기)으로만 열리게 했다. 그냥 누르면 안내만 잠깐 보여준다.
+  (function(){
+    const lnk = document.getElementById('lnkCredits');
+    const label = lnk.textContent;
+    let timer = null, restore = null;
+    lnk.addEventListener('click', e=> e.preventDefault());
+    lnk.addEventListener('contextmenu', e=> e.preventDefault());
+    lnk.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      clearTimeout(timer);
+      timer = setTimeout(()=>{ timer = null; lnk.textContent = label; buildCredits(); showScreen('screen-credits'); }, 1500);
+    });
+    const cancel = ()=>{
+      if(!timer) return;
+      clearTimeout(timer); timer = null;
+      lnk.textContent = '보호자용이에요 · 1.5초 동안 꾹 눌러 주세요';
+      clearTimeout(restore);
+      restore = setTimeout(()=>{ lnk.textContent = label; }, 2500);
+    };
+    lnk.addEventListener('pointerup', cancel);
+    lnk.addEventListener('pointerleave', cancel);
+    lnk.addEventListener('pointercancel', cancel);
+  })();
   document.getElementById('btnCreditsBack').addEventListener('click', ()=> showScreen('screen-home'));
 
   // 자동 테스트(tools/e2e_write.py)가 획 좌표를 알아내 손가락 대신 그을 수 있도록 읽기 전용으로 내보낸다

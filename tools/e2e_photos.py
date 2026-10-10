@@ -61,7 +61,7 @@ d.save_screenshot(str(OUT / 'photo_puzzle_game.png'))
 home(); click_text('#gameHubGrid > *', '그림자'); time.sleep(0.4)
 js("document.querySelector('#shadowCatGrid > *').click();"); time.sleep(3)
 srcs = js("return [...document.querySelectorAll('#shadowOptions img')].map(x=>decodeURIComponent(x.getAttribute('src')));")
-check('그림자 찾기는 선그림 사용', srcs and all('/coloring/' in s or s.startswith('coloring/') for s in srcs), srcs[:2])
+check('그림자 찾기는 선그림 사용', srcs and all(('/coloring/' in s or '/thumbs/' in s) for s in srcs), srcs[:2])
 
 # 4) 그림책
 home(); click_text('#gameHubGrid > *', '그림책'); time.sleep(0.4)
@@ -80,7 +80,10 @@ wimg = js("const x=document.querySelector('.screen.active img'); return x ? [dec
 check('단어 카드 사진 표시', wimg and wimg[0].startswith('photos/') and wimg[1] > 0, wimg)
 
 # 6) 출처 화면
-home(); js("document.getElementById('lnkCredits').click();"); time.sleep(0.4)
+# 출처 화면은 보호자용: 그냥 누르면 안 열리고, 1.5초 꾹 눌러야 열린다
+home(); js("const l=document.getElementById('lnkCredits'); l.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})); l.dispatchEvent(new PointerEvent('pointerup',{bubbles:true})); l.click();"); time.sleep(0.3)
+check('출처 링크를 그냥 누르면 열리지 않음', js("return document.querySelector('.screen.active').id;") == 'screen-home', js("return document.getElementById('lnkCredits').textContent;"))
+js("document.getElementById('lnkCredits').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));"); time.sleep(1.8)
 n = js("return document.querySelectorAll('#creditsList li').length;")
 badge = js("return document.querySelector('.pexels-badge').href;")
 check('출처 화면에 사진작가 목록', n == photos, f'{n}명 / 사진 {photos}장')
