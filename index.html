@@ -292,6 +292,13 @@
   #echoHint{ font-size:13px; opacity:.75; min-height:18px; margin-top:6px; }
 
   footer.credit{ margin-top:auto; padding-top:16px; font-size:11px; opacity:.4; text-align:center; }
+  /* 사진 출처 화면: Pexels 이용 조건(눈에 띄는 Pexels 링크 + 사진작가 표시)을 지키기 위한 화면 */
+  #creditsBody{ width:100%; max-width:440px; font-size:13px; line-height:1.6; }
+  #creditsBody h3{ font-size:15px; margin:18px 0 6px; }
+  #creditsBody a{ color:#7bd8ff; }
+  #creditsBody .pexels-badge{ display:block; text-align:center; padding:12px; border-radius:14px; background:#05a081; color:#fff; font-weight:800; font-size:16px; text-decoration:none; }
+  #creditsList{ list-style:none; padding:0; margin:0; columns:2; column-gap:14px; font-size:12px; }
+  #creditsList li{ break-inside:avoid; padding:2px 0; opacity:.85; }
 
   #screen-game{ position:relative; transition:background .3s ease; }
   #decorLayer{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
@@ -320,7 +327,7 @@
     <p class="sub">하고 싶은 놀이를 골라보세요!</p>
     <p class="sub" id="streakLine" style="margin-top:-10px; min-height:18px;"></p>
     <div class="grid" id="gameHubGrid" style="max-width:420px; grid-template-columns:repeat(3,1fr); gap:10px;"></div>
-    <footer class="credit">가로/세로로 돌려도 괜찮아요</footer>
+    <footer class="credit">가로/세로로 돌려도 괜찮아요 · <a href="#" id="lnkCredits" style="color:inherit;">📷 사진·자료 출처</a></footer>
   </section>
 
   <!-- STICKERS -->
@@ -513,6 +520,24 @@
     <div class="result-best" id="funResultBest"></div>
     <button class="big-btn" id="btnFunRetry" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 하기</button>
     <button class="icon-btn" id="btnFunBack" style="margin-top:10px">◀ 목록으로</button>
+  </section>
+
+  <!-- CREDITS -->
+  <section id="screen-credits" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnCreditsBack">◀ 뒤로</button>
+      <div class="info">📷 사진·자료 출처</div>
+      <span style="width:44px"></span>
+    </div>
+    <div id="creditsBody">
+      <a class="pexels-badge" href="https://www.pexels.com" target="_blank" rel="noopener">Photos provided by Pexels</a>
+      <p>그림 카드·퍼즐·그림책·따라쓰기의 사진은 <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a>의 무료 사진입니다. 멋진 사진을 찍어 주신 작가님들께 감사드립니다. 공룡은 실물 사진이 없어서 모형 사진을 썼습니다.</p>
+      <h3>사진 작가</h3>
+      <ul id="creditsList"></ul>
+      <h3>글자 획순 데이터</h3>
+      <p>일본어: <a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener">KanjiVG</a> (Ulrich Apel, CC BY-SA 3.0)<br>
+      중국어: <a href="https://github.com/skishore/makemeahanzi" target="_blank" rel="noopener">Make Me a Hanzi</a> (Arphic Public License)</p>
+    </div>
   </section>
 
   <!-- WRITE: language select -->
@@ -1910,15 +1935,248 @@
       return '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:1.6em;min-height:1.6em;padding:0 0.15em;border-radius:22%;background:rgba(255,255,255,.12);font-size:clamp(13px, 0.55em, 44px);font-weight:800;line-height:1.2;vertical-align:middle;">'+item.n+'</span>';
     }
     if(item.img){
-      return '<img src="'+item.img+'" alt="" style="width:clamp(30px, 1em, 100px);height:clamp(30px, 1em, 100px);object-fit:contain;vertical-align:middle;">';
+      // 사진은 선그림보다 작으면 알아보기 어려워서 큰 카드에서는 160px까지 키우고 모서리를 둥글게 한다
+      return '<img src="'+item.img+'" alt="" style="width:clamp(46px, 1.6em, 160px);height:clamp(46px, 1.6em, 160px);object-fit:cover;border-radius:14%;vertical-align:middle;">';
     }
     return item.emoji;
   }
-  // 단어 카드·퍼즐·그림자 찾기·그림책이 함께 쓰는 그림 경로.
-  // 지금은 색칠놀이용 선그림을 재사용하지만, 나중에 실제 사진으로 바꿀 때 이 함수 한 곳만
-  // 고치면 네 기능이 한꺼번에 바뀐다. (색칠놀이는 선이 있어야 칠할 수 있어서 rasterFilePath를 따로 쓴다)
-  function pictureSrc(category, name){
+  // 단어 카드·퍼즐·그림책·따라쓰기 보상이 함께 쓰는 그림 경로.
+  // 선그림이 너무 유아틱하다는 의견에 따라 2026-10에 실제 사진(photos/, Pexels)으로 바꿨다.
+  // 공룡은 실물 사진이 있을 수 없어서 공원·전시용 모형 사진을 썼다. 알맞은 사진을 못 찾은 항목은
+  // 아래 목록에서 빠져 있고 선그림을 그대로 쓴다. 목록은 tools/photo_fetch.py embed가 채운다.
+  // [사진작가, Pexels 사진 주소] — 출처 화면(📷 사진 출처)에도 그대로 보여준다
+  const PHOTO_CREDITS = /*PHOTO_CREDITS_START*/{
+    "곤충/개미":["Petr Ganaj", "https://www.pexels.com/photo/close-up-of-an-ants-on-a-green-stalk-20954385/"],
+    "곤충/거미":["Max  Vlogger", "https://www.pexels.com/photo/spider-in-cobweb-18273193/"],
+    "곤충/귀뚜라미":["Petr Ganaj", "https://www.pexels.com/photo/dark-bush-cricket-sitting-on-a-grass-leaf-17818763/"],
+    "곤충/꿀벌집":["SN.CHE", "https://www.pexels.com/photo/close-up-photo-of-a-honey-frame-12391587/"],
+    "곤충/나방":["Ahnaf Abror", "https://www.pexels.com/photo/close-up-of-a-brown-moth-on-a-leaf-in-bangladesh-35141455/"],
+    "곤충/나비":["Yudi Ding", "https://www.pexels.com/photo/beautiful-fritillary-butterfly-on-purple-flowers-39981763/"],
+    "곤충/달팽이":["Dany Goldraij", "https://www.pexels.com/photo/close-up-of-snail-on-plant-stem-in-nature-36039709/"],
+    "곤충/딱정벌레":["cassius cardoso", "https://www.pexels.com/photo/close-up-of-a-beetle-sitting-on-a-leaf-26545021/"],
+    "곤충/매미":["Manuel Bartsch", "https://www.pexels.com/photo/close-up-of-a-cicada-orni-fly-on-a-tree-9129510/"],
+    "곤충/메뚜기":["Rafael Minguet Delgado", "https://www.pexels.com/photo/close-up-macro-of-grasshopper-on-twigs-in-valencia-34327532/"],
+    "곤충/무당벌레":["Elena Brkv", "https://www.pexels.com/photo/ladybug-on-stick-20308118/"],
+    "곤충/물방개":["Nathan J Hilton", "https://www.pexels.com/photo/close-up-photo-of-black-beetle-on-glass-with-water-8954678/"],
+    "곤충/반딧불이":["marclyc li", "https://www.pexels.com/photo/enchanting-fireflies-in-a-serene-forest-setting-38188604/"],
+    "곤충/벌":["Mason McCall", "https://www.pexels.com/photo/bumble-bee-on-a-flower-14287333/"],
+    "곤충/사마귀":["Diana ✨", "https://www.pexels.com/photo/close-up-of-a-praying-mantis-on-a-plant-35908800/"],
+    "곤충/사슴벌레":["Daniil Kondrashin", "https://www.pexels.com/photo/a-beetle-on-a-wooden-surface-12925995/"],
+    "곤충/애벌레":["Karolina", "https://www.pexels.com/photo/vibrant-caterpillar-on-a-leaf-macro-shot-38599019/"],
+    "곤충/잠자리":["Erik Karits", "https://www.pexels.com/photo/orange-and-red-dragonfly-on-green-leaf-in-close-up-photography-9330804/"],
+    "곤충/장수풍뎅이":["Osmany Mederos", "https://www.pexels.com/photo/close-up-shot-of-a-beetle-13602381/"],
+    "곤충/지네":["Egor Kamelev", "https://www.pexels.com/photo/centipede-crawling-on-conc-8020439/"],
+    "곤충/집게벌레":["Rafael Minguet Delgado", "https://www.pexels.com/photo/close-up-of-european-earwig-on-wooden-surface-36484127/"],
+    "곤충/파리":["Eco Graphy", "https://www.pexels.com/photo/fly-on-leaf-19057181/"],
+    "곤충/하늘소":["Erik Karits", "https://www.pexels.com/photo/beetle-on-a-leaf-26528962/"],
+    "공룡/공룡 알":["Mehmet Turgut  Kirkgoz", "https://www.pexels.com/photo/dinosaurs-hatching-from-eggs-12220855/"],
+    "공룡/디플로도쿠스":["Giant Asparagus", "https://www.pexels.com/photo/wall-drug-80ft-dinosaur-advertisement-in-south-dakota-in-usa-19784117/"],
+    "공룡/딜로포사우루스":["Mehmet Turgut  Kirkgoz", "https://www.pexels.com/photo/close-up-of-dinosaur-in-forest-15159243/"],
+    "공룡/벨로키랍토르":["Dunamosji Mosquera Jimenez", "https://www.pexels.com/photo/close-up-of-a-plastic-toy-dinosaur-5420070/"],
+    "공룡/브라키오사우루스":["Huu Huynh", "https://www.pexels.com/photo/dinosaurs-models-in-forest-16943437/"],
+    "공룡/스테고사우루스":["Jean-Paul Wettstein", "https://www.pexels.com/photo/stegosaurus-model-in-autumn-forest-setting-38261555/"],
+    "공룡/아파토사우루스":["Cup of  Couple", "https://www.pexels.com/photo/grey-dinosaur-figurine-on-white-surface-8014583/"],
+    "공룡/안킬로사우루스":["Antonio Mistretta", "https://www.pexels.com/photo/realistic-dinosaur-sculpture-in-forest-setting-33722871/"],
+    "공룡/알로사우루스":["Rudolf Pankratius", "https://www.pexels.com/photo/a-dinosaur-statue-in-a-theme-park-17904920/"],
+    "공룡/오비랍토르":["Jaqor Q.I.", "https://www.pexels.com/photo/close-up-of-feathered-dinosaur-model-33563255/"],
+    "공룡/트리케라톱스":["Mehmet Turgut  Kirkgoz", "https://www.pexels.com/photo/close-up-photo-of-a-triceratops-dinosaur-13681288/"],
+    "공룡/티라노사우루스":["Dieter Hafen", "https://www.pexels.com/photo/statue-of-dinosaur-in-forest-16688523/"],
+    "공룡/파라사우롤로푸스":["Cup of  Couple", "https://www.pexels.com/photo/dinosaur-figurine-against-orange-background-8014533/"],
+    "공룡/프테라노돈":["Mehmet Turgut  Kirkgoz", "https://www.pexels.com/photo/figurine-of-a-dinosaur-19288069/"],
+    "과일/감":["대건 최", "https://www.pexels.com/photo/persimmons-hanging-on-tree-branches-5755632/"],
+    "과일/귤":["Hanawasthere", "https://www.pexels.com/photo/tangerines-on-plate-14704997/"],
+    "과일/딸기":["Ilo Frey", "https://www.pexels.com/photo/close-up-photo-of-strawberries-6810986/"],
+    "과일/레몬":["Julia Zolotova", "https://www.pexels.com/photo/close-up-photo-of-fresh-lemons-6516595/"],
+    "과일/망고":["Morris Lowery Jr", "https://www.pexels.com/photo/photograph-of-green-mangoes-5629818/"],
+    "과일/멜론":["Richa Varshney", "https://www.pexels.com/photo/ripe-melons-growing-in-a-garden-setting-39367676/"],
+    "과일/무화과":["Tijana Drndarski", "https://www.pexels.com/photo/close-up-photo-of-figs-5475169/"],
+    "과일/바나나":["Engin Akyurt", "https://www.pexels.com/photo/bunch-of-banana-fruits-4399936/"],
+    "과일/배":["Gustavo Fring", "https://www.pexels.com/photo/close-up-photo-of-pears-7156057/"],
+    "과일/복숭아":["mr. Yin", "https://www.pexels.com/photo/ripe-peaches-on-a-tree-with-lush-green-leaves-29727347/"],
+    "과일/블루베리":["Suzy Hazelwood", "https://www.pexels.com/photo/close-up-photo-of-blueberries-1765022/"],
+    "과일/사과":["Evgeniy Alekseyev", "https://www.pexels.com/photo/three-red-apples-on-white-surface-7333124/"],
+    "과일/석류":["Ilya Lisauskas", "https://www.pexels.com/photo/a-pomegranates-on-a-wooden-table-12148143/"],
+    "과일/아보카도":["Gilmer Diaz Estela", "https://www.pexels.com/photo/a-group-of-avocados-sitting-on-a-table-27462724/"],
+    "과일/오렌지":["Tina Laksmi Widayati", "https://www.pexels.com/photo/close-up-shot-of-slices-of-orange-on-a-white-surface-7960508/"],
+    "과일/용과":["Atlantic Ambience", "https://www.pexels.com/photo/close-up-photo-of-dragon-fruits-11450660/"],
+    "과일/자두":["Ilo Frey", "https://www.pexels.com/photo/close-up-of-fresh-dewy-purple-plums-38579939/"],
+    "과일/체리":["Екатерина Рыбалко", "https://www.pexels.com/photo/delicious-cherries-with-water-droplets-on-glass-surface-12414331/"],
+    "과일/코코넛":["Mikhail Nilov", "https://www.pexels.com/photo/close-up-photo-of-coconuts-with-white-flesh-7676718/"],
+    "과일/키위":["Pranjall Kumar", "https://www.pexels.com/photo/close-up-shot-of-kiwis-on-a-wooden-tray-7255620/"],
+    "과일/파인애플":["Yeye", "https://www.pexels.com/photo/fresh-pineapple-in-sabaneta-market-stall-37342491/"],
+    "과일/파파야":["Channabo Yos", "https://www.pexels.com/photo/close-up-photo-of-papayas-13306351/"],
+    "과일/포도":["Sergei Starostin", "https://www.pexels.com/photo/close-up-of-fresh-dewy-grapes-in-bowl-39403221/"],
+    "교통수단/견인차":["Jonathan  Reynaga", "https://www.pexels.com/photo/a-car-on-a-tow-truck-17429097/"],
+    "교통수단/경찰차":["Erik Mclean", "https://www.pexels.com/photo/police-cars-parked-on-street-sidewalk-12727666/"],
+    "교통수단/구급차":["Pavel Danilyuk", "https://www.pexels.com/photo/parked-ambulance-6753471/"],
+    "교통수단/굴착기":["Mad Knoxx Deluxe", "https://www.pexels.com/photo/yellow-excavator-at-urban-construction-site-30751525/"],
+    "교통수단/기차":["Wolfgang Weiser", "https://www.pexels.com/photo/red-passenger-train-at-rural-german-station-40010398/"],
+    "교통수단/레미콘":["Bipu Das Kajol", "https://www.pexels.com/photo/construction-mixer-truck-at-building-site-34281022/"],
+    "교통수단/로켓":["Berke  Can", "https://www.pexels.com/photo/tall-white-rocket-against-blue-sky-33091783/"],
+    "교통수단/배":["Serg Alesenko", "https://www.pexels.com/photo/tanker-ship-sailing-15944128/"],
+    "교통수단/버스":["Oliver Boese", "https://www.pexels.com/photo/buss-and-cars-on-city-street-bus-display-word-sorry-4774659/"],
+    "교통수단/비행기":["Phát Trương", "https://www.pexels.com/photo/airplane-in-flight-against-blue-sky-with-clouds-37589299/"],
+    "교통수단/소방차":["Roman Ska", "https://www.pexels.com/photo/red-and-white-truck-on-road-7586386/"],
+    "교통수단/열기구":["Mehmet Turgut  Kirkgoz", "https://www.pexels.com/photo/yellow-hot-air-balloon-in-clear-blue-sky-37372684/"],
+    "교통수단/오토바이":["Antoni Shkraba", "https://www.pexels.com/photo/a-biker-in-black-leather-jacket-riding-a-motorcycle-on-a-countryside-road-5794270/"],
+    "교통수단/요트":["mali maeder", "https://www.pexels.com/photo/white-and-blue-cabin-boat-42091/"],
+    "교통수단/유조선":["Oleksiy Yeshtokyn,🌻🇺🇦🌻", "https://www.pexels.com/photo/large-red-oil-tanker-docked-at-harbor-39012056/"],
+    "교통수단/자동차":["Samet Çolakoğlu", "https://www.pexels.com/photo/cars-on-city-street-and-people-on-sidewalk-11439335/"],
+    "교통수단/자전거":["Image Hunter", "https://www.pexels.com/photo/bicycles-on-a-beach-13012115/"],
+    "교통수단/잠수함":["Arjanne Holsappel", "https://www.pexels.com/photo/red-submarine-in-body-of-water-8514569/"],
+    "교통수단/지하철":["Jatin  Chadha", "https://www.pexels.com/photo/hankyu-kyoto-line-train-at-osaka-station-39113940/"],
+    "교통수단/택시":["There on Saturn", "https://www.pexels.com/photo/taxi-sign-on-car-roof-11171626/"],
+    "교통수단/트랙터":["Raman Chaudhary", "https://www.pexels.com/photo/green-tractor-on-plowed-field-under-cloudy-sky-30248663/"],
+    "교통수단/트럭":["CARLOSCRUZ ARTEGRAFIA", "https://www.pexels.com/photo/red-truck-on-the-road-11087837/"],
+    "교통수단/헬리콥터":["Wolfgang Weiser", "https://www.pexels.com/photo/mcdonnell-douglas-md-900-explorer-helicopter-of-air-lloyd-flight-services-gmbh-airline-18199318/"],
+    "꽃과식물/국화":["Lily  Lili", "https://www.pexels.com/photo/vibrant-close-up-of-chrysanthemums-in-bloom-34668695/"],
+    "꽃과식물/나무":["Radosław Krupa", "https://www.pexels.com/photo/green-tree-under-blue-sky-11249204/"],
+    "꽃과식물/나팔꽃":["F 植生记", "https://www.pexels.com/photo/vibrant-pink-morning-glory-bloom-in-natural-light-36136710/"],
+    "꽃과식물/대나무":["Laura Paredis", "https://www.pexels.com/photo/green-bamboo-sticks-in-close-up-photography-13156791/"],
+    "꽃과식물/데이지":["Alexas Fotos", "https://www.pexels.com/photo/close-up-of-stunning-oxeye-daisy-flower-32264558/"],
+    "꽃과식물/라벤더":["Ejov Igor", "https://www.pexels.com/photo/a-purple-flowers-in-full-bloom-12686034/"],
+    "꽃과식물/무궁화":["Henryk63", "https://www.pexels.com/photo/pink-hibiscus-flower-and-green-leaves-13378402/"],
+    "꽃과식물/민들레":["Yuliia Tretynychenko", "https://www.pexels.com/photo/close-up-photo-of-green-grass-near-yellow-flowers-12570545/"],
+    "꽃과식물/벚꽃":["Valeria Boltneva", "https://www.pexels.com/photo/close-up-of-cherry-blossom-flowers-16683388/"],
+    "꽃과식물/새싹":["Ana Morais", "https://www.pexels.com/photo/vibrant-seedling-growth-in-lush-portuguese-forest-36541765/"],
+    "꽃과식물/선인장":["Quang Nguyen Vinh", "https://www.pexels.com/photo/green-cactus-on-pot-2137857/"],
+    "꽃과식물/수선화":["Ireneusz Marcinkowski", "https://www.pexels.com/photo/vibrant-yellow-daffodil-in-springtime-meadow-31377569/"],
+    "꽃과식물/야자수":["Diana ✨", "https://www.pexels.com/photo/palm-tree-and-clear-sky-12366649/"],
+    "꽃과식물/연꽃":["HỨA QUANG THỚI", "https://www.pexels.com/photo/vibrant-pink-lotus-flower-in-vietnamese-pond-33059564/"],
+    "꽃과식물/이끼":["Peter Dyllong", "https://www.pexels.com/photo/lush-moss-on-textured-stone-in-natural-light-36620599/"],
+    "꽃과식물/잎사귀":["Ilo Frey", "https://www.pexels.com/photo/close-up-of-a-textured-green-leaf-under-sunlight-38681769/"],
+    "꽃과식물/장미":["Anna Romanova", "https://www.pexels.com/photo/close-up-shot-of-roses-in-bloom-12912281/"],
+    "꽃과식물/진달래":["Alexandra Georgieva", "https://www.pexels.com/photo/close-up-shot-of-azalea-flowers-11999966/"],
+    "꽃과식물/카네이션":["Oksana S", "https://www.pexels.com/photo/white-and-orange-flowers-in-close-up-photography-11864710/"],
+    "꽃과식물/코스모스":["alex ohan", "https://www.pexels.com/photo/vibrant-pink-cosmo-flower-in-toronto-garden-29826505/"],
+    "꽃과식물/클로버":["Sonny Sixteen", "https://www.pexels.com/photo/close-up-shot-of-four-leaf-clover-12542099/"],
+    "꽃과식물/튤립":["alex ohan", "https://www.pexels.com/photo/close-up-shot-of-tulips-12018676/"],
+    "꽃과식물/해바라기":["F 植生记", "https://www.pexels.com/photo/close-up-of-vibrant-sunflower-in-full-bloom-34537622/"],
+    "꽃과식물/화분":["성진 김", "https://www.pexels.com/photo/close-up-of-plants-with-delicate-flowers-in-the-pots-25462388/"],
+    "동물/강아지":["AMIT KUMAR", "https://www.pexels.com/photo/adorable-brown-and-white-puppy-outdoors-35445396/"],
+    "동물/고양이":["Willian Santos", "https://www.pexels.com/photo/close-up-of-a-tabby-cat-16671157/"],
+    "동물/곰":["Oliver  Morgan Media", "https://www.pexels.com/photo/bears-batching-in-a-river-18453573/"],
+    "동물/기린":["Joolsmagools  ®️", "https://www.pexels.com/photo/close-up-portrait-of-giraffe-at-werribee-zoo-29106247/"],
+    "동물/늑대":["Rob Bertrand", "https://www.pexels.com/photo/stunning-portrait-of-a-majestic-grey-wolf-30004291/"],
+    "동물/다람쥐":["wal_ 172619", "https://www.pexels.com/photo/close-up-of-two-red-squirrels-on-a-tree-36403782/"],
+    "동물/돼지":["Birgit Böllinger", "https://www.pexels.com/photo/domestic-pigs-in-a-bavarian-farm-pigsty-31116488/"],
+    "동물/말":["Radis B", "https://www.pexels.com/photo/mountains-nature-meadow-hills-27740076/"],
+    "동물/사슴":["Buddh Sharan Sahu", "https://www.pexels.com/photo/brown-deer-standing-on-brown-soil-3736574/"],
+    "동물/사자":["Magda Ehlers", "https://www.pexels.com/photo/portrait-of-a-lion-in-natural-habitat-31056317/"],
+    "동물/소":["Christina & Peter", "https://www.pexels.com/photo/rind-27896657/"],
+    "동물/양":["Jimmyk photos", "https://www.pexels.com/photo/close-up-portrait-of-a-sheep-with-dark-background-36480527/"],
+    "동물/얼룩말":["Diego F. Parra", "https://www.pexels.com/photo/zebras-grazing-in-the-wilderness-16878708/"],
+    "동물/여우":["Tomáš Malík", "https://www.pexels.com/photo/a-fox-sitting-outdoors-23914490/"],
+    "동물/염소":["Magda Ehlers", "https://www.pexels.com/photo/adorable-goat-with-floppy-ears-at-farm-32655850/"],
+    "동물/원숭이":["Magda Ehlers", "https://www.pexels.com/photo/vervet-monkey-perched-on-rooftop-edge-outdoors-32230138/"],
+    "동물/캥거루":["Line Knipst", "https://www.pexels.com/photo/a-kangaroo-and-her-baby-are-standing-in-the-grass-27110776/"],
+    "동물/코끼리":["Alexas Fotos", "https://www.pexels.com/photo/photo-of-elephants-7913267/"],
+    "동물/코뿔소":["Magda Ehlers", "https://www.pexels.com/photo/a-rhinoceros-eating-grass-12775468/"],
+    "동물/코알라":["Joolsmagools  ®️", "https://www.pexels.com/photo/koala-resting-on-tree-branch-in-australia-37701031/"],
+    "동물/토끼":["Ahmed Noaman", "https://www.pexels.com/photo/adorable-brown-and-white-bunny-on-floor-30197040/"],
+    "동물/판다":["Snow Chang", "https://www.pexels.com/photo/giant-panda-eating-bamboo-in-natural-habitat-39303271/"],
+    "동물/하마":["Joolsmagools  ®️", "https://www.pexels.com/photo/hippo-s-big-smile-for-camera-27785865/"],
+    "동물/호랑이":["Mehmet Turgut  Kirkgoz", "https://www.pexels.com/photo/close-up-of-a-tiger-15278920/"],
+    "바다생물/가오리":["Ahmed  Shan", "https://www.pexels.com/photo/close-up-photo-of-two-stingrays-underwater-4890155/"],
+    "바다생물/게":["Abeer H", "https://www.pexels.com/photo/close-up-of-ghost-crab-on-sandy-beach-31764068/"],
+    "바다생물/고래":["Ben Phillips", "https://www.pexels.com/photo/blue-whale-swimming-under-water-4781925/"],
+    "바다생물/나비고기":["Taryn Elliott", "https://www.pexels.com/photo/close-up-shot-of-a-copperband-butterflyfish-5546935/"],
+    "바다생물/돌고래":["Magda Ehlers", "https://www.pexels.com/photo/dolphin-jumping-out-of-water-11342081/"],
+    "바다생물/랍스터":["Ritesh Mitha", "https://www.pexels.com/photo/cape-rock-lobster-in-natural-habitat-close-up-39152352/"],
+    "바다생물/물개":["sandrine cornille", "https://www.pexels.com/photo/close-up-of-a-seal-lying-on-the-shore-21879947/"],
+    "바다생물/물고기":["Gilberto Olimpio", "https://www.pexels.com/photo/fishes-underwater-7863205/"],
+    "바다생물/바다거북":["Francisco Davids", "https://www.pexels.com/photo/close-up-shot-of-a-tortoise-14267319/"],
+    "바다생물/바다사자":["Shad Meeg", "https://www.pexels.com/photo/a-seal-on-a-rock-10813786/"],
+    "바다생물/복어":["Jeffry Surianto", "https://www.pexels.com/photo/close-up-of-spiky-fish-8887795/"],
+    "바다생물/불가사리":["Juan Carlos  Fernández Alemán", "https://www.pexels.com/photo/vibrant-starfish-in-shallow-florida-waters-36481872/"],
+    "바다생물/산호":["Francesco Ungaro", "https://www.pexels.com/photo/coral-reef-underwater-13211929/"],
+    "바다생물/상어":["GURYAN", "https://www.pexels.com/photo/underwater-view-of-swimming-sharks-13476998/"],
+    "바다생물/새우":["Ponsakthi Anand", "https://www.pexels.com/photo/close-up-photo-of-pile-of-freshly-caught-prawns-5273798/"],
+    "바다생물/소라":["Lucas Andrade", "https://www.pexels.com/photo/seashells-in-sand-19894531/"],
+    "바다생물/수달":["Chris Spain", "https://www.pexels.com/photo/sea-otter-27303085/"],
+    "바다생물/오징어":["Pascal Ingelrest", "https://www.pexels.com/photo/underwater-photography-of-a-pair-of-squids-10377019/"],
+    "바다생물/조개":["Mahmoud Atashi", "https://www.pexels.com/photo/beautiful-seashells-in-close-up-view-17704105/"],
+    "바다생물/펭귄":["Luke Seago", "https://www.pexels.com/photo/black-and-white-penguin-on-brown-sand-10147418/"],
+    "바다생물/해마":["Jeffry Surianto", "https://www.pexels.com/photo/close-up-of-seahorse-8887695/"],
+    "바다생물/해파리":["江门 江", "https://www.pexels.com/photo/close-up-of-translucent-jellyfish-in-blue-waters-40102042/"],
+    "바다생물/흰동가리":["Josué Rodríguez", "https://www.pexels.com/photo/clownfishes-swimming-underwater-12647649/"],
+    "우주/UFO":["Lucas Pezeta", "https://www.pexels.com/photo/toy-ufo-in-air-5251883/"],
+    "우주/금성":["Zelch Csaba", "https://www.pexels.com/photo/planet-on-black-background-20376407/"],
+    "우주/달":["Arto Suraj", "https://www.pexels.com/photo/full-moon-28284726/"],
+    "우주/로켓":["Berke  Can", "https://www.pexels.com/photo/tall-white-rocket-against-blue-sky-33091783/"],
+    "우주/망원경":["Furlin Chin", "https://www.pexels.com/photo/a-close-up-shot-of-a-telescope-9295368/"],
+    "우주/목성":["@T Keawkanok", "https://www.pexels.com/photo/high-definition-photo-of-jupiter-13229275/"],
+    "우주/별":["Adi K", "https://www.pexels.com/photo/starry-night-sky-over-starry-night-3222255/"],
+    "우주/별자리":["Sindre Fs", "https://www.pexels.com/photo/silhouette-of-trees-during-night-time-958363/"],
+    "우주/수성":["Zelch Csaba", "https://www.pexels.com/photo/planet-of-solar-system-20376399/"],
+    "우주/외계인":["Michaël Meyer", "https://www.pexels.com/photo/ashtray-with-an-alien-toy-inside-9739196/"],
+    "우주/우주복":["Tamula Aura", "https://www.pexels.com/photo/ussr-cosmonaut-uniform-on-black-background-6162307/"],
+    "우주/우주비행사":["Pixabay", "https://www.pexels.com/photo/astronaut-on-planet-355956/"],
+    "우주/우주선":["Daniel Golod", "https://www.pexels.com/photo/space-shuttle-tail-view-in-museum-exhibit-33619754/"],
+    "우주/우주정거장":["SpaceX", "https://www.pexels.com/photo/white-and-gray-satellite-586073/"],
+    "우주/운석":["Marina Leonova", "https://www.pexels.com/photo/brown-rock-on-blue-surface-7486969/"],
+    "우주/은하":["Shashank Brahmavar", "https://www.pexels.com/photo/view-of-a-starry-night-sky-18507018/"],
+    "우주/인공위성":["SpaceX", "https://www.pexels.com/photo/white-outer-space-satellite-586056/"],
+    "우주/지구":["Zelch Csaba", "https://www.pexels.com/photo/stunning-view-of-earth-from-space-30596291/"],
+    "우주/천왕성":["Zelch Csaba", "https://www.pexels.com/photo/planet-with-ring-12491650/"],
+    "우주/태양":["Amine", "https://www.pexels.com/photo/beautiful-sunset-scenery-8086058/"],
+    "우주/토성":["Zelch Csaba", "https://www.pexels.com/photo/saturn-20337593/"],
+    "우주/해왕성":["Zelch Csaba", "https://www.pexels.com/photo/neptune-on-a-black-background-20376388/"],
+    "우주/혜성":["Frank Cone", "https://www.pexels.com/photo/comets-in-the-starry-sky-4895721/"],
+    "우주/화성":["Zelch Csaba", "https://www.pexels.com/photo/moon-in-the-night-sky-12491595/"],
+    "채소/가지":["Ahmad  Khan", "https://www.pexels.com/photo/fresh-purple-eggplants-at-a-farmers-market-38383099/"],
+    "채소/감자":["Antara Verma", "https://www.pexels.com/photo/close-up-shot-of-potatoes-on-wooden-surface-7774212/"],
+    "채소/고구마":["PAND URU", "https://www.pexels.com/photo/root-vegetables-in-close-up-photography-10652321/"],
+    "채소/고추":["Oscar Helgstrand", "https://www.pexels.com/photo/three-red-chili-peppers-on-a-white-surface-5957547/"],
+    "채소/당근":["Suzy Hazelwood", "https://www.pexels.com/photo/close-up-photography-of-orange-carrots-1306559/"],
+    "채소/마늘":["Rachael Holzman", "https://www.pexels.com/photo/full-shot-of-fresh-garlic-5140147/"],
+    "채소/무":["L. Lum", "https://www.pexels.com/photo/fresh-harvest-of-organic-daikon-radishes-35625125/"],
+    "채소/배추":["José luis  Rivera correa", "https://www.pexels.com/photo/fresh-cabbage-pile-on-table-16275972/"],
+    "채소/버섯":["Łukasz Martenka", "https://www.pexels.com/photo/nature-forest-grass-blur-9875872/"],
+    "채소/브로콜리":["Christina & Peter", "https://www.pexels.com/photo/fresh-cut-broccoli-florets-on-wooden-board-36895573/"],
+    "채소/상추":["Robert Owen-Wahl", "https://www.pexels.com/photo/green-vegetable-in-close-up-shot-11509871/"],
+    "채소/시금치":["Yaroslav Shuraev", "https://www.pexels.com/photo/green-leaves-in-close-up-photography-8845078/"],
+    "채소/양배추":["Calvin _Cowakces", "https://www.pexels.com/photo/kubis-28213983/"],
+    "채소/양파":["Paul Seling", "https://www.pexels.com/photo/food-vegetables-cooking-onions-12296935/"],
+    "채소/연근":["Gu Ko", "https://www.pexels.com/photo/lotus-root-salad-with-tiny-shrimps-on-wooden-table-37297743/"],
+    "채소/오이":["aboodi vesakaran", "https://www.pexels.com/photo/a-bunch-of-cucumbers-17975573/"],
+    "채소/옥수수":["Mateusz Feliksik", "https://www.pexels.com/photo/corns-in-a-cooking-pot-13422444/"],
+    "채소/완두콩":["aboodi vesakaran", "https://www.pexels.com/photo/stack-of-green-pea-17975576/"],
+    "채소/콩":["Nadin Sh", "https://www.pexels.com/photo/close-up-of-green-leaves-18363407/"],
+    "채소/토마토":["Dmitry Demidov", "https://www.pexels.com/photo/close-up-photo-of-tomatoes-3938343/"],
+    "채소/파":["Kindel Media", "https://www.pexels.com/photo/close-up-photo-of-a-scallions-7456538/"],
+    "채소/피망":["Pexels User", "https://www.pexels.com/photo/close-up-of-red-peppers-18640811/"],
+    "채소/호박":["AlwaysRoyaltyFree.com AlwaysRoyaltyFree.com", "https://www.pexels.com/photo/a-pile-of-fresh-orange-pumpkins-close-up-40072590/"],
+    "학용품장난감/가방":["cottonbro studio", "https://www.pexels.com/photo/leather-bag-hanging-on-brown-wooden-table-7395291/"],
+    "학용품장난감/가위":["cottonbro studio", "https://www.pexels.com/photo/golden-scissors-beside-the-potted-plant-9710613/"],
+    "학용품장난감/곰인형":["Alena Evseenko", "https://www.pexels.com/photo/adorable-teddy-bears-in-cozy-setting-34402762/"],
+    "학용품장난감/공":["Sóc Năng Động", "https://www.pexels.com/photo/vibrant-red-ball-on-colorful-abstract-background-33971352/"],
+    "학용품장난감/그림책":["https://kaboompics.com/", "https://www.pexels.com/photo/a-stack-of-baby-books-on-a-white-table-7946399/"],
+    "학용품장난감/기차장난감":["Dijana Tandel", "https://www.pexels.com/photo/colorful-wooden-toy-train-on-soft-blanket-32720288/"],
+    "학용품장난감/로봇장난감":["Alexey Demidov", "https://www.pexels.com/photo/orange-mini-toy-on-brown-surface-10482131/"],
+    "학용품장난감/블록":["Polesie Toys", "https://www.pexels.com/photo/blue-red-yellow-and-green-plastic-blocks-4491711/"],
+    "학용품장난감/비눗방울":["Bohdan Hyrovych", "https://www.pexels.com/photo/floating-soap-bubbles-against-clear-blue-sky-38682555/"],
+    "학용품장난감/색종이":["Katie Rainbow 🏳️‍🌈", "https://www.pexels.com/photo/colorful-papers-in-close-up-photography-8559015/"],
+    "학용품장난감/시계":["Ramazan  Gün", "https://www.pexels.com/photo/vintage-clocks-on-stone-wall-in-ankara-38699699/"],
+    "학용품장난감/연":["Neha Parganihaa", "https://www.pexels.com/photo/colorful-kite-against-clear-sky-35671431/"],
+    "학용품장난감/연필":["Nothing Ahead", "https://www.pexels.com/photo/4-pencils-on-gray-surface-4853198/"],
+    "학용품장난감/인형":["quang vinh", "https://www.pexels.com/photo/toy-doll-in-store-20665608/"],
+    "학용품장난감/자":["https://kaboompics.com/", "https://www.pexels.com/photo/black-and-white-rulers-in-close-up-photography-5412192/"],
+    "학용품장난감/자동차장난감":["Engin Akyurt", "https://www.pexels.com/photo/yellow-volkswagen-beetle-scale-model-2767818/"],
+    "학용품장난감/지우개":["Pixabay", "https://www.pexels.com/photo/red-and-blue-pelikan-br-40-eraser-on-white-surface-35202/"],
+    "학용품장난감/책":["Marta Branco", "https://www.pexels.com/photo/colorful-stack-of-hardcover-books-on-dark-background-31881618/"],
+    "학용품장난감/크레파스":["Suzy Hazelwood", "https://www.pexels.com/photo/crayons-on-white-surface-4005362/"],
+    "학용품장난감/팽이":["Tara Winstead", "https://www.pexels.com/photo/close-up-photo-of-wooden-spinning-tops-7123053/"],
+    "학용품장난감/퍼즐":["DS stories", "https://www.pexels.com/photo/puzzle-on-white-background-9227507/"],
+    "학용품장난감/풍선":["Tirachard Kumtanom", "https://www.pexels.com/photo/assorted-color-aired-balloons-under-blue-sky-574282/"],
+    "학용품장난감/필통":["Jahra Tasfia Reza", "https://www.pexels.com/photo/colorful-pencils-in-patterned-pencil-case-37187501/"]
+  }/*PHOTO_CREDITS_END*/;
+  function lineArtSrc(category, name){
     return 'coloring/' + encodeURIComponent(category+'_'+name) + (category==='동물' ? '.jpg' : '.png');
+  }
+  function pictureSrc(category, name){
+    if(PHOTO_CREDITS[category+'/'+name]) return 'photos/' + encodeURIComponent(category+'_'+name) + '.jpg';
+    return lineArtSrc(category, name);
   }
   function wordImg(category, name){ return pictureSrc(category, name); }
   function buildImgWordData(category, rows){
@@ -4548,7 +4806,9 @@
     const entries = await Promise.all(cat.items.map(async name=>{
       const key = catId+'|'+name;
       try{
-        const img = await loadImage(pictureSrc(catId, name));
+        // 그림자는 선그림의 윤곽(흰 바탕 + 검은 선)으로 만들기 때문에, 사진 대신 선그림을 쓴다.
+        // 사진은 배경이 있어서 모양만 깔끔하게 오려내기 어렵다.
+        const img = await loadImage(lineArtSrc(catId, name));
         if(!shadowMaskCache.has(key)) shadowMaskCache.set(key, buildShadowMask(img));
         return {name, img, mask:shadowMaskCache.get(key)};
       }catch(e){ return null; }
@@ -5524,6 +5784,26 @@
     if(wp.idx < wp.level.items.length-1) openWrite(wp.idx+1);
     else leaveWritePlay();
   });
+  // =====================================================================
+  // 📷 사진·자료 출처
+  // =====================================================================
+  function buildCredits(){
+    const list = document.getElementById('creditsList');
+    list.innerHTML = '';
+    Object.keys(PHOTO_CREDITS).forEach(key=>{
+      const [by, url] = PHOTO_CREDITS[key];
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = key.split('/')[1];
+      li.appendChild(a);
+      li.appendChild(document.createTextNode(' — '+by));
+      list.appendChild(li);
+    });
+  }
+  document.getElementById('lnkCredits').addEventListener('click', (e)=>{ e.preventDefault(); buildCredits(); showScreen('screen-credits'); });
+  document.getElementById('btnCreditsBack').addEventListener('click', ()=> showScreen('screen-home'));
+
   // 자동 테스트(tools/e2e_write.py)가 획 좌표를 알아내 손가락 대신 그을 수 있도록 읽기 전용으로 내보낸다
   window.__writeTestState = ()=> wp ? { step:wp.step, ci:wp.ci, si:wp.si, busy:wp.busy, finished:wp.finished,
     strokes:wp.strokes[wp.ci], S:wGeom.S, pad:wGeom.pad, k:wGeom.k, mistakes:wp.mistakes } : null;
