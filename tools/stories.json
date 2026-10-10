@@ -1,0 +1,145 @@
+[
+ {"id":"tortoise", "emoji":"🐢", "gradient":"linear-gradient(160deg,#2e9e5b,#0d2b1d)",
+  "title":{"ko":"토끼와 거북이","en":"The Tortoise and the Hare","ja":"うさぎと かめ","zh":"龟兔赛跑"},
+  "moral":{"ko":"천천히 가도 꾸준히 가면 해낼 수 있어요","en":"Slow and steady wins the race","ja":"ゆっくりでも こつこつ つづければ できるよ","zh":"慢慢来，坚持就能成功"},
+  "scenes":[
+   {"q":"rabbit in meadow","t":{"ko":"숲속에 발이 빠른 토끼와 느릿느릿 거북이가 살았어요.","en":"In the forest lived a speedy rabbit and a very slow turtle.","ja":"もりに、あしの はやい うさぎと、のんびりやの かめが すんでいました。","zh":"森林里住着跑得很快的兔子和慢吞吞的乌龟。"}},
+   {"q":"tortoise close up","t":{"ko":"토끼가 놀렸어요. \"거북아, 넌 왜 그렇게 느리니?\"","en":"The rabbit teased, \"Turtle, why are you so slow?\"","ja":"うさぎが からかいました。「かめさん、どうして そんなに おそいの?」","zh":"兔子笑着说：“乌龟，你怎么这么慢呀？”"}},
+   {"q":"green hill landscape","t":{"ko":"거북이가 말했어요. \"그럼 저 언덕까지 달리기 시합을 하자!\"","en":"The turtle said, \"Then let's race to that hill!\"","ja":"かめは いいました。「じゃあ、あの おかまで かけっこしよう!」","zh":"乌龟说：“那我们比赛，看谁先跑到那座小山！”"}},
+   {"q":"rabbit running grass","v":"rabbit running","t":{"ko":"준비, 땅! 토끼는 깡충깡충 저만치 앞서 나갔어요.","en":"Ready, go! The rabbit hopped far, far ahead.","ja":"よーい、どん! うさぎは ぴょんぴょん ずっと さきへ いきました。","zh":"预备，跑！兔子蹦蹦跳跳，一下子跑到了前面。"}},
+   {"q":"rabbit resting under tree","t":{"ko":"\"거북이는 아직 멀었네. 한숨 자야지.\" 토끼는 나무 아래에서 잠이 들었어요.","en":"\"The turtle is far behind. I'll take a nap.\" The rabbit fell asleep under a tree.","ja":"「かめは まだまだ こないね。ひとねむり しよう。」うさぎは きの したで ねむって しまいました。","zh":"“乌龟还远着呢，我先睡一觉吧。”兔子在树下睡着了。"}},
+   {"q":"tortoise walking grass","v":"tortoise walking","t":{"ko":"그동안 거북이는 쉬지 않고 엉금엉금 걸었어요.","en":"Meanwhile, the turtle kept walking, step by step, without stopping.","ja":"その あいだも、かめは やすまずに のそのそ あるきつづけました。","zh":"这时候，乌龟一步一步地往前爬，一点也不停。"}},
+   {"q":"tortoise on hill","t":{"ko":"토끼가 눈을 떠 보니, 거북이가 벌써 언덕 꼭대기에 있었어요!","en":"When the rabbit woke up, the turtle was already at the top of the hill!","ja":"うさぎが めを さますと、かめは もう おかの うえに いました!","zh":"兔子醒来一看，乌龟已经爬到山顶了！"}},
+   {"q":"sunset meadow","fx":"sparkle","t":{"ko":"천천히 가도 꾸준히 가면 이길 수 있어요. 끝!","en":"Slow and steady wins the race. The end!","ja":"ゆっくりでも こつこつ つづければ かてるんだね。おしまい!","zh":"慢慢来，坚持到底就能赢。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"나무 아래에서 낮잠을 잔 친구는 누구였나요?","en":"Who took a nap under the tree?","ja":"きの したで ひるねを したのは だれ?","zh":"谁在树下睡着了？"},"a":0,"o":[1,2]},
+   {"q":{"ko":"달리기 시합에서 이긴 친구는 누구였나요?","en":"Who won the race?","ja":"かけっこで かったのは だれ?","zh":"谁赢了比赛？"},"a":1,"o":[0,2]}
+  ]},
+
+ {"id":"sunwind", "emoji":"☀️", "gradient":"linear-gradient(160deg,#e0a526,#5a3b05)",
+  "title":{"ko":"해와 바람","en":"The Sun and the Wind","ja":"きたかぜと たいよう","zh":"北风和太阳"},
+  "moral":{"ko":"억지로 하는 것보다 따뜻한 마음이 더 힘이 세요","en":"Kindness is stronger than force","ja":"むりやりより、あたたかい こころの ほうが つよいよ","zh":"温暖比强迫更有力量"},
+  "scenes":[
+   {"q":"sun behind clouds sky","t":{"ko":"어느 날, 해와 바람이 서로 자기가 더 힘이 세다고 다투었어요.","en":"One day, the Sun and the Wind argued about who was stronger.","ja":"ある ひ、たいようと かぜが、どちらが つよいか いいあらそいました。","zh":"有一天，太阳和风争论谁的力气更大。"}},
+   {"q":"man walking coat country road","t":{"ko":"그때 두꺼운 외투를 입은 나그네가 길을 걸어왔어요.","en":"Just then, a traveler in a thick coat came walking down the road.","ja":"そこへ、あつい コートを きた たびびとが あるいて きました。","zh":"这时，一个穿着厚外套的旅人走了过来。"}},
+   {"q":"winding country road","t":{"ko":"\"저 사람의 외투를 먼저 벗기는 쪽이 이기는 거야!\"","en":"\"Whoever gets his coat off first is the winner!\"","ja":"「あの ひとの コートを さきに ぬがせた ほうが かちだよ!」","zh":"“谁先让他脱下外套，谁就赢！”"}},
+   {"q":"trees blowing strong wind","v":"strong wind trees","fx":"wind","t":{"ko":"바람이 휘이잉 휘이잉 세게 불었어요.","en":"The Wind blew hard: whoosh, whoosh!","ja":"かぜが びゅうびゅう つよく ふきました。","zh":"风呼呼地使劲吹。"}},
+   {"q":"man holding coat cold wind","fx":"wind","t":{"ko":"하지만 나그네는 외투를 더 꼭 여몄어요. \"으, 추워!\"","en":"But the traveler only held his coat tighter. \"Brr, it's cold!\"","ja":"でも たびびとは コートを もっと しっかり おさえました。「うう、さむい!」","zh":"可是旅人把外套裹得更紧了。“哎呀，好冷！”"}},
+   {"q":"bright sun shining sky","v":"sun shining sky","fx":"sparkle","t":{"ko":"이번엔 해가 따뜻한 햇살을 비추었어요.","en":"Then the Sun shone down with warm sunshine.","ja":"こんどは たいようが あたたかい ひかりで てらしました。","zh":"这次，太阳洒下了温暖的阳光。"}},
+   {"q":"man carrying jacket sunny day","t":{"ko":"\"아이, 더워!\" 나그네는 스스로 외투를 벗었어요.","en":"\"Phew, it's hot!\" The traveler took off his coat by himself.","ja":"「ああ、あつい!」たびびとは じぶんから コートを ぬぎました。","zh":"“哎呀，好热！”旅人自己脱下了外套。"}},
+   {"q":"sunny field flowers","fx":"sparkle","t":{"ko":"억지로 하는 것보다 따뜻한 마음이 더 힘이 세답니다. 끝!","en":"Warmth and kindness are stronger than force. The end!","ja":"むりやりより、あたたかい こころの ほうが つよいんだね。おしまい!","zh":"温暖比强迫更有力量。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"세게 불어서 외투를 벗기려 한 것은 누구였나요?","en":"Who blew hard to take off the coat?","ja":"つよく ふいて コートを ぬがせようと したのは?","zh":"谁使劲吹想让旅人脱外套？"},"a":3,"o":[5,1]},
+   {"q":{"ko":"나그네의 외투를 벗긴 것은 누구였나요?","en":"Who made the traveler take off his coat?","ja":"たびびとの コートを ぬがせたのは?","zh":"是谁让旅人脱下了外套？"},"a":5,"o":[3,2]}
+  ]},
+
+ {"id":"ant", "emoji":"🐜", "gradient":"linear-gradient(160deg,#8a6d1f,#2b1f05)",
+  "title":{"ko":"개미와 베짱이","en":"The Ant and the Grasshopper","ja":"ありと きりぎりす","zh":"蚂蚁和蚱蜢"},
+  "moral":{"ko":"미리 준비하고, 어려운 친구와 나눠요","en":"Prepare ahead, and share with friends in need","ja":"まえもって じゅんびして、こまっている ともだちと わけあおう","zh":"提前做好准备，也要和朋友分享"},
+  "scenes":[
+   {"q":"ants carrying food","v":"ants carrying food","t":{"ko":"뜨거운 여름, 개미들은 영차영차 부지런히 먹이를 날랐어요.","en":"In the hot summer, the ants worked hard carrying food.","ja":"あつい なつ、ありたちは えっさ ほいさと たべものを はこびました。","zh":"炎热的夏天，蚂蚁们嘿哟嘿哟地搬运食物。"}},
+   {"q":"grasshopper on leaf","t":{"ko":"베짱이는 나무 그늘에서 노래만 불렀어요. \"랄랄라~\"","en":"The grasshopper just sang in the shade. \"La la la!\"","ja":"きりぎりすは こかげで うたって ばかり。「ラララ〜」","zh":"蚱蜢却在树荫下唱歌。“啦啦啦～”"}},
+   {"q":"ant macro close up","t":{"ko":"\"베짱이야, 겨울 준비를 해야지!\" \"아직 여름인걸!\"","en":"\"Grasshopper, get ready for winter!\" \"But it's still summer!\"","ja":"「きりぎりすさん、ふゆの じゅんびを しなくちゃ!」「まだ なつだよ!」","zh":"“蚱蜢，要准备过冬啦！”“现在还是夏天呢！”"}},
+   {"q":"autumn leaves falling","fx":"leaves","t":{"ko":"시간이 흘러 나뭇잎이 알록달록 물들고 하나둘 떨어졌어요.","en":"Time passed. The leaves turned colorful and fell one by one.","ja":"やがて はっぱが いろづいて、ひらひら おちて いきました。","zh":"时间过去了，树叶变得五颜六色，一片片落下来。"}},
+   {"q":"snowy forest","v":"snow falling forest","fx":"snow","t":{"ko":"차가운 겨울이 왔어요. 온 세상이 하얀 눈으로 덮였어요.","en":"Cold winter came. The whole world was covered in white snow.","ja":"さむい ふゆが きました。せかいじゅうが まっしろな ゆきに つつまれました。","zh":"寒冷的冬天来了，到处都盖满了白雪。"}},
+   {"q":"wooden door snow","fx":"snow","t":{"ko":"배고프고 추운 베짱이가 개미네 집 문을 똑똑 두드렸어요.","en":"Hungry and cold, the grasshopper knocked on the ants' door.","ja":"おなかが すいて さむい きりぎりすが、ありの いえの とびらを とんとん たたきました。","zh":"又饿又冷的蚱蜢敲了敲蚂蚁家的门。"}},
+   {"q":"warm soup bread table","t":{"ko":"개미들은 따뜻한 음식을 나눠 주었어요. \"같이 먹자!\"","en":"The ants shared warm food. \"Let's eat together!\"","ja":"ありたちは あたたかい たべものを わけて あげました。「いっしょに たべよう!」","zh":"蚂蚁们分给它热乎乎的食物。“一起吃吧！”"}},
+   {"q":"green summer meadow","fx":"sparkle","t":{"ko":"베짱이는 다음 여름에는 미리 준비하겠다고 약속했어요. 끝!","en":"The grasshopper promised to prepare early next summer. The end!","ja":"きりぎりすは、つぎの なつは はやめに じゅんびすると やくそくしました。おしまい!","zh":"蚱蜢答应明年夏天要提前做准备。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"여름에 노래만 부른 친구는 누구였나요?","en":"Who only sang all summer?","ja":"なつに うたって ばかりいたのは だれ?","zh":"谁整个夏天都在唱歌？"},"a":1,"o":[2,4]},
+   {"q":{"ko":"겨울에 음식을 나눠 준 친구는 누구였나요?","en":"Who shared food in winter?","ja":"ふゆに たべものを わけて くれたのは だれ?","zh":"冬天谁分享了食物？"},"a":2,"o":[1,3]}
+  ]},
+
+ {"id":"mouse", "emoji":"🐭", "gradient":"linear-gradient(160deg,#6b5b95,#231c3a)",
+  "title":{"ko":"시골쥐와 서울쥐","en":"The Country Mouse and the City Mouse","ja":"いなかの ねずみと まちの ねずみ","zh":"乡下老鼠和城里老鼠"},
+  "moral":{"ko":"마음 편한 곳이 가장 좋은 곳이에요","en":"A peaceful home is the best home","ja":"こころが やすらぐ ところが いちばん","zh":"安心的地方才是最好的家"},
+  "scenes":[
+   {"q":"field mouse grass","t":{"ko":"시골에 사는 쥐가 서울에 사는 친구를 집에 초대했어요.","en":"A country mouse invited a friend from the city to visit.","ja":"いなかの ねずみが、まちに すむ ともだちを いえに よびました。","zh":"乡下老鼠请城里的朋友来家里玩。"}},
+   {"q":"grains beans wooden bowl","t":{"ko":"시골쥐는 보리와 콩을 정성껏 대접했어요.","en":"The country mouse served barley and beans with care.","ja":"いなかの ねずみは むぎと まめを ごちそうしました。","zh":"乡下老鼠用心地端出了大麦和豆子。"}},
+   {"q":"mouse close up","t":{"ko":"\"이런 것밖에 없니? 우리 집에 가면 맛있는 게 아주 많아!\"","en":"\"Is this all? My house has lots of tasty food!\"","ja":"「これだけ? ぼくの いえには おいしい ものが いっぱい あるよ!」","zh":"“就这些吗？我家里有好多好吃的！”"}},
+   {"q":"city lights night","v":"city lights night","t":{"ko":"둘은 서울쥐네 집으로 갔어요. 높은 건물과 반짝이는 불빛!","en":"They went to the city. Tall buildings and twinkling lights!","ja":"ふたりは まちへ いきました。たかい ビルと きらきら ひかる あかり!","zh":"它们来到了城市。高高的楼房，闪闪的灯光！"}},
+   {"q":"cheese cake table","t":{"ko":"식탁 위에는 치즈와 케이크가 가득했어요. \"우와!\"","en":"The table was full of cheese and cake. \"Wow!\"","ja":"テーブルには チーズや ケーキが いっぱい。「わあ!」","zh":"桌子上摆满了奶酪和蛋糕。“哇！”"}},
+   {"q":"cat staring","t":{"ko":"그때 \"야옹!\" 커다란 고양이가 나타났어요!","en":"Suddenly, \"Meow!\" A big cat appeared!","ja":"その とき、「ニャーオ!」おおきな ねこが あらわれました!","zh":"这时，“喵！”一只大猫出现了！"}},
+   {"q":"mouse hiding","t":{"ko":"깜짝 놀란 시골쥐가 말했어요. \"나는 조용한 시골이 더 좋아.\"","en":"The startled country mouse said, \"I like my quiet country home better.\"","ja":"びっくりした いなかの ねずみは いいました。「ぼくは しずかな いなかの ほうが いいな。」","zh":"吓了一跳的乡下老鼠说：“我还是喜欢安静的乡下。”"}},
+   {"q":"countryside farm sunset","fx":"sparkle","t":{"ko":"시골쥐는 집으로 돌아가 편안하게 잠들었어요. 끝!","en":"The country mouse went home and slept peacefully. The end!","ja":"いなかの ねずみは いえに かえって、ぐっすり ねむりました。おしまい!","zh":"乡下老鼠回到家，安安心心地睡着了。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"시골쥐가 대접한 음식은 무엇이었나요?","en":"What food did the country mouse serve?","ja":"いなかの ねずみが ごちそうしたのは?","zh":"乡下老鼠请朋友吃了什么？"},"a":1,"o":[4,3]},
+   {"q":{"ko":"서울쥐네 집에서 갑자기 나타난 동물은 누구였나요?","en":"Which animal suddenly appeared in the city?","ja":"まちの いえで とつぜん あらわれたのは?","zh":"城里突然出现了什么动物？"},"a":5,"o":[0,2]}
+  ]},
+
+ {"id":"sunmoon", "emoji":"🌙", "gradient":"linear-gradient(160deg,#232b66,#0b1030)",
+  "title":{"ko":"해님 달님","en":"The Sun and the Moon","ja":"おひさまと おつきさま","zh":"太阳和月亮"},
+  "moral":{"ko":"서로 돕고 지혜롭게 위기를 이겨 내요","en":"Help each other and stay wise in danger","ja":"たすけあって、ちえを だせば のりこえられるよ","zh":"互相帮助，用智慧克服困难"},
+  "scenes":[
+   {"q":"korean traditional house mountain","t":{"ko":"옛날 깊은 산골에 엄마와 오누이가 살았어요.","en":"Long ago, a mother and her son and daughter lived deep in the mountains.","ja":"むかし、ふかい やまおくに、おかあさんと きょうだいが くらしていました。","zh":"很久以前，深山里住着妈妈和一对兄妹。"}},
+   {"q":"korean rice cake","t":{"ko":"엄마는 떡을 팔러 고개 너머 마을에 다녀왔어요.","en":"The mother went over the hill to sell rice cakes in the village.","ja":"おかあさんは おもちを うりに、とうげの むこうの むらへ いきました。","zh":"妈妈翻过山岭，到村子里去卖年糕。"}},
+   {"q":"tiger","t":{"ko":"\"떡 하나 주면 안 잡아먹지!\" 무서운 호랑이가 나타났어요.","en":"\"Give me a rice cake and I won't eat you!\" A scary tiger appeared.","ja":"「おもちを ひとつ くれたら たべないぞ!」こわい とらが あらわれました。","zh":"“给我一块年糕，我就不吃你！”一只可怕的老虎出现了。"}},
+   {"q":"old wooden door","t":{"ko":"호랑이는 엄마 흉내를 내며 집으로 찾아왔어요. \"얘들아, 문 열어라.\"","en":"The tiger came to the house pretending to be Mom. \"Children, open the door.\"","ja":"とらは おかあさんの ふりを して いえに きました。「こどもたち、とを あけて。」","zh":"老虎假装成妈妈来到家门口：“孩子们，开开门。”"}},
+   {"q":"big old tree","t":{"ko":"털이 숭숭 난 손을 본 오누이는 뒷문으로 나가 커다란 나무 위로 올라갔어요.","en":"Seeing a furry paw, the children slipped out the back and climbed a big tree.","ja":"けむくじゃらの てを みた きょうだいは、うらぐちから にげて おおきな きに のぼりました。","zh":"兄妹俩看见毛茸茸的爪子，从后门溜出去，爬上了大树。"}},
+   {"q":"rope hanging sky","fx":"sparkle","t":{"ko":"\"하늘님, 저희를 도와주세요!\" 하늘에서 튼튼한 동아줄이 내려왔어요.","en":"\"Please help us!\" A strong rope came down from the sky.","ja":"「かみさま、たすけて ください!」そらから じょうぶな なわが おりて きました。","zh":"“老天爷，请救救我们！”天上垂下了一根结实的绳子。"}},
+   {"q":"full moon night sky","v":"moon night sky","fx":"stars","t":{"ko":"오누이는 하늘로 올라가 오빠는 달님, 동생은 해님이 되었어요.","en":"The children rose to the sky. The brother became the Moon, and the sister became the Sun.","ja":"きょうだいは そらへ のぼり、おにいさんは おつきさま、いもうとは おひさまに なりました。","zh":"兄妹俩升上天空，哥哥变成了月亮，妹妹变成了太阳。"}},
+   {"q":"sunrise sky","v":"sunrise","fx":"sparkle","t":{"ko":"그래서 지금도 해님과 달님이 우리를 환하게 비춰 준답니다. 끝!","en":"That's why the Sun and the Moon still shine brightly on us today. The end!","ja":"だから いまも、おひさまと おつきさまが わたしたちを てらして くれるんだって。おしまい!","zh":"所以直到今天，太阳和月亮还在明亮地照耀着我们。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"\"떡 하나 주면 안 잡아먹지!\" 하고 말한 동물은 누구였나요?","en":"Who said, \"Give me a rice cake and I won't eat you\"?","ja":"「おもちを くれたら たべないぞ」と いったのは だれ?","zh":"是谁说“给我一块年糕，我就不吃你”？"},"a":2,"o":[4,0]},
+   {"q":{"ko":"하늘에서 내려와 오누이를 구해 준 것은 무엇이었나요?","en":"What came down from the sky to save the children?","ja":"そらから おりて きて きょうだいを たすけたのは?","zh":"是什么从天上垂下来救了兄妹俩？"},"a":5,"o":[4,3]}
+  ]},
+
+ {"id":"heungbu", "emoji":"🎃", "gradient":"linear-gradient(160deg,#b5652a,#3b1f0a)",
+  "title":{"ko":"흥부와 놀부","en":"Heungbu and Nolbu","ja":"フンブと ノルブ","zh":"兴夫和孬夫"},
+  "moral":{"ko":"착한 마음은 복이 되어 돌아와요","en":"A kind heart brings good things back to you","ja":"やさしい こころは しあわせに なって かえって くるよ","zh":"善良的心会带来好运"},
+  "scenes":[
+   {"q":"korean hanok village","t":{"ko":"옛날에 욕심쟁이 형 놀부와 마음씨 착한 동생 흥부가 살았어요.","en":"Long ago lived greedy big brother Nolbu and kind little brother Heungbu.","ja":"むかし、よくばりな あにの ノルブと、こころやさしい おとうとの フンブが いました。","zh":"从前，有个贪心的哥哥孬夫和善良的弟弟兴夫。"}},
+   {"q":"swallow bird","t":{"ko":"어느 봄날, 흥부는 다리를 다친 제비를 발견했어요.","en":"One spring day, Heungbu found a swallow with a hurt leg.","ja":"ある はるの ひ、フンブは あしを けがした つばめを みつけました。","zh":"一个春天，兴夫发现了一只腿受伤的燕子。"}},
+   {"q":"baby birds nest","t":{"ko":"흥부는 정성껏 제비 다리를 고쳐 주었어요. \"얼른 나으렴.\"","en":"Heungbu gently fixed the swallow's leg. \"Get well soon.\"","ja":"フンブは ていねいに つばめの あしを なおして あげました。「はやく よく なってね。」","zh":"兴夫细心地给燕子治好了腿。“快点好起来吧。”"}},
+   {"q":"swallow flying sky","v":"swallow flying","t":{"ko":"다음 해 봄, 제비가 돌아와 박씨 하나를 선물했어요.","en":"Next spring, the swallow came back and gave him a gourd seed.","ja":"つぎの はる、つばめが もどって きて、ひょうたんの たねを くれました。","zh":"第二年春天，燕子飞回来，送给他一颗葫芦籽。"}},
+   {"q":"gourd plant","t":{"ko":"박씨를 심었더니 지붕 위에 커다란 박이 주렁주렁 열렸어요.","en":"He planted the seed, and big gourds grew all over the roof.","ja":"たねを まくと、やねの うえに おおきな ひょうたんが どっさり なりました。","zh":"他种下种子，屋顶上结满了大大的葫芦。"}},
+   {"q":"gold coins treasure","fx":"sparkle","t":{"ko":"박을 쓱싹쓱싹 켜자 금은보화가 와르르 쏟아졌어요!","en":"When he cut open the gourds, gold and treasure came pouring out!","ja":"ひょうたんを ぎこぎこ わると、きんぎんの たからが ざくざく でて きました!","zh":"锯开葫芦，金银财宝哗啦啦地涌了出来！"}},
+   {"q":"dark storm clouds","fx":"rain","t":{"ko":"욕심이 난 놀부는 일부러 제비를 다치게 했어요. 그러자 놀부의 박에서는 도깨비가 나와 혼쭐을 냈어요.","en":"Greedy Nolbu hurt a swallow on purpose. Goblins jumped out of his gourds and scolded him.","ja":"よくばりな ノルブは わざと つばめに けがを させました。すると ノルブの ひょうたんからは おにが でて きて、こらしめました。","zh":"贪心的孬夫故意弄伤了燕子。结果他的葫芦里跳出了鬼怪，狠狠地教训了他。"}},
+   {"q":"warm sunset village","fx":"sparkle","t":{"ko":"놀부는 잘못을 뉘우쳤고, 형제는 사이좋게 살았답니다. 끝!","en":"Nolbu said sorry, and the brothers lived happily together. The end!","ja":"ノルブは はんせいして、きょうだいは なかよく くらしました。おしまい!","zh":"孬夫知道错了，兄弟俩从此和和睦睦地生活。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"흥부가 다리를 고쳐 준 새는 누구였나요?","en":"Which bird did Heungbu help?","ja":"フンブが あしを なおして あげた とりは?","zh":"兴夫帮助了哪只鸟？"},"a":1,"o":[4,5]},
+   {"q":{"ko":"흥부의 박에서 나온 것은 무엇이었나요?","en":"What came out of Heungbu's gourds?","ja":"フンブの ひょうたんから でて きたのは?","zh":"兴夫的葫芦里出来了什么？"},"a":5,"o":[6,4]}
+  ]},
+
+ {"id":"magpie", "emoji":"🐦", "gradient":"linear-gradient(160deg,#1f7a6b,#0b2b27)",
+  "title":{"ko":"은혜 갚은 까치","en":"The Grateful Magpies","ja":"おんがえしの かささぎ","zh":"报恩的喜鹊"},
+  "moral":{"ko":"고마운 마음은 잊지 않아요","en":"Never forget those who help you","ja":"ありがとうの きもちは わすれないよ","zh":"别忘了帮助过你的人"},
+  "scenes":[
+   {"q":"mountain forest path","t":{"ko":"옛날에 한 젊은 선비가 먼 길을 떠나 산길을 걷고 있었어요.","en":"Long ago, a young scholar was walking along a mountain path.","ja":"むかし、わかい がくしゃが とおくへ たびを して、やまみちを あるいて いました。","zh":"从前，一位年轻的书生走在山路上。"}},
+   {"q":"snake on tree branch","t":{"ko":"그때 커다란 구렁이가 까치 둥지를 노리고 있었어요.","en":"A big snake was creeping toward a magpie's nest.","ja":"その とき、おおきな へびが かささぎの すを ねらって いました。","zh":"这时，一条大蛇正盯着喜鹊的窝。"}},
+   {"q":"magpie bird","t":{"ko":"선비는 구렁이를 쫓아 까치 가족을 구해 주었어요.","en":"The scholar chased the snake away and saved the magpie family.","ja":"がくしゃは へびを おいはらって、かささぎの かぞくを たすけました。","zh":"书生赶走了大蛇，救了喜鹊一家。"}},
+   {"q":"old house in forest night","t":{"ko":"밤이 되자 선비는 산속 외딴집에서 하룻밤 묵게 되었어요.","en":"At night, the scholar stayed at a lonely house in the woods.","ja":"よるに なり、がくしゃは やまおくの いっけんやに とまる ことに なりました。","zh":"天黑了，书生在山里一间孤零零的房子里借宿。"}},
+   {"q":"snake close up","t":{"ko":"그런데 그 집 주인은 구렁이였어요! \"산 위의 종이 세 번 울리면 보내 주마!\"","en":"But the owner was the snake! \"If the bell on the mountain rings three times, I'll let you go!\"","ja":"ところが その いえの あるじは へびでした!「やまの かねが みっつ なったら にがして やろう!」","zh":"原来房子的主人就是那条大蛇！“要是山上的钟响三声，我就放了你！”"}},
+   {"q":"temple bell","fx":"sparkle","t":{"ko":"깊은 밤, 산 위 절에서 \"댕! 댕! 댕!\" 종소리가 울렸어요.","en":"Late at night, the temple bell rang out: dong, dong, dong!","ja":"よなか、やまの うえの おてらから「ゴーン、ゴーン、ゴーン!」と かねが なりました。","zh":"深夜，山上的寺庙传来了“当！当！当！”的钟声。"}},
+   {"q":"magpies flying","v":"magpie flying","t":{"ko":"아침에 가 보니, 까치들이 날개로 힘껏 종을 쳐서 선비를 구한 것이었어요.","en":"In the morning, he found the magpies had rung the bell with their wings to save him.","ja":"あさ いって みると、かささぎたちが はねで かねを ついて、がくしゃを たすけて くれたのでした。","zh":"早上一看，原来是喜鹊们用翅膀撞响了钟，救了书生。"}},
+   {"q":"sunrise mountains","fx":"sparkle","t":{"ko":"작은 까치도 고마운 마음을 잊지 않았답니다. 끝!","en":"Even little magpies never forget kindness. The end!","ja":"ちいさな かささぎも、ありがとうの きもちを わすれなかったんだね。おしまい!","zh":"小小的喜鹊也没有忘记别人的恩情。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"선비가 구해 준 새는 누구였나요?","en":"Which bird did the scholar save?","ja":"がくしゃが たすけた とりは?","zh":"书生救了哪种鸟？"},"a":2,"o":[1,5]},
+   {"q":{"ko":"종을 울려 선비를 구한 것은 누구였나요?","en":"Who rang the bell to save the scholar?","ja":"かねを ならして がくしゃを たすけたのは?","zh":"是谁敲响了钟，救了书生？"},"a":6,"o":[4,3]}
+  ]},
+
+ {"id":"pigs", "emoji":"🐷", "gradient":"linear-gradient(160deg,#d6336c,#4a0e2a)",
+  "title":{"ko":"아기 돼지 삼형제","en":"The Three Little Pigs","ja":"さんびきの こぶた","zh":"三只小猪"},
+  "moral":{"ko":"부지런히, 튼튼하게 준비하면 든든해요","en":"Hard work and careful building keep you safe","ja":"こつこつ じょうぶに つくれば あんしんだよ","zh":"勤劳踏实，才能平平安安"},
+  "scenes":[
+   {"q":"three piglets","t":{"ko":"아기 돼지 삼형제가 각자 집을 짓기로 했어요.","en":"Three little pigs each decided to build a house.","ja":"さんびきの こぶたが、それぞれ いえを たてる ことに しました。","zh":"三只小猪决定各自盖一座房子。"}},
+   {"q":"straw hay bales","t":{"ko":"첫째는 지푸라기로 후다닥 집을 지었어요. \"다 했다!\"","en":"The first pig quickly built a house of straw. \"Done!\"","ja":"いちばん うえの こぶたは わらで さっさと いえを たてました。「できた!」","zh":"老大用稻草很快就盖好了房子。“盖好啦！”"}},
+   {"q":"wooden cabin","t":{"ko":"둘째는 나무로 뚝딱뚝딱 집을 지었어요.","en":"The second pig built a house of wood, tap, tap, tap.","ja":"にばんめの こぶたは きで とんとん いえを たてました。","zh":"老二用木头叮叮当当地盖了房子。"}},
+   {"q":"red brick wall","t":{"ko":"셋째는 벽돌을 하나하나 쌓아 튼튼한 집을 지었어요.","en":"The third pig stacked bricks one by one to build a strong house.","ja":"さんばんめの こぶたは れんがを ひとつずつ つんで、じょうぶな いえを たてました。","zh":"老三一块一块地垒砖，盖了一座结实的房子。"}},
+   {"q":"wolf","t":{"ko":"그때 배고픈 늑대가 나타났어요. \"후~ 불어서 날려 버려야지!\"","en":"Then a hungry wolf came. \"I'll huff and puff and blow your house down!\"","ja":"そこへ おなかを すかせた おおかみが きました。「ふーっと ふいて とばして やる!」","zh":"这时，一只饿狼来了。“我要呼地一吹，把房子吹倒！”"}},
+   {"q":"hay blowing wind","v":"hay blowing wind","fx":"wind","t":{"ko":"후우~! 지푸라기 집과 나무 집은 날아가 버렸어요!","en":"Whoosh! The straw house and the wooden house blew away!","ja":"ふーっ! わらの いえと きの いえは とんで いって しまいました!","zh":"呼——！稻草房和木头房都被吹跑了！"}},
+   {"q":"brick house","t":{"ko":"하지만 벽돌집은 아무리 불어도 끄떡없었어요.","en":"But no matter how hard he blew, the brick house stood strong.","ja":"でも れんがの いえは どんなに ふいても びくとも しませんでした。","zh":"可是砖房子怎么吹都纹丝不动。"}},
+   {"q":"piglets sleeping together","fx":"sparkle","t":{"ko":"삼형제는 튼튼한 벽돌집에서 함께 안전하게 지냈어요. 끝!","en":"The three pigs lived safely together in the strong brick house. The end!","ja":"さんびきは じょうぶな れんがの いえで、なかよく あんしんして くらしました。おしまい!","zh":"三只小猪在结实的砖房里平平安安地住在一起。完！"}}
+  ],
+  "quiz":[
+   {"q":{"ko":"늑대가 불어도 끄떡없었던 집은 무엇으로 지었나요?","en":"What was the strong house made of?","ja":"おおかみが ふいても びくとも しなかった いえは なにで できていた?","zh":"狼怎么吹都吹不倒的房子是用什么盖的？"},"a":3,"o":[1,2]},
+   {"q":{"ko":"집을 불어서 날려 버린 동물은 누구였나요?","en":"Who blew the houses down?","ja":"いえを ふいて とばしたのは だれ?","zh":"是谁把房子吹跑了？"},"a":4,"o":[0,6]}
+  ]}
+]

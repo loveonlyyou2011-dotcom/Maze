@@ -327,6 +327,49 @@
   @keyframes popIn{ 0%{ transform:scale(.4); opacity:0; } 70%{ transform:scale(1.08); opacity:1; } 100%{ transform:scale(1); } }
   .write-credit{ font-size:11px; opacity:.45; text-align:center; margin-top:16px; max-width:360px; line-height:1.5; }
 
+  /* ---------- 🎬 동화 극장 ---------- */
+  #storyGrid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; max-width:440px; }
+  .story-card{ position:relative; border-radius:18px; overflow:hidden; aspect-ratio:4/5; cursor:pointer; background:#222;
+    border:3px solid rgba(255,255,255,.15); }
+  .story-card:active{ transform:scale(.96); }
+  .story-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .story-card .sc-title{ position:absolute; left:0; right:0; bottom:0; padding:22px 8px 8px; font-size:16px; font-weight:800; text-align:center;
+    background:linear-gradient(transparent, rgba(0,0,0,.78)); word-break:keep-all; line-height:1.25; }
+  .story-card .sc-emoji{ position:absolute; top:6px; left:8px; font-size:26px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.6)); }
+  .story-card .sc-star{ position:absolute; top:8px; right:8px; font-size:12px; }
+  /* 키가 큰 폰에서 아래가 비지 않게 화면 높이에 맞춰 무대를 키운다 */
+  #storyStage{ position:relative; width:100%; max-width:460px; height:clamp(230px, 47vh, 440px); border-radius:20px; overflow:hidden; background:#000;
+    box-shadow:0 8px 24px rgba(0,0,0,.4); flex-shrink:0; }
+  #storyLayer{ position:absolute; inset:0; transition:opacity .6s ease; }
+  #storyLayer.fade{ opacity:0; }
+  #storyImg, #storyVideo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  #storyVideo{ display:none; }
+  /* 사진을 천천히 확대·이동해서 영상처럼 보이게 (켄 번스 효과) */
+  #storyImg.kb-in{ animation:kbIn 14s ease-in-out forwards; }
+  #storyImg.kb-out{ animation:kbOut 14s ease-in-out forwards; }
+  #storyImg.kb-left{ animation:kbLeft 14s ease-in-out forwards; }
+  #storyImg.kb-right{ animation:kbRight 14s ease-in-out forwards; }
+  @keyframes kbIn{ from{ transform:scale(1); } to{ transform:scale(1.18); } }
+  @keyframes kbOut{ from{ transform:scale(1.18); } to{ transform:scale(1.02); } }
+  @keyframes kbLeft{ from{ transform:scale(1.15) translateX(5%); } to{ transform:scale(1.15) translateX(-5%); } }
+  @keyframes kbRight{ from{ transform:scale(1.15) translateX(-5%); } to{ transform:scale(1.15) translateX(5%); } }
+  #storyFx{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; background:transparent; box-shadow:none; border-radius:0; }
+  #storyEnd{ position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    background:rgba(10,14,40,.78); padding:16px; gap:8px; }
+  #storyEnd.show{ display:flex; animation:popIn .5s ease; }
+  .st-end-star{ font-size:54px; }
+  #storyMoral{ font-size:20px; font-weight:800; line-height:1.4; word-break:keep-all; max-width:340px; }
+  .st-end-btns{ display:flex; flex-direction:column; align-items:center; gap:6px; width:100%; }
+  .st-end-btns .big-btn{ max-width:240px; margin:4px 0; padding:14px; }
+  #storyText{ width:100%; max-width:460px; min-height:96px; margin-top:12px; padding:12px 14px; border-radius:16px; background:var(--ui-card);
+    font-size:21px; font-weight:800; line-height:1.5; text-align:center; word-break:keep-all; }
+  #storyText .w{ transition:color .15s, background .15s; border-radius:6px; }
+  #storyText .w.on{ color:#ffd93d; background:rgba(255,217,61,.16); }
+  #storyText .w.done{ color:#cfd8ff; }
+  #storyControls button{ font-size:18px; padding:12px 16px; border-radius:14px; }
+  #creditsStoryList{ list-style:none; padding:0; margin:0; font-size:12px; }
+  #creditsStoryList li{ padding:2px 0; opacity:.85; }
+
   /* ---------- 그림 퀴즈 공용 (듣고 고르기·수 세기·생각 놀이·마음·안전) ---------- */
   #pqVisual{ width:100%; max-width:400px; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px;
     font-size:64px; min-height:10px; margin:4px 0 6px; text-align:center; }
@@ -662,6 +705,47 @@
     <button class="icon-btn" id="btnFunBack" style="margin-top:10px">◀ 목록으로</button>
   </section>
 
+  <!-- 🎬 동화 극장: 목록 -->
+  <section id="screen-story-list" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnStoryListBack">◀ 뒤로</button>
+      <div class="info">🎬 동화 극장</div>
+      <span style="width:44px"></span>
+    </div>
+    <p class="sub" style="margin-bottom:8px;">어떤 말로 들을까요?</p>
+    <div class="seg" id="storyLangSeg"></div>
+    <div id="storyGrid"></div>
+  </section>
+
+  <!-- 🎬 동화 극장: 재생 -->
+  <section id="screen-story-play" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnStoryPlayBack">◀ 목록</button>
+      <div class="info" id="storyTitle">동화</div>
+      <div class="info" id="storyProgress" style="flex:0 0 auto;">1 / 8</div>
+    </div>
+    <div class="seg" id="storyPlayLangSeg" style="margin-bottom:8px;"></div>
+    <div id="storyStage">
+      <div id="storyLayer"><img id="storyImg" alt=""><video id="storyVideo" muted loop playsinline preload="auto"></video></div>
+      <canvas id="storyFx"></canvas>
+      <div id="storyEnd">
+        <div class="st-end-star">🌟</div>
+        <div id="storyMoral"></div>
+        <div class="st-end-btns">
+          <button class="big-btn" id="btnStoryQuiz">❓ 문제 풀기</button>
+          <button class="icon-btn" id="btnStoryReplay">🔁 처음부터</button>
+        </div>
+      </div>
+    </div>
+    <div id="storyText"></div>
+    <div class="game-actions" id="storyControls">
+      <button id="btnStoryPrev">◀</button>
+      <button id="btnStoryAuto">⏸ 멈춤</button>
+      <button id="btnStorySay">🔊 다시 듣기</button>
+      <button id="btnStoryNext">▶</button>
+    </div>
+  </section>
+
   <!-- 놀이 묶음 메뉴 (한글 블록·생각 놀이·마음·안전·수 세기) -->
   <section id="screen-fun-menu" class="screen">
     <div class="topbar">
@@ -737,6 +821,8 @@
       <p>그림 카드·퍼즐·그림책·따라쓰기의 사진은 <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a>의 무료 사진입니다. 멋진 사진을 찍어 주신 작가님들께 감사드립니다. 공룡은 실물 사진이 없어서 모형 사진을 썼습니다.</p>
       <h3>사진 작가</h3>
       <ul id="creditsList"></ul>
+      <h3>🎬 동화 극장 장면 (사진·영상: Pexels)</h3>
+      <ul id="creditsStoryList"></ul>
       <h3>글자 획순 데이터</h3>
       <p>일본어: <a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener">KanjiVG</a> (Ulrich Apel, CC BY-SA 3.0)<br>
       중국어: <a href="https://github.com/skishore/makemeahanzi" target="_blank" rel="noopener">Make Me a Hanzi</a> (Arphic Public License)</p>
@@ -1592,6 +1678,7 @@
     const wrap = document.getElementById('gameHubGrid');
     wrap.innerHTML = '';
     const games = [
+      {emoji:'🎬', label:'동화 극장', wide:true, gradient:'linear-gradient(160deg,#5b2a86,#1a0b33)', onClick:()=>{ buildStoryList(); showScreen('screen-story-list'); }},
       {emoji:'🧭', label:'미로찾기', gradient:'linear-gradient(160deg,#232b66,#0b1030)', onClick:()=>{ buildThemeGrid(); showScreen('screen-theme'); }},
       {emoji:'🔢', label:'숫자놀이', gradient:'linear-gradient(160deg,#3a3a3a,#161616)', onClick:()=>{ buildMathOpGrid(); showScreen('screen-math-op'); }},
       {emoji:'🗣️', label:'단어놀이', gradient:'linear-gradient(160deg,#6d2e8f,#3a0f52)', onClick:()=>{ buildWordLangGrid(); showScreen('screen-word-lang'); }},
@@ -6091,6 +6178,17 @@
   // 📷 사진·자료 출처
   // =====================================================================
   function buildCredits(){
+    const sl = document.getElementById('creditsStoryList');
+    sl.innerHTML = '';
+    STORIES.forEach(st=> st.scenes.forEach((sc, n)=> sc.credit.forEach(([by, url])=>{
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = st.title.ko+' '+(n+1)+'장면';
+      li.appendChild(a);
+      li.appendChild(document.createTextNode(' — '+by + (url.includes('/video/') ? ' (영상)' : '')));
+      sl.appendChild(li);
+    })));
     const list = document.getElementById('creditsList');
     list.innerHTML = '';
     Object.keys(PHOTO_CREDITS).forEach(key=>{
@@ -6865,6 +6963,308 @@
   }
   document.getElementById('btnBookRec').addEventListener('click', ()=>{ if(bookRec.rec) stopBookRec(false); else startBookRec(); });
   document.getElementById('btnBookPlay').addEventListener('click', playBookRec);
+
+  // =====================================================================
+  // 🎬 동화 극장
+  // 저작권이 끝난 옛이야기를 짧게 새로 쓰고(한·영·일·중), 장면마다 실제 사진(천천히 확대·이동)이나
+  // 짧은 실사 영상을 보여주며 기기 음성으로 읽어준다. 읽는 낱말은 노랗게 따라가고, 다 읽으면 다음 장면으로
+  // 저절로 넘어간다. 사진·영상은 Pexels(tools/story_fetch.py), 이야기 글은 tools/stories.json에서 넣는다.
+  // =====================================================================
+  const STORIES = /*STORIES_START*/[{"id":"tortoise","emoji":"🐢","gradient":"linear-gradient(160deg,#2e9e5b,#0d2b1d)","title":{"ko":"토끼와 거북이","en":"The Tortoise and the Hare","ja":"うさぎと かめ","zh":"龟兔赛跑"},"moral":{"ko":"천천히 가도 꾸준히 가면 해낼 수 있어요","en":"Slow and steady wins the race","ja":"ゆっくりでも こつこつ つづければ できるよ","zh":"慢慢来，坚持就能成功"},"scenes":[{"t":{"ko":"숲속에 발이 빠른 토끼와 느릿느릿 거북이가 살았어요.","en":"In the forest lived a speedy rabbit and a very slow turtle.","ja":"もりに、あしの はやい うさぎと、のんびりやの かめが すんでいました。","zh":"森林里住着跑得很快的兔子和慢吞吞的乌龟。"},"fx":"","video":false,"credit":[["William Warby","https://www.pexels.com/photo/close-up-of-a-domestic-rabbit-19613749/"]]},{"t":{"ko":"토끼가 놀렸어요. \"거북아, 넌 왜 그렇게 느리니?\"","en":"The rabbit teased, \"Turtle, why are you so slow?\"","ja":"うさぎが からかいました。「かめさん、どうして そんなに おそいの?」","zh":"兔子笑着说：“乌龟，你怎么这么慢呀？”"},"fx":"","video":false,"credit":[["Sami  Aksu","https://www.pexels.com/photo/brown-and-black-greek-tortoise-on-gray-sand-11169769/"]]},{"t":{"ko":"거북이가 말했어요. \"그럼 저 언덕까지 달리기 시합을 하자!\"","en":"The turtle said, \"Then let's race to that hill!\"","ja":"かめは いいました。「じゃあ、あの おかまで かけっこしよう!」","zh":"乌龟说：“那我们比赛，看谁先跑到那座小山！”"},"fx":"","video":false,"credit":[["Furkan Aygün","https://www.pexels.com/photo/green-field-on-a-hill-under-white-clouds-14383012/"]]},{"t":{"ko":"준비, 땅! 토끼는 깡충깡충 저만치 앞서 나갔어요.","en":"Ready, go! The rabbit hopped far, far ahead.","ja":"よーい、どん! うさぎは ぴょんぴょん ずっと さきへ いきました。","zh":"预备，跑！兔子蹦蹦跳跳，一下子跑到了前面。"},"fx":"","video":true,"credit":[["Jay Brand","https://www.pexels.com/photo/wild-rabbit-in-motion-on-green-lawn-32095660/"],["Tom Fisk","https://www.pexels.com/video/close-up-of-rabbit-13892574/"]]},{"t":{"ko":"\"거북이는 아직 멀었네. 한숨 자야지.\" 토끼는 나무 아래에서 잠이 들었어요.","en":"\"The turtle is far behind. I'll take a nap.\" The rabbit fell asleep under a tree.","ja":"「かめは まだまだ こないね。ひとねむり しよう。」うさぎは きの したで ねむって しまいました。","zh":"“乌龟还远着呢，我先睡一觉吧。”兔子在树下睡着了。"},"fx":"","video":false,"credit":[["Sami  Abdullah","https://www.pexels.com/photo/a-rabbit-under-a-tree-9330896/"]]},{"t":{"ko":"그동안 거북이는 쉬지 않고 엉금엉금 걸었어요.","en":"Meanwhile, the turtle kept walking, step by step, without stopping.","ja":"その あいだも、かめは やすまずに のそのそ あるきつづけました。","zh":"这时候，乌龟一步一步地往前爬，一点也不停。"},"fx":"","video":true,"credit":[["https://kaboompics.com/","https://www.pexels.com/photo/tortoise-walking-on-grass-5840814/"],["Mikhail Nilov","https://www.pexels.com/video/a-tortoise-walking-7722331/"]]},{"t":{"ko":"토끼가 눈을 떠 보니, 거북이가 벌써 언덕 꼭대기에 있었어요!","en":"When the rabbit woke up, the turtle was already at the top of the hill!","ja":"うさぎが めを さますと、かめは もう おかの うえに いました!","zh":"兔子醒来一看，乌龟已经爬到山顶了！"},"fx":"","video":false,"credit":[["Alfred Franz","https://www.pexels.com/photo/tortoise-in-hammamet-sud-grassland-31219119/"]]},{"t":{"ko":"천천히 가도 꾸준히 가면 이길 수 있어요. 끝!","en":"Slow and steady wins the race. The end!","ja":"ゆっくりでも こつこつ つづければ かてるんだね。おしまい!","zh":"慢慢来，坚持到底就能赢。完！"},"fx":"sparkle","video":false,"credit":[["Bob Butler","https://www.pexels.com/photo/serene-sunset-over-a-countryside-field-34263461/"]]}],"quiz":[{"q":{"ko":"나무 아래에서 낮잠을 잔 친구는 누구였나요?","en":"Who took a nap under the tree?","ja":"きの したで ひるねを したのは だれ?","zh":"谁在树下睡着了？"},"a":0,"o":[1,2]},{"q":{"ko":"달리기 시합에서 이긴 친구는 누구였나요?","en":"Who won the race?","ja":"かけっこで かったのは だれ?","zh":"谁赢了比赛？"},"a":1,"o":[0,2]}]},{"id":"sunwind","emoji":"☀️","gradient":"linear-gradient(160deg,#e0a526,#5a3b05)","title":{"ko":"해와 바람","en":"The Sun and the Wind","ja":"きたかぜと たいよう","zh":"北风和太阳"},"moral":{"ko":"억지로 하는 것보다 따뜻한 마음이 더 힘이 세요","en":"Kindness is stronger than force","ja":"むりやりより、あたたかい こころの ほうが つよいよ","zh":"温暖比强迫更有力量"},"scenes":[{"t":{"ko":"어느 날, 해와 바람이 서로 자기가 더 힘이 세다고 다투었어요.","en":"One day, the Sun and the Wind argued about who was stronger.","ja":"ある ひ、たいようと かぜが、どちらが つよいか いいあらそいました。","zh":"有一天，太阳和风争论谁的力气更大。"},"fx":"","video":false,"credit":[["David Kanigan","https://www.pexels.com/photo/sunrise-60-f-6-25-to-6-40-a-m-august-24-2024-cove-island-park-stamford-ct-27966168/"]]},{"t":{"ko":"그때 두꺼운 외투를 입은 나그네가 길을 걸어왔어요.","en":"Just then, a traveler in a thick coat came walking down the road.","ja":"そこへ、あつい コートを きた たびびとが あるいて きました。","zh":"这时，一个穿着厚外套的旅人走了过来。"},"fx":"","video":false,"credit":[["Sebastian Voortman","https://www.pexels.com/photo/shallow-focus-photography-of-man-wearing-black-coat-and-black-pants-standing-beside-green-trees-663454/"]]},{"t":{"ko":"\"저 사람의 외투를 먼저 벗기는 쪽이 이기는 거야!\"","en":"\"Whoever gets his coat off first is the winner!\"","ja":"「あの ひとの コートを さきに ぬがせた ほうが かちだよ!」","zh":"“谁先让他脱下外套，谁就赢！”"},"fx":"","video":false,"credit":[["Harri Hofer","https://www.pexels.com/photo/winding-country-road-through-lush-green-fields-35269270/"]]},{"t":{"ko":"바람이 휘이잉 휘이잉 세게 불었어요.","en":"The Wind blew hard: whoosh, whoosh!","ja":"かぜが びゅうびゅう つよく ふきました。","zh":"风呼呼地使劲吹。"},"fx":"wind","video":true,"credit":[["Guilherme Christmann","https://www.pexels.com/photo/palm-trees-during-a-hurricane-16313103/"],["Engin Akyurt","https://www.pexels.com/video/palm-trees-on-a-windy-day-1730394/"]]},{"t":{"ko":"하지만 나그네는 외투를 더 꼭 여몄어요. \"으, 추워!\"","en":"But the traveler only held his coat tighter. \"Brr, it's cold!\"","ja":"でも たびびとは コートを もっと しっかり おさえました。「うう、さむい!」","zh":"可是旅人把外套裹得更紧了。“哎呀，好冷！”"},"fx":"wind","video":false,"credit":[["Amir Esrafili","https://www.pexels.com/photo/a-man-in-black-coat-holding-a-scarf-while-smelling-it-7050675/"]]},{"t":{"ko":"이번엔 해가 따뜻한 햇살을 비추었어요.","en":"Then the Sun shone down with warm sunshine.","ja":"こんどは たいようが あたたかい ひかりで てらしました。","zh":"这次，太阳洒下了温暖的阳光。"},"fx":"sparkle","video":true,"credit":[["Nothing Ahead","https://www.pexels.com/photo/sun-during-sunset-9709946/"],["Nick C","https://www.pexels.com/video/drone-footage-of-the-sun-shining-above-the-clouds-12959241/"]]},{"t":{"ko":"\"아이, 더워!\" 나그네는 스스로 외투를 벗었어요.","en":"\"Phew, it's hot!\" The traveler took off his coat by himself.","ja":"「ああ、あつい!」たびびとは じぶんから コートを ぬぎました。","zh":"“哎呀，好热！”旅人自己脱下了外套。"},"fx":"","video":false,"credit":[["PNW Production","https://www.pexels.com/photo/photo-of-a-man-in-black-clothes-carrying-a-white-bag-7576670/"]]},{"t":{"ko":"억지로 하는 것보다 따뜻한 마음이 더 힘이 세답니다. 끝!","en":"Warmth and kindness are stronger than force. The end!","ja":"むりやりより、あたたかい こころの ほうが つよいんだね。おしまい!","zh":"温暖比强迫更有力量。完！"},"fx":"sparkle","video":false,"credit":[["Ramakanth Chilekampalli","https://www.pexels.com/photo/bright-yellow-cosmos-flowers-in-a-sunlit-meadow-33422039/"]]}],"quiz":[{"q":{"ko":"세게 불어서 외투를 벗기려 한 것은 누구였나요?","en":"Who blew hard to take off the coat?","ja":"つよく ふいて コートを ぬがせようと したのは?","zh":"谁使劲吹想让旅人脱外套？"},"a":3,"o":[5,1]},{"q":{"ko":"나그네의 외투를 벗긴 것은 누구였나요?","en":"Who made the traveler take off his coat?","ja":"たびびとの コートを ぬがせたのは?","zh":"是谁让旅人脱下了外套？"},"a":5,"o":[3,2]}]},{"id":"ant","emoji":"🐜","gradient":"linear-gradient(160deg,#8a6d1f,#2b1f05)","title":{"ko":"개미와 베짱이","en":"The Ant and the Grasshopper","ja":"ありと きりぎりす","zh":"蚂蚁和蚱蜢"},"moral":{"ko":"미리 준비하고, 어려운 친구와 나눠요","en":"Prepare ahead, and share with friends in need","ja":"まえもって じゅんびして、こまっている ともだちと わけあおう","zh":"提前做好准备，也要和朋友分享"},"scenes":[{"t":{"ko":"뜨거운 여름, 개미들은 영차영차 부지런히 먹이를 날랐어요.","en":"In the hot summer, the ants worked hard carrying food.","ja":"あつい なつ、ありたちは えっさ ほいさと たべものを はこびました。","zh":"炎热的夏天，蚂蚁们嘿哟嘿哟地搬运食物。"},"fx":"","video":false,"credit":[["Hera Permata S","https://www.pexels.com/photo/ant-balancing-green-grape-against-black-background-36630730/"]]},{"t":{"ko":"베짱이는 나무 그늘에서 노래만 불렀어요. \"랄랄라~\"","en":"The grasshopper just sang in the shade. \"La la la!\"","ja":"きりぎりすは こかげで うたって ばかり。「ラララ〜」","zh":"蚱蜢却在树荫下唱歌。“啦啦啦～”"},"fx":"","video":false,"credit":[["hartono subagio","https://www.pexels.com/photo/green-grasshopper-on-leaf-in-natural-setting-35334208/"]]},{"t":{"ko":"\"베짱이야, 겨울 준비를 해야지!\" \"아직 여름인걸!\"","en":"\"Grasshopper, get ready for winter!\" \"But it's still summer!\"","ja":"「きりぎりすさん、ふゆの じゅんびを しなくちゃ!」「まだ なつだよ!」","zh":"“蚱蜢，要准备过冬啦！”“现在还是夏天呢！”"},"fx":"","video":false,"credit":[["Egor Kamelev","https://www.pexels.com/photo/red-ant-macro-photography-1086882/"]]},{"t":{"ko":"시간이 흘러 나뭇잎이 알록달록 물들고 하나둘 떨어졌어요.","en":"Time passed. The leaves turned colorful and fell one by one.","ja":"やがて はっぱが いろづいて、ひらひら おちて いきました。","zh":"时间过去了，树叶变得五颜六色，一片片落下来。"},"fx":"leaves","video":false,"credit":[["el jusuf","https://www.pexels.com/photo/vibrant-autumn-leaves-in-a-sunlit-forest-38716624/"]]},{"t":{"ko":"차가운 겨울이 왔어요. 온 세상이 하얀 눈으로 덮였어요.","en":"Cold winter came. The whole world was covered in white snow.","ja":"さむい ふゆが きました。せかいじゅうが まっしろな ゆきに つつまれました。","zh":"寒冷的冬天来了，到处都盖满了白雪。"},"fx":"snow","video":true,"credit":[["Michał Robak","https://www.pexels.com/photo/view-of-a-snowy-footpath-in-a-forest-19784906/"],["Brixiv","https://www.pexels.com/video/serene-winter-forest-with-falling-snow-30181650/"]]},{"t":{"ko":"배고프고 추운 베짱이가 개미네 집 문을 똑똑 두드렸어요.","en":"Hungry and cold, the grasshopper knocked on the ants' door.","ja":"おなかが すいて さむい きりぎりすが、ありの いえの とびらを とんとん たたきました。","zh":"又饿又冷的蚱蜢敲了敲蚂蚁家的门。"},"fx":"snow","video":false,"credit":[["Marina Endzhirgli","https://www.pexels.com/photo/rustic-wooden-door-in-snowy-moscow-setting-36427360/"]]},{"t":{"ko":"개미들은 따뜻한 음식을 나눠 주었어요. \"같이 먹자!\"","en":"The ants shared warm food. \"Let's eat together!\"","ja":"ありたちは あたたかい たべものを わけて あげました。「いっしょに たべよう!」","zh":"蚂蚁们分给它热乎乎的食物。“一起吃吧！”"},"fx":"","video":false,"credit":[["Shameel mukkath","https://www.pexels.com/photo/soup-in-red-ceramic-bowl-5639445/"]]},{"t":{"ko":"베짱이는 다음 여름에는 미리 준비하겠다고 약속했어요. 끝!","en":"The grasshopper promised to prepare early next summer. The end!","ja":"きりぎりすは、つぎの なつは はやめに じゅんびすると やくそくしました。おしまい!","zh":"蚱蜢答应明年夏天要提前做准备。完！"},"fx":"sparkle","video":false,"credit":[["iddea photo","https://www.pexels.com/photo/sunny-green-meadow-with-lush-trees-39015952/"]]}],"quiz":[{"q":{"ko":"여름에 노래만 부른 친구는 누구였나요?","en":"Who only sang all summer?","ja":"なつに うたって ばかりいたのは だれ?","zh":"谁整个夏天都在唱歌？"},"a":1,"o":[2,4]},{"q":{"ko":"겨울에 음식을 나눠 준 친구는 누구였나요?","en":"Who shared food in winter?","ja":"ふゆに たべものを わけて くれたのは だれ?","zh":"冬天谁分享了食物？"},"a":2,"o":[1,3]}]},{"id":"mouse","emoji":"🐭","gradient":"linear-gradient(160deg,#6b5b95,#231c3a)","title":{"ko":"시골쥐와 서울쥐","en":"The Country Mouse and the City Mouse","ja":"いなかの ねずみと まちの ねずみ","zh":"乡下老鼠和城里老鼠"},"moral":{"ko":"마음 편한 곳이 가장 좋은 곳이에요","en":"A peaceful home is the best home","ja":"こころが やすらぐ ところが いちばん","zh":"安心的地方才是最好的家"},"scenes":[{"t":{"ko":"시골에 사는 쥐가 서울에 사는 친구를 집에 초대했어요.","en":"A country mouse invited a friend from the city to visit.","ja":"いなかの ねずみが、まちに すむ ともだちを いえに よびました。","zh":"乡下老鼠请城里的朋友来家里玩。"},"fx":"","video":false,"credit":[["Pixabay","https://www.pexels.com/photo/brown-and-white-land-animal-301448/"]]},{"t":{"ko":"시골쥐는 보리와 콩을 정성껏 대접했어요.","en":"The country mouse served barley and beans with care.","ja":"いなかの ねずみは むぎと まめを ごちそうしました。","zh":"乡下老鼠用心地端出了大麦和豆子。"},"fx":"","video":false,"credit":[["Vie Studio","https://www.pexels.com/photo/food-healthy-wood-spoon-7420982/"]]},{"t":{"ko":"\"이런 것밖에 없니? 우리 집에 가면 맛있는 게 아주 많아!\"","en":"\"Is this all? My house has lots of tasty food!\"","ja":"「これだけ? ぼくの いえには おいしい ものが いっぱい あるよ!」","zh":"“就这些吗？我家里有好多好吃的！”"},"fx":"","video":false,"credit":[["Tommes Frites","https://www.pexels.com/photo/close-up-of-a-cute-forest-mouse-in-nature-30374722/"]]},{"t":{"ko":"둘은 서울쥐네 집으로 갔어요. 높은 건물과 반짝이는 불빛!","en":"They went to the city. Tall buildings and twinkling lights!","ja":"ふたりは まちへ いきました。たかい ビルと きらきら ひかる あかり!","zh":"它们来到了城市。高高的楼房，闪闪的灯光！"},"fx":"","video":true,"credit":[["Stephen Leonardi","https://www.pexels.com/photo/stunning-night-cityscape-of-downtown-los-angeles-35291216/"],["K","https://www.pexels.com/video/stunning-aerial-timelapse-of-city-lights-at-night-33637800/"]]},{"t":{"ko":"식탁 위에는 치즈와 케이크가 가득했어요. \"우와!\"","en":"The table was full of cheese and cake. \"Wow!\"","ja":"テーブルには チーズや ケーキが いっぱい。「わあ!」","zh":"桌子上摆满了奶酪和蛋糕。“哇！”"},"fx":"","video":false,"credit":[["Dmitry Zvolskiy","https://www.pexels.com/photo/cheese-and-fruits-5823166/"]]},{"t":{"ko":"그때 \"야옹!\" 커다란 고양이가 나타났어요!","en":"Suddenly, \"Meow!\" A big cat appeared!","ja":"その とき、「ニャーオ!」おおきな ねこが あらわれました!","zh":"这时，“喵！”一只大猫出现了！"},"fx":"","video":false,"credit":[["Zomlien Neihsiel","https://www.pexels.com/photo/close-up-portrait-of-a-tabby-cat-36407054/"]]},{"t":{"ko":"깜짝 놀란 시골쥐가 말했어요. \"나는 조용한 시골이 더 좋아.\"","en":"The startled country mouse said, \"I like my quiet country home better.\"","ja":"びっくりした いなかの ねずみは いいました。「ぼくは しずかな いなかの ほうが いいな。」","zh":"吓了一跳的乡下老鼠说：“我还是喜欢安静的乡下。”"},"fx":"","video":false,"credit":[["David Hablützel","https://www.pexels.com/photo/brown-mouse-inside-a-cardboard-tube-10232942/"]]},{"t":{"ko":"시골쥐는 집으로 돌아가 편안하게 잠들었어요. 끝!","en":"The country mouse went home and slept peacefully. The end!","ja":"いなかの ねずみは いえに かえって、ぐっすり ねむりました。おしまい!","zh":"乡下老鼠回到家，安安心心地睡着了。完！"},"fx":"sparkle","video":false,"credit":[["Frans van Heerden","https://www.pexels.com/photo/farm-animals-on-the-field-under-orange-sky-12825452/"]]}],"quiz":[{"q":{"ko":"시골쥐가 대접한 음식은 무엇이었나요?","en":"What food did the country mouse serve?","ja":"いなかの ねずみが ごちそうしたのは?","zh":"乡下老鼠请朋友吃了什么？"},"a":1,"o":[4,3]},{"q":{"ko":"서울쥐네 집에서 갑자기 나타난 동물은 누구였나요?","en":"Which animal suddenly appeared in the city?","ja":"まちの いえで とつぜん あらわれたのは?","zh":"城里突然出现了什么动物？"},"a":5,"o":[0,2]}]},{"id":"sunmoon","emoji":"🌙","gradient":"linear-gradient(160deg,#232b66,#0b1030)","title":{"ko":"해님 달님","en":"The Sun and the Moon","ja":"おひさまと おつきさま","zh":"太阳和月亮"},"moral":{"ko":"서로 돕고 지혜롭게 위기를 이겨 내요","en":"Help each other and stay wise in danger","ja":"たすけあって、ちえを だせば のりこえられるよ","zh":"互相帮助，用智慧克服困难"},"scenes":[{"t":{"ko":"옛날 깊은 산골에 엄마와 오누이가 살았어요.","en":"Long ago, a mother and her son and daughter lived deep in the mountains.","ja":"むかし、ふかい やまおくに、おかあさんと きょうだいが くらしていました。","zh":"很久以前，深山里住着妈妈和一对兄妹。"},"fx":"","video":false,"credit":[["무닙 아하마드","https://www.pexels.com/photo/seoul-tourist-attraction-eunpyeong-hanok-village-at-the-food-of-bukhansan-mountain-16797097/"]]},{"t":{"ko":"엄마는 떡을 팔러 고개 너머 마을에 다녀왔어요.","en":"The mother went over the hill to sell rice cakes in the village.","ja":"おかあさんは おもちを うりに、とうげの むこうの むらへ いきました。","zh":"妈妈翻过山岭，到村子里去卖年糕。"},"fx":"","video":false,"credit":[["neilstha firman","https://www.pexels.com/photo/traditional-rice-cakes-on-rustic-wooden-dish-36165605/"]]},{"t":{"ko":"\"떡 하나 주면 안 잡아먹지!\" 무서운 호랑이가 나타났어요.","en":"\"Give me a rice cake and I won't eat you!\" A scary tiger appeared.","ja":"「おもちを ひとつ くれたら たべないぞ!」こわい とらが あらわれました。","zh":"“给我一块年糕，我就不吃你！”一只可怕的老虎出现了。"},"fx":"","video":false,"credit":[["Leon Aschemann","https://www.pexels.com/photo/tigerblicke-unschuldige-augen-27834731/"]]},{"t":{"ko":"호랑이는 엄마 흉내를 내며 집으로 찾아왔어요. \"얘들아, 문 열어라.\"","en":"The tiger came to the house pretending to be Mom. \"Children, open the door.\"","ja":"とらは おかあさんの ふりを して いえに きました。「こどもたち、とを あけて。」","zh":"老虎假装成妈妈来到家门口：“孩子们，开开门。”"},"fx":"","video":false,"credit":[["Istiaque Hossain","https://www.pexels.com/photo/wooden-doors-to-old-building-11231039/"]]},{"t":{"ko":"털이 숭숭 난 손을 본 오누이는 뒷문으로 나가 커다란 나무 위로 올라갔어요.","en":"Seeing a furry paw, the children slipped out the back and climbed a big tree.","ja":"けむくじゃらの てを みた きょうだいは、うらぐちから にげて おおきな きに のぼりました。","zh":"兄妹俩看见毛茸茸的爪子，从后门溜出去，爬上了大树。"},"fx":"","video":false,"credit":[["ELEOD","https://www.pexels.com/photo/majestic-ancient-tree-in-serene-landscape-39612292/"]]},{"t":{"ko":"\"하늘님, 저희를 도와주세요!\" 하늘에서 튼튼한 동아줄이 내려왔어요.","en":"\"Please help us!\" A strong rope came down from the sky.","ja":"「かみさま、たすけて ください!」そらから じょうぶな なわが おりて きました。","zh":"“老天爷，请救救我们！”天上垂下了一根结实的绳子。"},"fx":"sparkle","video":false,"credit":[["Magda Ehlers","https://www.pexels.com/photo/rescue-worker-suspended-in-sky-via-helicopter-38038464/"]]},{"t":{"ko":"오누이는 하늘로 올라가 오빠는 달님, 동생은 해님이 되었어요.","en":"The children rose to the sky. The brother became the Moon, and the sister became the Sun.","ja":"きょうだいは そらへ のぼり、おにいさんは おつきさま、いもうとは おひさまに なりました。","zh":"兄妹俩升上天空，哥哥变成了月亮，妹妹变成了太阳。"},"fx":"stars","video":true,"credit":[["Lucas Pezeta","https://www.pexels.com/photo/full-moon-in-dark-night-sky-8488394/"],["Dr Photographer","https://www.pexels.com/video/crescent-moon-in-night-sky-36492194/"]]},{"t":{"ko":"그래서 지금도 해님과 달님이 우리를 환하게 비춰 준답니다. 끝!","en":"That's why the Sun and the Moon still shine brightly on us today. The end!","ja":"だから いまも、おひさまと おつきさまが わたしたちを てらして くれるんだって。おしまい!","zh":"所以直到今天，太阳和月亮还在明亮地照耀着我们。完！"},"fx":"sparkle","video":true,"credit":[["Hee Kwang Lee","https://www.pexels.com/photo/clouds-in-the-sky-at-sunrise-16661298/"],["Mustafa Dönmez","https://www.pexels.com/video/a-flight-near-the-sun-28441665/"]]}],"quiz":[{"q":{"ko":"\"떡 하나 주면 안 잡아먹지!\" 하고 말한 동물은 누구였나요?","en":"Who said, \"Give me a rice cake and I won't eat you\"?","ja":"「おもちを くれたら たべないぞ」と いったのは だれ?","zh":"是谁说“给我一块年糕，我就不吃你”？"},"a":2,"o":[4,0]},{"q":{"ko":"하늘에서 내려와 오누이를 구해 준 것은 무엇이었나요?","en":"What came down from the sky to save the children?","ja":"そらから おりて きて きょうだいを たすけたのは?","zh":"是什么从天上垂下来救了兄妹俩？"},"a":5,"o":[4,3]}]},{"id":"heungbu","emoji":"🎃","gradient":"linear-gradient(160deg,#b5652a,#3b1f0a)","title":{"ko":"흥부와 놀부","en":"Heungbu and Nolbu","ja":"フンブと ノルブ","zh":"兴夫和孬夫"},"moral":{"ko":"착한 마음은 복이 되어 돌아와요","en":"A kind heart brings good things back to you","ja":"やさしい こころは しあわせに なって かえって くるよ","zh":"善良的心会带来好运"},"scenes":[{"t":{"ko":"옛날에 욕심쟁이 형 놀부와 마음씨 착한 동생 흥부가 살았어요.","en":"Long ago lived greedy big brother Nolbu and kind little brother Heungbu.","ja":"むかし、よくばりな あにの ノルブと、こころやさしい おとうとの フンブが いました。","zh":"从前，有个贪心的哥哥孬夫和善良的弟弟兴夫。"},"fx":"","video":false,"credit":[["Jakob Jin","https://www.pexels.com/photo/traditional-asian-buildings-rooftops-13885523/"]]},{"t":{"ko":"어느 봄날, 흥부는 다리를 다친 제비를 발견했어요.","en":"One spring day, Heungbu found a swallow with a hurt leg.","ja":"ある はるの ひ、フンブは あしを けがした つばめを みつけました。","zh":"一个春天，兴夫发现了一只腿受伤的燕子。"},"fx":"","video":false,"credit":[["Hilal Diken","https://www.pexels.com/photo/barn-swallow-perched-on-wrought-iron-scroll-38855419/"]]},{"t":{"ko":"흥부는 정성껏 제비 다리를 고쳐 주었어요. \"얼른 나으렴.\"","en":"Heungbu gently fixed the swallow's leg. \"Get well soon.\"","ja":"フンブは ていねいに つばめの あしを なおして あげました。「はやく よく なってね。」","zh":"兴夫细心地给燕子治好了腿。“快点好起来吧。”"},"fx":"","video":false,"credit":[["Pixabay","https://www.pexels.com/photo/four-brown-birds-36430/"]]},{"t":{"ko":"다음 해 봄, 제비가 돌아와 박씨 하나를 선물했어요.","en":"Next spring, the swallow came back and gave him a gourd seed.","ja":"つぎの はる、つばめが もどって きて、ひょうたんの たねを くれました。","zh":"第二年春天，燕子飞回来，送给他一颗葫芦籽。"},"fx":"","video":true,"credit":[["Derek Keats","https://www.pexels.com/photo/barn-swallow-in-flight-against-blue-sky-33144164/"],["suellen baker","https://www.pexels.com/video/feeding-swallow-chicks-9741558/"]]},{"t":{"ko":"박씨를 심었더니 지붕 위에 커다란 박이 주렁주렁 열렸어요.","en":"He planted the seed, and big gourds grew all over the roof.","ja":"たねを まくと、やねの うえに おおきな ひょうたんが どっさり なりました。","zh":"他种下种子，屋顶上结满了大大的葫芦。"},"fx":"","video":false,"credit":[["HONG SON","https://www.pexels.com/photo/vibrant-green-gourd-hanging-in-lush-foliage-36873528/"]]},{"t":{"ko":"박을 쓱싹쓱싹 켜자 금은보화가 와르르 쏟아졌어요!","en":"When he cut open the gourds, gold and treasure came pouring out!","ja":"ひょうたんを ぎこぎこ わると、きんぎんの たからが ざくざく でて きました!","zh":"锯开葫芦，金银财宝哗啦啦地涌了出来！"},"fx":"sparkle","video":false,"credit":[["William Warby","https://www.pexels.com/photo/close-up-of-golden-pennies-19590480/"]]},{"t":{"ko":"욕심이 난 놀부는 일부러 제비를 다치게 했어요. 그러자 놀부의 박에서는 도깨비가 나와 혼쭐을 냈어요.","en":"Greedy Nolbu hurt a swallow on purpose. Goblins jumped out of his gourds and scolded him.","ja":"よくばりな ノルブは わざと つばめに けがを させました。すると ノルブの ひょうたんからは おにが でて きて、こらしめました。","zh":"贪心的孬夫故意弄伤了燕子。结果他的葫芦里跳出了鬼怪，狠狠地教训了他。"},"fx":"rain","video":false,"credit":[["Elina Volkova","https://www.pexels.com/photo/dramatic-sky-with-gray-storm-clouds-over-the-lake-17845889/"]]},{"t":{"ko":"놀부는 잘못을 뉘우쳤고, 형제는 사이좋게 살았답니다. 끝!","en":"Nolbu said sorry, and the brothers lived happily together. The end!","ja":"ノルブは はんせいして、きょうだいは なかよく くらしました。おしまい!","zh":"孬夫知道错了，兄弟俩从此和和睦睦地生活。完！"},"fx":"sparkle","video":false,"credit":[["Tom Fisk","https://www.pexels.com/photo/sunset-over-town-during-overcast-6553279/"]]}],"quiz":[{"q":{"ko":"흥부가 다리를 고쳐 준 새는 누구였나요?","en":"Which bird did Heungbu help?","ja":"フンブが あしを なおして あげた とりは?","zh":"兴夫帮助了哪只鸟？"},"a":1,"o":[4,5]},{"q":{"ko":"흥부의 박에서 나온 것은 무엇이었나요?","en":"What came out of Heungbu's gourds?","ja":"フンブの ひょうたんから でて きたのは?","zh":"兴夫的葫芦里出来了什么？"},"a":5,"o":[6,4]}]},{"id":"magpie","emoji":"🐦","gradient":"linear-gradient(160deg,#1f7a6b,#0b2b27)","title":{"ko":"은혜 갚은 까치","en":"The Grateful Magpies","ja":"おんがえしの かささぎ","zh":"报恩的喜鹊"},"moral":{"ko":"고마운 마음은 잊지 않아요","en":"Never forget those who help you","ja":"ありがとうの きもちは わすれないよ","zh":"别忘了帮助过你的人"},"scenes":[{"t":{"ko":"옛날에 한 젊은 선비가 먼 길을 떠나 산길을 걷고 있었어요.","en":"Long ago, a young scholar was walking along a mountain path.","ja":"むかし、わかい がくしゃが とおくへ たびを して、やまみちを あるいて いました。","zh":"从前，一位年轻的书生走在山路上。"},"fx":"","video":false,"credit":[["Marija van Velzen","https://www.pexels.com/photo/trees-on-the-mountain-13311694/"]]},{"t":{"ko":"그때 커다란 구렁이가 까치 둥지를 노리고 있었어요.","en":"A big snake was creeping toward a magpie's nest.","ja":"その とき、おおきな へびが かささぎの すを ねらって いました。","zh":"这时，一条大蛇正盯着喜鹊的窝。"},"fx":"","video":false,"credit":[["brazil topno","https://www.pexels.com/photo/close-up-of-a-snake-wrapped-around-a-branch-26833159/"]]},{"t":{"ko":"선비는 구렁이를 쫓아 까치 가족을 구해 주었어요.","en":"The scholar chased the snake away and saved the magpie family.","ja":"がくしゃは へびを おいはらって、かささぎの かぞくを たすけました。","zh":"书生赶走了大蛇，救了喜鹊一家。"},"fx":"","video":false,"credit":[["Shreyas Chavan","https://www.pexels.com/photo/close-up-photo-of-a-bird-15376301/"]]},{"t":{"ko":"밤이 되자 선비는 산속 외딴집에서 하룻밤 묵게 되었어요.","en":"At night, the scholar stayed at a lonely house in the woods.","ja":"よるに なり、がくしゃは やまおくの いっけんやに とまる ことに なりました。","zh":"天黑了，书生在山里一间孤零零的房子里借宿。"},"fx":"","video":false,"credit":[["Sanat Anghan","https://www.pexels.com/photo/lights-in-house-in-windmill-8971402/"]]},{"t":{"ko":"그런데 그 집 주인은 구렁이였어요! \"산 위의 종이 세 번 울리면 보내 주마!\"","en":"But the owner was the snake! \"If the bell on the mountain rings three times, I'll let you go!\"","ja":"ところが その いえの あるじは へびでした!「やまの かねが みっつ なったら にがして やろう!」","zh":"原来房子的主人就是那条大蛇！“要是山上的钟响三声，我就放了你！”"},"fx":"","video":false,"credit":[["Saleh  Bakhshiyev","https://www.pexels.com/photo/portrait-of-a-snake-in-monochrome-20878210/"]]},{"t":{"ko":"깊은 밤, 산 위 절에서 \"댕! 댕! 댕!\" 종소리가 울렸어요.","en":"Late at night, the temple bell rang out: dong, dong, dong!","ja":"よなか、やまの うえの おてらから「ゴーン、ゴーン、ゴーン!」と かねが なりました。","zh":"深夜，山上的寺庙传来了“当！当！当！”的钟声。"},"fx":"sparkle","video":false,"credit":[["arnon  chuechan","https://www.pexels.com/photo/bell-monument-in-wat-rakhang-temple-in-bangkok-thailand-14240999/"]]},{"t":{"ko":"아침에 가 보니, 까치들이 날개로 힘껏 종을 쳐서 선비를 구한 것이었어요.","en":"In the morning, he found the magpies had rung the bell with their wings to save him.","ja":"あさ いって みると、かささぎたちが はねで かねを ついて、がくしゃを たすけて くれたのでした。","zh":"早上一看，原来是喜鹊们用翅膀撞响了钟，救了书生。"},"fx":"","video":false,"credit":[["Simone Cappellari","https://www.pexels.com/photo/eurasian-magpie-in-flight-20786266/"]]},{"t":{"ko":"작은 까치도 고마운 마음을 잊지 않았답니다. 끝!","en":"Even little magpies never forget kindness. The end!","ja":"ちいさな かささぎも、ありがとうの きもちを わすれなかったんだね。おしまい!","zh":"小小的喜鹊也没有忘记别人的恩情。完！"},"fx":"sparkle","video":false,"credit":[["Francesco Ungaro","https://www.pexels.com/photo/silhouette-of-mountains-11834006/"]]}],"quiz":[{"q":{"ko":"선비가 구해 준 새는 누구였나요?","en":"Which bird did the scholar save?","ja":"がくしゃが たすけた とりは?","zh":"书生救了哪种鸟？"},"a":2,"o":[1,5]},{"q":{"ko":"종을 울려 선비를 구한 것은 누구였나요?","en":"Who rang the bell to save the scholar?","ja":"かねを ならして がくしゃを たすけたのは?","zh":"是谁敲响了钟，救了书生？"},"a":6,"o":[4,3]}]},{"id":"pigs","emoji":"🐷","gradient":"linear-gradient(160deg,#d6336c,#4a0e2a)","title":{"ko":"아기 돼지 삼형제","en":"The Three Little Pigs","ja":"さんびきの こぶた","zh":"三只小猪"},"moral":{"ko":"부지런히, 튼튼하게 준비하면 든든해요","en":"Hard work and careful building keep you safe","ja":"こつこつ じょうぶに つくれば あんしんだよ","zh":"勤劳踏实，才能平平安安"},"scenes":[{"t":{"ko":"아기 돼지 삼형제가 각자 집을 짓기로 했어요.","en":"Three little pigs each decided to build a house.","ja":"さんびきの こぶたが、それぞれ いえを たてる ことに しました。","zh":"三只小猪决定各自盖一座房子。"},"fx":"","video":false,"credit":[["Vanessa  Cardui","https://www.pexels.com/photo/little-pigs-on-a-farm-18831697/"]]},{"t":{"ko":"첫째는 지푸라기로 후다닥 집을 지었어요. \"다 했다!\"","en":"The first pig quickly built a house of straw. \"Done!\"","ja":"いちばん うえの こぶたは わらで さっさと いえを たてました。「できた!」","zh":"老大用稻草很快就盖好了房子。“盖好啦！”"},"fx":"","video":false,"credit":[["Deneen L Treble","https://www.pexels.com/photo/hay-bales-on-the-field-18028124/"]]},{"t":{"ko":"둘째는 나무로 뚝딱뚝딱 집을 지었어요.","en":"The second pig built a house of wood, tap, tap, tap.","ja":"にばんめの こぶたは きで とんとん いえを たてました。","zh":"老二用木头叮叮当当地盖了房子。"},"fx":"","video":false,"credit":[["Bilal Mansuri","https://www.pexels.com/photo/brown-wooden-house-on-green-grass-field-11539578/"]]},{"t":{"ko":"셋째는 벽돌을 하나하나 쌓아 튼튼한 집을 지었어요.","en":"The third pig stacked bricks one by one to build a strong house.","ja":"さんばんめの こぶたは れんがを ひとつずつ つんで、じょうぶな いえを たてました。","zh":"老三一块一块地垒砖，盖了一座结实的房子。"},"fx":"","video":false,"credit":[["Jan van der Wolf","https://www.pexels.com/photo/brick-on-a-wall-14982351/"]]},{"t":{"ko":"그때 배고픈 늑대가 나타났어요. \"후~ 불어서 날려 버려야지!\"","en":"Then a hungry wolf came. \"I'll huff and puff and blow your house down!\"","ja":"そこへ おなかを すかせた おおかみが きました。「ふーっと ふいて とばして やる!」","zh":"这时，一只饿狼来了。“我要呼地一吹，把房子吹倒！”"},"fx":"","video":false,"credit":[["patrice schoefolt","https://www.pexels.com/photo/portrait-of-a-wolf-21655742/"]]},{"t":{"ko":"후우~! 지푸라기 집과 나무 집은 날아가 버렸어요!","en":"Whoosh! The straw house and the wooden house blew away!","ja":"ふーっ! わらの いえと きの いえは とんで いって しまいました!","zh":"呼——！稻草房和木头房都被吹跑了！"},"fx":"wind","video":true,"credit":[["Dinara Guseinova","https://www.pexels.com/photo/blades-of-wheat-and-grass-in-a-field-10173419/"],["Adem Albayrak","https://www.pexels.com/video/a-close-up-of-some-tall-grass-19120716/"]]},{"t":{"ko":"하지만 벽돌집은 아무리 불어도 끄떡없었어요.","en":"But no matter how hard he blew, the brick house stood strong.","ja":"でも れんがの いえは どんなに ふいても びくとも しませんでした。","zh":"可是砖房子怎么吹都纹丝不动。"},"fx":"","video":false,"credit":[["Sergej  *****","https://www.pexels.com/photo/charming-red-brick-house-on-a-quiet-street-32972999/"]]},{"t":{"ko":"삼형제는 튼튼한 벽돌집에서 함께 안전하게 지냈어요. 끝!","en":"The three pigs lived safely together in the strong brick house. The end!","ja":"さんびきは じょうぶな れんがの いえで、なかよく あんしんして くらしました。おしまい!","zh":"三只小猪在结实的砖房里平平安安地住在一起。完！"},"fx":"sparkle","video":false,"credit":[["Kasha M","https://www.pexels.com/photo/adorable-piglets-resting-on-straw-bed-37519413/"]]}],"quiz":[{"q":{"ko":"늑대가 불어도 끄떡없었던 집은 무엇으로 지었나요?","en":"What was the strong house made of?","ja":"おおかみが ふいても びくとも しなかった いえは なにで できていた?","zh":"狼怎么吹都吹不倒的房子是用什么盖的？"},"a":3,"o":[1,2]},{"q":{"ko":"집을 불어서 날려 버린 동물은 누구였나요?","en":"Who blew the houses down?","ja":"いえを ふいて とばしたのは だれ?","zh":"是谁把房子吹跑了？"},"a":4,"o":[0,6]}]}]/*STORIES_END*/;
+  const STORY_LANGS = [
+    {id:'ko', label:'한국어', speech:'ko-KR'}, {id:'en', label:'English', speech:'en-US'},
+    {id:'ja', label:'日本語', speech:'ja-JP'}, {id:'zh', label:'中文', speech:'zh-CN'},
+  ];
+  // 0.85배 속도에서 글자 하나를 읽는 대략의 시간(ms, 2026-10-11 크롬 실측). 낱말 위치 신호가 없는 기기와
+  // 소리를 끈 상태에서 자동 넘김 시간을 어림잡는 데 쓴다
+  const STORY_MS_PER_CHAR = { ko:200, en:75, ja:150, zh:260 };
+  const STORY_LANG_KEY = 'fingerMazeStoryLang';
+  let storyLang = 'ko';
+  try{ const v = localStorage.getItem(STORY_LANG_KEY); if(STORY_LANGS.some(l=>l.id===v)) storyLang = v; }catch(e){}
+  STORIES.forEach(st=> FUN_LABELS['story|'+st.id] = ['🎬', st.title.ko]);
+  const KB_MOVES = ['kb-in','kb-left','kb-out','kb-right'];
+  const sp = { st:null, i:0, auto:true, token:0, timer:null, hlTimer:null, ending:false };
+
+  function storyMedia(st, n, ext){ return 'stories/'+st.id+'/'+n+'.'+ext; }
+  function setStoryLang(id){
+    storyLang = id;
+    try{ localStorage.setItem(STORY_LANG_KEY, id); }catch(e){}
+  }
+  function fillLangSeg(segId, onPick){
+    const seg = document.getElementById(segId);
+    seg.innerHTML = '';
+    STORY_LANGS.forEach(l=>{
+      const b = document.createElement('button');
+      b.textContent = l.label;
+      b.classList.toggle('selected', l.id===storyLang);
+      b.addEventListener('click', ()=>{ setStoryLang(l.id); onPick(); });
+      seg.appendChild(b);
+    });
+  }
+
+  function buildStoryList(){
+    currentPlayGroup = '동화 극장';
+    fillLangSeg('storyLangSeg', buildStoryList);
+    const stars = loadFunStars();
+    const wrap = document.getElementById('storyGrid');
+    wrap.innerHTML = '';
+    STORIES.forEach(st=>{
+      const card = document.createElement('div');
+      card.className = 'story-card';
+      card.style.background = st.gradient;
+      const s = stars['story|'+st.id];
+      card.innerHTML = '<img loading="lazy" alt="" src="'+storyMedia(st, 0, 'jpg')+'"><span class="sc-emoji">'+st.emoji+'</span>'
+        + (s!==undefined ? '<span class="sc-star">'+'⭐'.repeat(s)+'</span>' : '')
+        + '<div class="sc-title"></div>';
+      card.querySelector('.sc-title').textContent = st.title[storyLang];
+      card.addEventListener('click', ()=> openStory(st));
+      wrap.appendChild(card);
+    });
+  }
+
+  function openStory(st){
+    recordPlayToday();
+    sp.st = st; sp.i = 0; sp.auto = true; sp.ending = false;
+    updateStoryAutoBtn();
+    showScreen('screen-story-play');
+    sizeStoryFx();
+    startStoryFx();
+    renderStoryScene(true);
+  }
+
+  function stopStoryTimers(){
+    sp.token++;
+    clearTimeout(sp.timer); sp.timer = null;
+    clearInterval(sp.hlTimer); sp.hlTimer = null;
+    stopSpeaking();
+  }
+
+  function renderStoryScene(first){
+    stopStoryTimers();
+    const st = sp.st, sc = st.scenes[sp.i], token = sp.token;
+    document.getElementById('storyTitle').textContent = st.emoji+' '+st.title[storyLang];
+    document.getElementById('storyProgress').textContent = (sp.i+1)+' / '+st.scenes.length;
+    document.getElementById('storyEnd').classList.remove('show');
+    document.getElementById('storyControls').style.visibility = '';
+    fillLangSeg('storyPlayLangSeg', ()=>{ renderStoryScene(false); });
+    const layer = document.getElementById('storyLayer');
+    const img = document.getElementById('storyImg'), vid = document.getElementById('storyVideo');
+    // 장면이 바뀔 때 잠깐 어두워졌다가 새 그림이 나타난다
+    layer.classList.add('fade');
+    setTimeout(()=>{
+      if(token !== sp.token) return;
+      img.className = '';
+      void img.offsetWidth;
+      img.src = storyMedia(st, sp.i, 'jpg');
+      if(sc.video){
+        vid.poster = img.src;
+        vid.src = storyMedia(st, sp.i, 'mp4');
+        vid.style.display = 'block';
+        img.style.visibility = 'hidden';
+        vid.play().catch(()=>{});
+      } else {
+        vid.pause(); vid.removeAttribute('src'); vid.load(); vid.style.display = 'none';
+        img.style.visibility = '';
+        img.classList.add(KB_MOVES[sp.i % KB_MOVES.length]);
+      }
+      layer.classList.remove('fade');
+      // 다음 장면 사진을 미리 받아 둔다
+      if(sp.i+1 < st.scenes.length){ const pre = new Image(); pre.src = storyMedia(st, sp.i+1, 'jpg'); }
+    }, first ? 0 : 450);
+    storyFxMode = sc.fx || '';
+    setStoryText(sc.t[storyLang]);
+    setTimeout(()=>{ if(token === sp.token) readStoryScene(); }, first ? 500 : 800);
+  }
+
+  function setStoryText(text){
+    const el = document.getElementById('storyText');
+    el.innerHTML = '';
+    // 중국어는 띄어쓰기가 없어서 글자마다, 나머지는 띄어 쓴 덩어리마다 칠한다
+    const parts = storyLang==='zh' ? [...text] : text.split(/(\s+)/);
+    let pos = 0;
+    parts.forEach(part=>{
+      if(!part) return;
+      if(/^\s+$/.test(part)) el.appendChild(document.createTextNode(part));
+      else{
+        const sEl = document.createElement('span');
+        sEl.className = 'w'; sEl.dataset.start = pos; sEl.textContent = part;
+        el.appendChild(sEl);
+      }
+      pos += part.length;
+    });
+  }
+  function highlightStoryAt(idx){
+    const spans = [...document.querySelectorAll('#storyText .w')];
+    let cur = -1;
+    spans.forEach((s, k)=>{ if(Number(s.dataset.start) <= idx) cur = k; });
+    spans.forEach((s, k)=>{ s.classList.toggle('on', k===cur); s.classList.toggle('done', k<cur); });
+  }
+  function finishStoryHighlight(){
+    document.querySelectorAll('#storyText .w').forEach(s=>{ s.classList.remove('on'); s.classList.add('done'); });
+  }
+
+  function readStoryScene(){
+    const token = sp.token;
+    const text = sp.st.scenes[sp.i].t[storyLang];
+    const lang = STORY_LANGS.find(l=>l.id===storyLang);
+    const estimate = Math.max(3500, text.length * STORY_MS_PER_CHAR[storyLang]);
+    const done = ()=>{
+      if(token !== sp.token) return;
+      clearInterval(sp.hlTimer);
+      finishStoryHighlight();
+      if(sp.auto) sp.timer = setTimeout(()=>{ if(token === sp.token) nextStoryScene(); }, 1600);
+    };
+    let canSpeak = false;
+    try{ canSpeak = ('speechSynthesis' in window) && !muted; }catch(e){}
+    if(!canSpeak){
+      // 소리를 껐거나 음성을 쓸 수 없으면 글자 수로 시간을 어림잡아 자막만 따라가고 넘긴다
+      const t0 = Date.now();
+      sp.hlTimer = setInterval(()=>{ if(token===sp.token) highlightStoryAt(Math.floor((Date.now()-t0)/STORY_MS_PER_CHAR[storyLang])); }, 120);
+      sp.timer = setTimeout(done, estimate);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang.speech; u.rate = 0.85;
+    let gotBoundary = false, ended = false;
+    u.onboundary = (e)=>{ if(token===sp.token && (!e.name || e.name==='word')){ gotBoundary = true; highlightStoryAt(e.charIndex); } };
+    u.onstart = ()=>{
+      const t0 = Date.now();
+      highlightStoryAt(0);
+      sp.hlTimer = setInterval(()=>{
+        if(token !== sp.token || gotBoundary){ clearInterval(sp.hlTimer); return; }
+        highlightStoryAt(Math.floor((Date.now()-t0)/STORY_MS_PER_CHAR[storyLang]));
+      }, 120);
+    };
+    u.onend = ()=>{ ended = true; done(); };
+    u.onerror = ()=>{ if(!ended){ ended = true; done(); } };
+    // 일부 기기는 음성이 없으면 onend가 오지 않아서, 넉넉한 시간이 지나면 그냥 넘긴다
+    sp.timer = setTimeout(()=>{ if(!ended){ ended = true; done(); } }, estimate * 2.2 + 3000);
+    window.speechSynthesis.speak(u);
+  }
+
+  function nextStoryScene(){
+    if(sp.i < sp.st.scenes.length-1){ sp.i++; renderStoryScene(false); }
+    else showStoryEnd();
+  }
+  function showStoryEnd(){
+    stopStoryTimers();
+    const moral = sp.st.moral[storyLang];
+    document.getElementById('storyMoral').textContent = moral;
+    document.getElementById('storyEnd').classList.add('show');
+    document.getElementById('storyControls').style.visibility = 'hidden';
+    storyFxMode = 'sparkle';
+    const lang = STORY_LANGS.find(l=>l.id===storyLang);
+    setTimeout(()=> speak(moral, lang.speech), 400);
+    sfxWin();
+  }
+  function updateStoryAutoBtn(){ document.getElementById('btnStoryAuto').textContent = sp.auto ? '⏸ 멈춤' : '▶ 자동'; }
+
+  function startStoryQuiz(){
+    const st = sp.st, lang = STORY_LANGS.find(l=>l.id===storyLang);
+    stopStoryTimers();
+    startPQ({ info:'🎬 '+st.title[storyLang], group:'동화 극장', title:'🎬 이야기를 잘 들었어요!',
+      make: ()=> st.quiz.map(q=>({ prompt: q.q[storyLang], say: q.q[storyLang], sayLang: lang.speech, cols:3,
+        options: shuffle([q.a, ...q.o]).map(n=>({ html:'<img alt="" src="'+storyMedia(st, n, 'jpg')+'">', cls:'square', correct: n===q.a })) })),
+      save: s=> saveFunStar('story|'+st.id, s),
+      onBack: ()=>{ buildStoryList(); showScreen('screen-story-list'); } });
+  }
+
+  function leaveStory(){
+    stopStoryTimers();
+    const vid = document.getElementById('storyVideo');
+    vid.pause();
+    storyFxRunning = false;
+    buildStoryList();
+    showScreen('screen-story-list');
+  }
+  document.getElementById('btnStoryListBack').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnStoryPlayBack').addEventListener('click', leaveStory);
+  document.getElementById('btnStoryPrev').addEventListener('click', ()=>{ if(sp.i > 0){ sp.i--; renderStoryScene(false); } });
+  document.getElementById('btnStoryNext').addEventListener('click', nextStoryScene);
+  document.getElementById('btnStorySay').addEventListener('click', ()=>{ stopStoryTimers(); readStoryScene(); });
+  document.getElementById('btnStoryAuto').addEventListener('click', ()=>{
+    sp.auto = !sp.auto; updateStoryAutoBtn();
+    if(!sp.auto){ clearTimeout(sp.timer); sp.timer = null; }
+    else { stopStoryTimers(); readStoryScene(); }
+  });
+  document.getElementById('btnStoryQuiz').addEventListener('click', startStoryQuiz);
+  document.getElementById('btnStoryReplay').addEventListener('click', ()=>{ sp.i = 0; sp.auto = true; updateStoryAutoBtn(); renderStoryScene(false); });
+  // 그림을 누르면 멈추거나 다시 이어서 본다
+  document.getElementById('storyLayer').addEventListener('click', ()=> document.getElementById('btnStoryAuto').click());
+
+  // ---------- 장면 효과: 눈·비·바람·낙엽·반짝임·별 ----------
+  let storyFxMode = '', storyFxRunning = false, storyFxParts = [], storyFxSize = {w:0, h:0};
+  function sizeStoryFx(){
+    const cv = document.getElementById('storyFx'), r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(r.width*dpr); cv.height = Math.round(r.height*dpr);
+    cv.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+    storyFxSize = {w:r.width, h:r.height};
+  }
+  function newFxPart(mode, w, h, fresh){
+    const rnd = Math.random;
+    if(mode==='snow') return {x:rnd()*w, y:fresh ? rnd()*h : -10, r:1.5+rnd()*3, vy:0.4+rnd()*0.9, vx:-0.3+rnd()*0.6, ph:rnd()*6};
+    if(mode==='rain') return {x:rnd()*w, y:fresh ? rnd()*h : -20, len:10+rnd()*14, vy:7+rnd()*5};
+    if(mode==='wind') return {x:fresh ? rnd()*w : -80, y:rnd()*h, len:40+rnd()*70, vx:6+rnd()*6, a:0.15+rnd()*0.25};
+    if(mode==='leaves') return {x:rnd()*w, y:fresh ? rnd()*h : -12, s:5+rnd()*5, vy:0.6+rnd()*0.8, vx:0.3+rnd()*0.8, rot:rnd()*6, vr:-0.05+rnd()*0.1,
+      c:['#e8762b','#d9481f','#f2b632','#b5651d'][Math.floor(rnd()*4)]};
+    return {x:rnd()*w, y:rnd()*h, life:0, max:40+rnd()*60, s:(mode==='stars' ? 1.2 : 2)+rnd()*2.5}; // sparkle·stars
+  }
+  function startStoryFx(){
+    if(storyFxRunning) return;
+    storyFxRunning = true;
+    let lastMode = null;
+    const ctx = document.getElementById('storyFx').getContext('2d');
+    const frame = ()=>{
+      if(!storyFxRunning || !screens['screen-story-play'].classList.contains('active')){ storyFxRunning = false; return; }
+      const {w, h} = storyFxSize, mode = storyFxMode;
+      ctx.clearRect(0, 0, w, h);
+      if(mode !== lastMode){
+        lastMode = mode;
+        const n = {snow:70, rain:90, wind:14, leaves:22, sparkle:26, stars:40}[mode] || 0;
+        storyFxParts = Array.from({length:n}, ()=> newFxPart(mode, w, h, true));
+      }
+      storyFxParts.forEach((p, k)=>{
+        if(mode==='snow'){
+          p.ph += 0.03; p.y += p.vy; p.x += p.vx + Math.sin(p.ph)*0.3;
+          ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+          if(p.y > h+5) storyFxParts[k] = newFxPart(mode, w, h, false);
+        } else if(mode==='rain'){
+          p.y += p.vy;
+          ctx.strokeStyle = 'rgba(190,215,255,.6)'; ctx.lineWidth = 1.3;
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x-2, p.y+p.len); ctx.stroke();
+          if(p.y > h) storyFxParts[k] = newFxPart(mode, w, h, false);
+        } else if(mode==='wind'){
+          p.x += p.vx;
+          ctx.strokeStyle = 'rgba(255,255,255,'+p.a+')'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo(p.x+p.len/2, p.y-8, p.x+p.len, p.y); ctx.stroke();
+          if(p.x > w+20) storyFxParts[k] = newFxPart(mode, w, h, false);
+        } else if(mode==='leaves'){
+          p.y += p.vy; p.x += p.vx + Math.sin(p.rot)*0.5; p.rot += p.vr;
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.c;
+          ctx.beginPath(); ctx.ellipse(0, 0, p.s, p.s*0.55, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+          if(p.y > h+10) storyFxParts[k] = newFxPart(mode, w, h, false);
+        } else if(mode==='sparkle' || mode==='stars'){
+          p.life++;
+          const a = Math.sin(Math.PI * p.life / p.max);
+          ctx.fillStyle = mode==='stars' ? 'rgba(255,255,230,'+a+')' : 'rgba(255,235,150,'+a+')';
+          ctx.beginPath();
+          for(let i=0;i<8;i++){ const rr = i%2 ? p.s*0.4 : p.s*1.6, an = i*Math.PI/4; ctx.lineTo(p.x+Math.cos(an)*rr, p.y+Math.sin(an)*rr); }
+          ctx.closePath(); ctx.fill();
+          if(p.life >= p.max) storyFxParts[k] = newFxPart(mode, w, h, true);
+        }
+      });
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize', ()=>{ if(screens['screen-story-play'].classList.contains('active')) sizeStoryFx(); });
+  // 다른 앱으로 넘어가면 읽기를 멈추고, 돌아오면 그 장면부터 다시 읽는다
+  document.addEventListener('visibilitychange', ()=>{
+    if(!screens['screen-story-play'].classList.contains('active') || !sp.st || sp.ending) return;
+    if(document.visibilityState === 'hidden') stopStoryTimers();
+    else if(!document.getElementById('storyEnd').classList.contains('show')){ readStoryScene(); startStoryFx(); }
+  });
 
 })();
 </script>
