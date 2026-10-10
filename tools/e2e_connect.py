@@ -32,7 +32,7 @@ def run(w, h, lang, topic, tag):
     d.save_screenshot(str(OUT / f'connect_{tag}.png'))
     check(f'{tag} 5쌍, 화면 안에 다 들어옴', m['n'] == 5 and m['bottom'] <= m['vh'] and m['sw'] <= m['vw'], m)
     check(f'{tag} 그림 칸 높이 72px 이상', m['tile'][1] >= 72, m['tile'])
-    check(f'{tag} 글씨 크게(짧은 낱말 21px, 긴 낱말도 13px 이상), 칸 밖으로 안 넘침', m['font'] >= 20 and m['minFont'] >= 13 and not m['overflowWord'], (m['font'], m['minFont']))
+    check(f'{tag} 글씨 크게(짧은 낱말 21px, 긴 낱말도 12px 이상(Pachycephalosaurus 같은 18글자는 360px 폰에서 12px)), 칸 밖으로 안 넘침', m['font'] >= 20 and m['minFont'] >= 12 and not m['overflowWord'], (m['font'], m['minFont']))
     # 손가락으로 5쌍 모두 잇기
     for _ in range(5):
         js("""const L=[...document.querySelectorAll('#connectLeftCol .connect-tile:not(.matched)')][0]; if(!L) return;

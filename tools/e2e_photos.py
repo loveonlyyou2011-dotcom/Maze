@@ -84,6 +84,8 @@ check('단어 카드 사진 표시', wimg and wimg[0].startswith('photos/') and 
 home(); js("const l=document.getElementById('lnkCredits'); l.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})); l.dispatchEvent(new PointerEvent('pointerup',{bubbles:true})); l.click();"); time.sleep(0.3)
 check('출처 링크를 그냥 누르면 열리지 않음', js("return document.querySelector('.screen.active').id;") == 'screen-home', js("return document.getElementById('lnkCredits').textContent;"))
 js("document.getElementById('lnkCredits').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));"); time.sleep(1.8)
+# 꾹 누르면 보호자 메뉴가 열리고, 거기서 사진·자료 출처로 들어간다
+js("document.getElementById('btnParentCredits').click();"); time.sleep(0.4)
 n = js("return document.querySelectorAll('#creditsList li').length;")
 badge = js("return document.querySelector('.pexels-badge').href;")
 check('출처 화면에 사진작가 목록', n == photos, f'{n}명 / 사진 {photos}장')

@@ -327,6 +327,93 @@
   @keyframes popIn{ 0%{ transform:scale(.4); opacity:0; } 70%{ transform:scale(1.08); opacity:1; } 100%{ transform:scale(1); } }
   .write-credit{ font-size:11px; opacity:.45; text-align:center; margin-top:16px; max-width:360px; line-height:1.5; }
 
+  /* ---------- 그림 퀴즈 공용 (듣고 고르기·수 세기·생각 놀이·마음·안전) ---------- */
+  #pqVisual{ width:100%; max-width:400px; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px;
+    font-size:64px; min-height:10px; margin:4px 0 6px; text-align:center; }
+  #pqVisual:empty{ display:none; }
+  #pqVisual .pq-photo{ width:min(60vw,230px); height:min(60vw,230px); border-radius:22px; overflow:hidden; background:#fff; }
+  #pqVisual .pq-photo img{ width:100%; height:100%; object-fit:cover; }
+  #pqVisual .pq-big{ font-size:96px; line-height:1.1; }
+  #pqVisual .seq{ display:flex; flex-wrap:wrap; justify-content:center; gap:4px; font-size:40px; background:rgba(255,255,255,.08); border-radius:16px; padding:10px; }
+  #pqVisual .seq .slot-q{ display:inline-flex; width:52px; height:52px; align-items:center; justify-content:center; border:3px dashed #ffd93d; border-radius:12px; font-size:30px; }
+  #pqVisual .op{ font-size:44px; font-weight:800; margin:0 4px; }
+  #pqVisual .formula{ width:100%; font-size:22px; font-weight:800; opacity:.85; }
+  .count-group{ display:inline-flex; flex-wrap:wrap; justify-content:center; gap:2px; max-width:300px; font-size:38px; line-height:1.15;
+    background:rgba(255,255,255,.08); border-radius:16px; padding:8px; }
+  .count-group .gone{ opacity:.28; position:relative; }
+  .count-group .gone::after{ content:'✕'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#ff6f59; font-weight:900; font-size:.9em; }
+  #pqPrompt{ background:none; border:none; color:#fff; font:inherit; font-size:19px; font-weight:800; margin:4px 0 12px; cursor:pointer;
+    text-align:center; word-break:keep-all; line-height:1.35; max-width:400px; }
+  #pqSlots{ display:flex; gap:8px; justify-content:center; margin-bottom:6px; }
+  #pqSlots:empty{ display:none; }
+  #pqSlots .pq-slot{ width:72px; height:84px; border:3px dashed rgba(255,255,255,.3); border-radius:14px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; font-size:30px; font-weight:800; opacity:.6; }
+  #pqSlots .pq-slot.filled{ border-style:solid; border-color:#8bd450; background:rgba(139,212,80,.15); opacity:1; }
+  #pqSlots .pq-slot .l, #pqOptions .l{ font-size:12px; font-weight:700; margin-top:2px; line-height:1.15; word-break:keep-all; }
+  #pqOptions{ display:grid; grid-template-columns:repeat(var(--pq-cols,2),1fr); gap:12px; width:100%; max-width:400px; }
+  .pq-opt{ background:var(--ui-card); border:3px solid rgba(255,255,255,.15); border-radius:18px; min-height:96px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; font-size:56px; cursor:pointer; padding:6px; overflow:hidden; word-break:keep-all; }
+  .pq-opt:active{ transform:scale(.96); }
+  .pq-opt.square{ aspect-ratio:1/1; min-height:0; }
+  .pq-opt.square img{ width:100% !important; height:100% !important; object-fit:cover; border-radius:12px !important; background:#fff; }
+  .pq-opt .num{ font-size:48px; font-weight:900; }
+  .pq-opt.letter{ font-size:52px; font-weight:900; }
+  .pq-opt.choice{ flex-direction:row; gap:10px; font-size:40px; min-height:88px; justify-content:flex-start; padding:10px 14px; }
+  #pqOptions .pq-opt.choice .l{ font-size:19px; text-align:left; }
+  /* 순서 맞추기 카드: 정사각형이면 4칸일 때 이름이 잘려서 2칸씩 넉넉하게 */
+  .pq-opt.step{ font-size:44px; min-height:104px; }
+  #pqOptions .pq-opt.step .l{ font-size:15px; }
+  .pq-opt .count-group{ font-size:28px; background:none; padding:2px; }
+  .pq-opt.correct{ background:#2e7d32; border-color:#8bd450; animation:pulseGood .4s ease; }
+  .pq-opt.wrong{ background:#8b2e2e; border-color:#ff6f59; animation:shakeX .35s ease; }
+  .pq-opt.dim{ opacity:.35; pointer-events:none; }
+  .pq-opt.placed{ visibility:hidden; }
+  @keyframes shakeX{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-7px); } 75%{ transform:translateX(7px); } }
+
+  /* ---------- 한글 블록 ---------- */
+  #hbTarget{ font-size:84px; font-weight:900; background:#fffdf6; color:#2b2b3a; border:none; border-radius:24px; width:150px; height:150px;
+    margin:2px 0 10px; cursor:pointer; color-scheme:light; }
+  #hbBuild{ display:flex; align-items:center; gap:6px; margin-bottom:12px; }
+  .hb-slot{ width:58px; height:58px; border-radius:14px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center;
+    font-size:34px; font-weight:900; }
+  .hb-slot.result{ background:#ffd93d; color:#3a2a00; width:70px; height:70px; font-size:42px; }
+  .hb-plus{ font-size:26px; font-weight:800; opacity:.7; }
+  .hb-row-label{ font-size:13px; opacity:.7; margin:4px 0; }
+  .hb-row{ display:flex; gap:10px; justify-content:center; margin-bottom:8px; }
+  .hb-key{ width:68px; height:68px; border-radius:16px; border:3px solid rgba(255,255,255,.18); background:var(--ui-card); color:#fff;
+    font-size:38px; font-weight:900; cursor:pointer; }
+  .hb-key.sel{ border-color:#ffd93d; background:rgba(255,217,61,.2); }
+  .hb-key.wrong{ animation:shakeX .35s ease; border-color:#ff6f59; }
+  #hbBonus{ min-height:90px; display:flex; align-items:center; gap:10px; font-size:20px; font-weight:800; margin-top:4px; }
+  #hbBonus img{ width:84px; height:84px; object-fit:cover; border-radius:14px; background:#fff; }
+
+  /* ---------- 보호자 화면·쉬는 시간 ---------- */
+  #parentBody{ width:100%; max-width:440px; font-size:14px; line-height:1.55; }
+  #parentBody h3{ font-size:16px; margin:18px 0 8px; }
+  .parent-note{ font-size:12px; opacity:.7; margin:0 0 8px; }
+  #parentRestSeg{ flex-wrap:wrap; }
+  #parentRestSeg button{ white-space:nowrap; padding:8px 14px; }
+  #parentWeek{ display:flex; align-items:flex-end; gap:6px; height:120px; padding:6px 0; }
+  #parentWeek .day{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; font-size:11px; }
+  #parentWeek .bar{ width:70%; background:linear-gradient(180deg,#7bd8ff,#2f6f9f); border-radius:6px 6px 2px 2px; min-height:2px; }
+  #parentWeek .min{ font-size:10px; opacity:.8; margin-bottom:2px; }
+  #parentByGame .row, #parentMistakes .row{ display:flex; justify-content:space-between; gap:10px; padding:4px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  #parentMistakes .empty, #parentWrite .empty, #parentByGame .empty{ opacity:.6; }
+  #parentWrite{ display:flex; flex-wrap:wrap; gap:6px; }
+  #parentWrite span{ background:rgba(255,255,255,.1); border-radius:8px; padding:3px 8px; }
+  #restOverlay{ position:fixed; inset:0; z-index:80; background:linear-gradient(160deg,#1f7a6b,#0b2b27); color:#fff; display:none;
+    flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; }
+  #restOverlay.show{ display:flex; }
+  #restOverlay .big{ font-size:96px; animation:popIn .6s ease; }
+  #restOverlay h2{ font-size:28px; margin:10px 0 6px; }
+  #restOverlay p{ font-size:17px; opacity:.9; margin:0 0 18px; line-height:1.5; word-break:keep-all; }
+  #restCount{ font-size:40px; font-weight:900; font-variant-numeric:tabular-nums; margin-bottom:16px; }
+
+  /* ---------- 그림책: 읽는 낱말 따라 색칠, 따라 읽기 ---------- */
+  #bookTextMain .w{ transition:color .15s, background .15s; border-radius:6px; }
+  #bookTextMain .w.on{ color:#ffd93d; background:rgba(255,217,61,.14); }
+  #bookRecHint{ font-size:13px; opacity:.8; min-height:18px; margin-top:6px; text-align:center; }
+
   #echoRow{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
   #echoRow .icon-btn{ font-size:16px; }
   #echoHint{ font-size:13px; opacity:.75; min-height:18px; margin-top:6px; }
@@ -360,6 +447,14 @@
 <div id="app">
   <canvas id="confettiCanvas"></canvas>
   <button class="icon-btn" id="btnMute">🔊</button>
+  <!-- 놀이 시간 알림: 보호자가 정한 시간만큼 놀면 1분 동안 쉬게 한다 -->
+  <div id="restOverlay" role="dialog" aria-live="polite">
+    <div class="big">🙆</div>
+    <h2>잠깐 쉬어요!</h2>
+    <p>먼 곳을 바라보고 기지개를 쭉 켜 봐요.<br>눈을 감고 천천히 숨을 쉬어도 좋아요.</p>
+    <div id="restCount">60</div>
+    <button class="big-btn" id="btnRestDone" style="max-width:260px;">다시 놀기</button>
+  </div>
 
   <!-- HOME / HUB -->
   <section id="screen-home" class="screen active">
@@ -367,7 +462,7 @@
     <p class="sub">하고 싶은 놀이를 골라보세요!</p>
     <p class="sub" id="streakLine" style="margin-top:-10px; min-height:18px;"></p>
     <div class="grid" id="gameHubGrid" style="max-width:420px; grid-template-columns:repeat(3,1fr); gap:10px;"></div>
-    <footer class="credit">가로/세로로 돌려도 괜찮아요 · <a href="#" id="lnkCredits" style="color:inherit;">📷 사진·자료 출처</a></footer>
+    <footer class="credit">가로/세로로 돌려도 괜찮아요 · <a href="#" id="lnkCredits" style="color:inherit;">👨‍👩‍👧 보호자 메뉴 · 사진 출처</a></footer>
   </section>
 
   <!-- STICKERS -->
@@ -550,6 +645,11 @@
       <button id="btnBookRead">🔊 다시 읽기</button>
       <button id="btnBookNext">다음 ▶</button>
     </div>
+    <div class="game-actions" style="margin-top:8px;">
+      <button id="btnBookRec">🎤 따라 읽기</button>
+      <button id="btnBookPlay" style="display:none;">▶ 내 목소리</button>
+    </div>
+    <div id="bookRecHint"></div>
   </section>
 
   <!-- 퍼즐·그림자 찾기 공용 결과 화면 -->
@@ -560,6 +660,69 @@
     <div class="result-best" id="funResultBest"></div>
     <button class="big-btn" id="btnFunRetry" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 하기</button>
     <button class="icon-btn" id="btnFunBack" style="margin-top:10px">◀ 목록으로</button>
+  </section>
+
+  <!-- 놀이 묶음 메뉴 (한글 블록·생각 놀이·마음·안전·수 세기) -->
+  <section id="screen-fun-menu" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnFunMenuBack">◀ 뒤로</button>
+      <div class="info" id="funMenuTitle">놀이</div>
+      <span style="width:44px"></span>
+    </div>
+    <p class="sub" id="funMenuSub"></p>
+    <div class="grid" id="funMenuGrid"></div>
+  </section>
+
+  <!-- 그림 퀴즈 공용 화면: 듣고 고르기·수 세기·첫소리·분류·규칙·순서·기분·안전·그림책 질문 -->
+  <section id="screen-pq" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnPqBack">◀ 그만</button>
+      <div class="info" id="pqInfo">놀이</div>
+      <div class="info" id="pqProgress" style="flex:0 0 auto;">1 / 8</div>
+    </div>
+    <div id="pqVisual"></div>
+    <div id="pqSlots"></div>
+    <button id="pqPrompt" type="button">🔊 <span id="pqPromptText"></span></button>
+    <div id="pqOptions"></div>
+  </section>
+
+  <!-- 한글 블록: 자음 + 모음으로 글자 만들기 -->
+  <section id="screen-hangul-build" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnHbBack">◀ 그만</button>
+      <div class="info">🔤 글자 만들기</div>
+      <div class="info" id="hbProgress" style="flex:0 0 auto;">1 / 8</div>
+    </div>
+    <p class="sub" style="margin-bottom:6px;">자음과 모음을 하나씩 골라서 글자를 만들어요</p>
+    <button id="hbTarget" type="button" aria-label="만들 글자 다시 듣기">가</button>
+    <div id="hbBuild"><span id="hbCho" class="hb-slot">?</span><span class="hb-plus">+</span><span id="hbJung" class="hb-slot">?</span><span class="hb-plus">=</span><span id="hbResult" class="hb-slot result"></span></div>
+    <div class="hb-row-label">자음</div>
+    <div class="hb-row" id="hbChoRow"></div>
+    <div class="hb-row-label">모음</div>
+    <div class="hb-row" id="hbJungRow"></div>
+    <div id="hbBonus"></div>
+  </section>
+
+  <!-- 보호자 화면 -->
+  <section id="screen-parent" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnParentBack">◀ 뒤로</button>
+      <div class="info">👨‍👩‍👧 보호자</div>
+      <span style="width:44px"></span>
+    </div>
+    <div id="parentBody">
+      <h3>이번 주 놀이 시간</h3>
+      <div id="parentWeek"></div>
+      <div id="parentByGame"></div>
+      <h3>놀이 시간 알림</h3>
+      <p class="parent-note">정한 시간만큼 놀면 "잠깐 쉬어요" 화면이 1분 동안 나와요. 눈을 쉬고 몸을 움직이게 도와줘요.</p>
+      <div class="seg" id="parentRestSeg"></div>
+      <h3>자주 틀린 문제</h3>
+      <div id="parentMistakes"></div>
+      <h3>더 연습하면 좋은 글자</h3>
+      <div id="parentWrite"></div>
+      <button class="icon-btn" id="btnParentCredits" style="margin-top:18px;">📷 사진·자료 출처</button>
+    </div>
   </section>
 
   <!-- CREDITS -->
@@ -1438,6 +1601,9 @@
       {emoji:'🧩', label:'퍼즐', gradient:'linear-gradient(160deg,#1f7a6b,#0b2b27)', onClick:()=>{ buildPuzzleSelect(); showScreen('screen-puzzle-select'); }},
       {emoji:'👤', label:'그림자 찾기', gradient:'linear-gradient(160deg,#4b4f6b,#171a2e)', onClick:()=>{ buildShadowSelect(); showScreen('screen-shadow-select'); }},
       {emoji:'📖', label:'그림책', gradient:'linear-gradient(160deg,#b5652a,#3b1f0a)', onClick:()=>{ buildBookList(); showScreen('screen-book-list'); }},
+      {emoji:'🔤', label:'한글 블록', gradient:'linear-gradient(160deg,#8b2635,#3a0f1c)', onClick:()=> openFunMenu(hangulMenu)},
+      {emoji:'🧠', label:'생각 놀이', gradient:'linear-gradient(160deg,#2e7d6b,#0b2b27)', onClick:()=> openFunMenu(thinkMenu)},
+      {emoji:'💛', label:'마음·안전', gradient:'linear-gradient(160deg,#c49a2e,#3b2b10)', onClick:()=> openFunMenu(heartMenu)},
       {emoji:'🏆', label:'스티커판', wide:true, gradient:'linear-gradient(160deg,#8b6d2e,#3b2b10)', onClick:()=>{ buildStickerBoard(); showScreen('screen-stickers'); }},
     ];
     games.forEach(g=>{
@@ -1445,10 +1611,12 @@
       div.className = 'card' + (g.wide ? ' card-wide' : '');
       div.style.background = g.gradient;
       div.innerHTML = '<span class="emoji">'+g.emoji+'</span><span class="name">'+g.label+'</span>';
-      div.addEventListener('click', g.onClick);
+      // 보호자 화면의 "놀이별 시간"에 쓸 이름을 기억해 둔다
+      div.addEventListener('click', ()=>{ currentPlayGroup = g.label; g.onClick(); });
       wrap.appendChild(div);
     });
   }
+  let currentPlayGroup = '기타';
   buildGameHub();
 
   function buildStickerBoard(){
@@ -1481,10 +1649,10 @@
     if(mathChips.length) sections.push({title:'🔢 숫자놀이', chips:mathChips});
 
     const wordChips = [];
-    const modeLabels = {quiz:'퀴즈', match:'짝맞추기', connect:'줄긋기'};
+    const modeLabels = {quiz:'퀴즈', match:'짝맞추기', connect:'줄긋기', listen:'듣고 고르기'};
     WORD_LANGS.forEach(lang=>{
       WORD_TOPICS.forEach(topic=>{
-        ['quiz','match','connect'].forEach(mode=>{
+        ['quiz','match','connect','listen'].forEach(mode=>{
           const s = wordStars[wordKey(lang.id, topic.id, mode)];
           if(s!==undefined){ total += s; wordChips.push({icon:topic.emoji, label:lang.flag+' '+topic.label+' '+modeLabels[mode], stars:s}); }
         });
@@ -1519,6 +1687,14 @@
       if(s!==undefined){ total += s; writeChips.push({icon:lang.flag, label:r[0]+' ('+level.label+')', stars:s}); }
     })));
     if(writeChips.length) sections.push({title:'✏️ 따라쓰기', chips:writeChips});
+
+    const funStars = loadFunStars();
+    const funChips = [];
+    Object.keys(FUN_LABELS).forEach(k=>{
+      const st = funStars[k];
+      if(st!==undefined){ total += st; funChips.push({icon:FUN_LABELS[k][0], label:FUN_LABELS[k][1], stars:st}); }
+    });
+    if(funChips.length) sections.push({title:'🌱 배움 놀이', chips:funChips});
 
     document.getElementById('stickerTotal').textContent = '⭐ '+total+'개 모았어요';
     let badge = '';
@@ -1729,6 +1905,13 @@
   function buildMathOpGrid(){
     const wrap = document.getElementById('mathOpGrid');
     wrap.innerHTML = '';
+    // 기호 계산 전 단계: 물건 세기·비교·그림 덧셈/뺄셈
+    const countDiv = document.createElement('div');
+    countDiv.className = 'card';
+    countDiv.style.background = 'linear-gradient(160deg,#d6336c,#4a0e2a)';
+    countDiv.innerHTML = '<span class="emoji">🍎</span><span class="name">수 세기</span>';
+    countDiv.addEventListener('click', ()=> openFunMenu(countMenu));
+    wrap.appendChild(countDiv);
     MATH_OPS.forEach((op, idx)=>{
       const div = document.createElement('div');
       div.className = 'card';
@@ -2852,6 +3035,7 @@
     wrap.innerHTML = '';
     const modes = [
       {id:'card', emoji:'🗂️', label:'카드로 배우기'},
+      {id:'listen', emoji:'🎧', label:'듣고 고르기'},
       {id:'quiz', emoji:'🎯', label:'퀴즈 풀기'},
       {id:'match', emoji:'🧩', label:'짝맞추기'},
       {id:'connect', emoji:'🔗', label:'줄긋기'},
@@ -2866,6 +3050,7 @@
         else if(m.id==='quiz'){ startWordQuiz(); showScreen('screen-word-quiz'); }
         else if(m.id==='match'){ startWordMatch(); showScreen('screen-word-match'); }
         else if(m.id==='connect'){ startWordConnect(); showScreen('screen-word-connect'); }
+        else if(m.id==='listen'){ startWordListen(); }
       });
       wrap.appendChild(div);
     });
@@ -5115,7 +5300,7 @@
   }
   function readBookPage(){
     const p = book.bk.pages[book.page];
-    if(bookLang==='en') speak(p.en, 'en-US'); else speak(p.ko, 'ko-KR');
+    if(bookLang==='en') readBookWithHighlight(p.en, 'en-US'); else readBookWithHighlight(p.ko, 'ko-KR');
   }
   function renderBookPage(){
     const bk = book.bk, p = bk.pages[book.page];
@@ -5126,10 +5311,11 @@
     img.src = pictureSrc(p.cat, p.item);
     img.alt = p.item;
     // 읽어주는 말을 크게, 다른 말은 작게 함께 보여준다
-    document.getElementById('bookTextMain').textContent = bookLang==='en' ? p.en : p.ko;
+    resetBookRec();
+    setBookTextWords(bookLang==='en' ? p.en : p.ko);
     document.getElementById('bookTextSub').textContent = bookLang==='en' ? p.ko : p.en;
     document.getElementById('btnBookPrev').style.visibility = book.page===0 ? 'hidden' : '';
-    document.getElementById('btnBookNext').textContent = last ? '📚 다른 책' : '다음 ▶';
+    document.getElementById('btnBookNext').textContent = last ? '❓ 문제 풀기' : '다음 ▶';
     readBookPage();
     if(last && !book.celebrated){
       book.celebrated = true;
@@ -5140,11 +5326,11 @@
   document.getElementById('btnBookNext').addEventListener('click', ()=>{
     if(!book) return;
     if(book.page < book.bk.pages.length-1){ book.page++; renderBookPage(); }
-    else { stopSpeaking(); buildBookList(); showScreen('screen-book-list'); }
+    else { stopSpeaking(); resetBookRec(); startBookQuiz(book.bk); }
   });
   document.getElementById('btnBookRead').addEventListener('click', ()=>{ if(book) readBookPage(); });
   document.getElementById('bookPic').addEventListener('click', ()=>{ if(book) readBookPage(); });
-  document.getElementById('btnBookReadBack').addEventListener('click', ()=>{ stopSpeaking(); buildBookList(); showScreen('screen-book-list'); });
+  document.getElementById('btnBookReadBack').addEventListener('click', ()=>{ stopSpeaking(); resetBookRec(); buildBookList(); showScreen('screen-book-list'); });
   document.getElementById('btnBookListBack').addEventListener('click', ()=> showScreen('screen-home'));
 
   // =====================================================================
@@ -5929,7 +6115,7 @@
     lnk.addEventListener('pointerdown', e=>{
       e.preventDefault();
       clearTimeout(timer);
-      timer = setTimeout(()=>{ timer = null; lnk.textContent = label; buildCredits(); showScreen('screen-credits'); }, 1500);
+      timer = setTimeout(()=>{ timer = null; lnk.textContent = label; buildParent(); showScreen('screen-parent'); }, 1500);
     });
     const cancel = ()=>{
       if(!timer) return;
@@ -5942,11 +6128,743 @@
     lnk.addEventListener('pointerleave', cancel);
     lnk.addEventListener('pointercancel', cancel);
   })();
-  document.getElementById('btnCreditsBack').addEventListener('click', ()=> showScreen('screen-home'));
+  document.getElementById('btnCreditsBack').addEventListener('click', ()=>{ buildParent(); showScreen('screen-parent'); });
 
   // 자동 테스트(tools/e2e_write.py)가 획 좌표를 알아내 손가락 대신 그을 수 있도록 읽기 전용으로 내보낸다
   window.__writeTestState = ()=> wp ? { step:wp.step, ci:wp.ci, si:wp.si, busy:wp.busy, finished:wp.finished,
     strokes:wp.strokes[wp.ci], S:wGeom.S, pad:wGeom.pad, k:wGeom.k, mistakes:wp.mistakes } : null;
+
+  // =====================================================================
+  // 🌱 유치원 기초 놀이 (2026-10-11 추가)
+  // 글을 읽기 전 단계를 채우려고 만든 놀이들. 듣고 고르기·수 세기·첫소리·분류·규칙·순서·기분·안전·
+  // 그림책 질문은 모두 "문제를 듣고 보기를 누르는" 같은 틀이라 그림 퀴즈 엔진(pq) 하나로 돌린다.
+  // 글을 못 읽는 아이를 위해 문제는 항상 소리로도 읽어주고, 문제 글을 누르면 다시 읽어준다.
+  // =====================================================================
+  const FUN_STARS_KEY = 'fingerMazeFunStars_v1';
+  function loadFunStars(){ try{ return JSON.parse(localStorage.getItem(FUN_STARS_KEY)||'{}'); }catch(e){ return {}; } }
+  function saveFunStar(key, stars){
+    const map = loadFunStars();
+    if(map[key]===undefined || stars > map[key]){ map[key] = stars; try{ localStorage.setItem(FUN_STARS_KEY, JSON.stringify(map)); }catch(e){} }
+    return map[key];
+  }
+  // 스티커판에 보여줄 이름 (key → [아이콘, 이름])
+  const FUN_LABELS = {};
+  function pickOne(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function randInt(a, b){ return a + Math.floor(Math.random()*(b-a+1)); }
+  function photoTag(cat, item){ return '<img alt="" src="'+pictureSrc(cat, item)+'">'; }
+  // 사진이 있는 그림만 (선그림은 사진들 사이에서 튀어서 퀴즈에는 쓰지 않는다)
+  function photoItems(cats){
+    const out = [];
+    RASTER_COLORING_CATEGORIES.forEach(c=>{
+      if(cats && !cats.includes(c.id)) return;
+      c.items.forEach(it=>{ if(PHOTO_CREDITS[c.id+'/'+it]) out.push({cat:c.id, item:it}); });
+    });
+    return out;
+  }
+  function eunNeun(word){ return word + (hasBatchim(word) ? '은' : '는'); }
+  function pqBump(){ if(navigator.vibrate) navigator.vibrate(20); sfxBump(); }
+
+  // ---------- 그림 퀴즈 엔진 ----------
+  // 문제: {say, sayLang, prompt, visual(html), cols, options:[{html, cls, correct, order}], order(순서 맞추기), after(맞힌 뒤 읽어줄 말), reveal}
+  const pq = { cfg:null, qs:[], i:0, mistakes:0, wrong:0, locked:false, placed:0, token:0 };
+  function startPQ(cfg){
+    pq.cfg = cfg; pq.qs = cfg.make(); pq.i = 0; pq.mistakes = 0; pq.token++;
+    if(cfg.group) currentPlayGroup = cfg.group;
+    document.getElementById('pqInfo').textContent = cfg.info;
+    recordPlayToday();
+    showScreen('screen-pq');
+    renderPQ();
+  }
+  function renderPQ(){
+    const q = pq.qs[pq.i];
+    pq.locked = false; pq.wrong = 0; pq.placed = 0;
+    document.getElementById('pqProgress').textContent = (pq.i+1)+' / '+pq.qs.length;
+    document.getElementById('pqVisual').innerHTML = q.visual || '';
+    document.getElementById('pqPromptText').textContent = q.prompt || '';
+    const slots = document.getElementById('pqSlots');
+    slots.innerHTML = q.order ? q.options.map((_,k)=>'<div class="pq-slot">'+(k+1)+'</div>').join('') : '';
+    const box = document.getElementById('pqOptions');
+    box.style.setProperty('--pq-cols', q.cols || 2);
+    box.innerHTML = '';
+    q.options.forEach((o, k)=>{
+      const el = document.createElement('div');
+      el.className = 'pq-opt' + (o.cls ? ' '+o.cls : '');
+      el.innerHTML = o.html;
+      // 자동 점검(tools/e2e_edu.py)이 정답을 찾을 수 있게 표시해 둔다
+      if(o.correct) el.dataset.ok = '1';
+      if(o.order !== undefined) el.dataset.order = o.order;
+      el.addEventListener('click', ()=> pickPQ(k, el));
+      box.appendChild(el);
+    });
+    const token = pq.token, idx = pq.i;
+    setTimeout(()=>{ if(token===pq.token && idx===pq.i) sayPQ(); }, 250);
+  }
+  function sayPQ(){ const q = pq.qs[pq.i]; if(q && q.say) speak(q.say, q.sayLang || 'ko-KR'); }
+  function pickPQ(k, el){
+    if(pq.locked) return;
+    const q = pq.qs[pq.i], o = q.options[k];
+    if(q.order){
+      if(el.classList.contains('placed')) return;
+      if(o.order === pq.placed){
+        const slot = document.getElementById('pqSlots').children[pq.placed];
+        slot.innerHTML = o.html; slot.classList.add('filled');
+        el.classList.add('placed');
+        pq.placed++;
+        beep(500 + pq.placed*90, 0.1, 'sine', 0.12);
+        if(o.say) speak(o.say, 'ko-KR');
+        if(pq.placed === q.options.length){
+          pq.locked = true;
+          if(pq.wrong) pq.mistakes++;
+          setTimeout(()=>{ sfxCorrect(); if(q.after) speak(q.after, 'ko-KR'); }, 500);
+          nextPQSoon(q.after ? 2600 : 1200);
+        }
+      } else wrongPQ(el);
+      return;
+    }
+    if(o.correct){
+      pq.locked = true;
+      el.classList.add('correct');
+      document.querySelectorAll('#pqOptions .pq-opt').forEach(b=>{ if(b!==el) b.classList.add('dim'); });
+      if(q.reveal){ const s = document.querySelector('#pqVisual .slot-q'); if(s) s.innerHTML = q.reveal; }
+      sfxCorrect();
+      if(pq.wrong) pq.mistakes++;
+      if(q.after) speak(q.after, q.afterLang || 'ko-KR');
+      nextPQSoon(q.after ? Math.min(3200, 1100 + q.after.length*70) : 800);
+    } else wrongPQ(el);
+  }
+  function wrongPQ(el){
+    pq.wrong++;
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    setTimeout(()=> el.classList.remove('wrong'), 380);
+    pqBump();
+  }
+  function nextPQSoon(ms){
+    const token = pq.token;
+    setTimeout(()=>{
+      if(token !== pq.token) return;
+      pq.i++;
+      if(pq.i >= pq.qs.length) finishPQ(); else renderPQ();
+    }, ms);
+  }
+  function finishPQ(){
+    const cfg = pq.cfg, n = pq.qs.length;
+    const stars = starsFromMistakes(pq.mistakes);
+    const best = cfg.save ? cfg.save(stars) : stars;
+    showFunResult({ title: cfg.title || '🎉 잘했어요!', stars,
+      msg: n+'문제 중 '+(n-pq.mistakes)+'문제를 한 번에 맞혔어요',
+      best: '최고 기록: '+starText(best), onRetry: ()=> startPQ(cfg), onBack: cfg.onBack });
+  }
+  document.getElementById('pqPrompt').addEventListener('click', sayPQ);
+  document.getElementById('btnPqBack').addEventListener('click', ()=>{
+    pq.token++; stopSpeaking();
+    if(pq.cfg && pq.cfg.onBack) pq.cfg.onBack(); else showScreen('screen-home');
+  });
+
+  // ---------- 놀이 묶음 메뉴 ----------
+  let funMenuBack = null, lastFunMenu = null;
+  function openFunMenu(menu){
+    lastFunMenu = menu;
+    if(menu.group) currentPlayGroup = menu.group;
+    document.getElementById('funMenuTitle').textContent = menu.title;
+    document.getElementById('funMenuSub').textContent = menu.sub || '';
+    const stars = loadFunStars();
+    const wrap = document.getElementById('funMenuGrid');
+    wrap.innerHTML = '';
+    menu.items.forEach(it=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.background = it.gradient || 'var(--ui-card)';
+      const s = it.key ? stars[it.key] : undefined;
+      div.innerHTML = '<span class="emoji">'+it.emoji+'</span><span class="name">'+it.label+'</span>'
+        + (s!==undefined ? '<div style="font-size:12px;margin-top:4px;">'+'⭐'.repeat(s)+'</div>' : '');
+      div.addEventListener('click', it.onClick);
+      wrap.appendChild(div);
+    });
+    funMenuBack = menu.back || (()=> showScreen('screen-home'));
+    showScreen('screen-fun-menu');
+  }
+  function backToFunMenu(){ if(lastFunMenu) openFunMenu(lastFunMenu); else showScreen('screen-home'); }
+  document.getElementById('btnFunMenuBack').addEventListener('click', ()=>{ if(funMenuBack) funMenuBack(); });
+
+  // ---------- 🎧 듣고 고르기 (단어놀이의 다섯째 놀이 방식) ----------
+  // 기존 퀴즈는 보기가 글자라 글을 읽어야 풀 수 있어서, 소리를 듣고 그림을 고르는 방식을 따로 두었다
+  function startWordListen(){
+    const lang = currentWordLang(), topic = currentWordTopic(), items = currentWordItems();
+    startPQ({ info: lang.flag+' '+topic.label+' · 듣고 고르기', title:'🎧 귀가 쫑긋!', group:'단어놀이',
+      make: ()=> shuffle(items.map((_,i)=>i)).slice(0, 8).map(idx=>{
+        const word = wordEntry(items[idx], lang.id).word;
+        const wrong = shuffle(items.map((_,i)=>i).filter(i=>i!==idx)).slice(0, 3);
+        return { say: word, sayLang: lang.speechLang, prompt:'잘 듣고 맞는 그림을 골라요', cols:2,
+          options: shuffle([idx, ...wrong]).map(i=>({ html: visualHTML(items[i], topic.id), cls:'square', correct: i===idx })),
+          after: word, afterLang: lang.speechLang };
+      }),
+      save: (stars)=>{
+        const key = wordKey(lang.id, topic.id, 'listen'), map = loadWordStars();
+        if(map[key]===undefined || stars>map[key]){ map[key] = stars; saveWordStars(map); }
+        return map[key];
+      },
+      onBack: ()=>{ buildWordModeGrid(); showScreen('screen-word-mode'); } });
+  }
+
+  // ---------- 🍎 수 세기 (숫자놀이 안) ----------
+  // "3 + 4 = ?" 같은 기호 계산 전에, 물건 개수와 숫자를 잇는 감각부터 익히게 한다
+  const COUNT_THINGS = ['🍎','🍓','🐟','⭐','🚗','🐥','🌸','🎈','🍪','🐞','🍌','🧸'];
+  const KO_COUNT = ['','한','두','세','네','다섯','여섯','일곱','여덟','아홉','열'];
+  const COUNT_LEVELS = [
+    {id:'c5', emoji:'🖐️', label:'1~5 세어 보기', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)'},
+    {id:'c10', emoji:'🔟', label:'1~10 세어 보기', gradient:'linear-gradient(160deg,#7a3fb0,#3a0f52)'},
+    {id:'more', emoji:'⚖️', label:'어느 쪽이 많을까?', gradient:'linear-gradient(160deg,#c46a2e,#3b2412)'},
+    {id:'add', emoji:'➕', label:'그림 덧셈', gradient:'linear-gradient(160deg,#2e9e5b,#0d2b1d)'},
+    {id:'sub', emoji:'➖', label:'그림 뺄셈', gradient:'linear-gradient(160deg,#b0304e,#3b0f1c)'},
+  ];
+  COUNT_LEVELS.forEach(l=> FUN_LABELS['count|'+l.id] = ['🍎', '수 세기 · '+l.label]);
+  function countGroup(n, thing, gone){
+    let h = '<div class="count-group">';
+    for(let i=0;i<n;i++) h += '<span'+(gone && i>=n-gone ? ' class="gone"' : '')+'>'+thing+'</span>';
+    return h + '</div>';
+  }
+  function numberOptions(ans, lo, hi){
+    const set = new Set([ans]);
+    while(set.size < 3){ const v = randInt(Math.max(lo, ans-3), Math.min(hi, ans+3)); set.add(v); }
+    return shuffle([...set]).map(v=>({ html:'<span class="num">'+v+'</span>', correct: v===ans }));
+  }
+  function makeCountQuestion(level){
+    const t = pickOne(COUNT_THINGS);
+    if(level==='c5' || level==='c10'){
+      const n = randInt(1, level==='c5' ? 5 : 10);
+      return { visual: countGroup(n, t), say:'몇 개일까요?', prompt:'몇 개일까요? 손가락으로 하나씩 세어 봐요', cols:3,
+        options: numberOptions(n, 1, level==='c5' ? 6 : 10), after: (KO_COUNT[n] || n)+' 개!' };
+    }
+    if(level==='more'){
+      let a = randInt(1, 8), b = randInt(1, 8);
+      while(b===a) b = randInt(1, 8);
+      return { say:'어느 쪽이 더 많을까요?', prompt:'어느 쪽이 더 많을까요?', cols:2,
+        options: [a, b].map(v=>({ html: countGroup(v, t), correct: v===Math.max(a,b) })), after:'이쪽이 더 많아요!' };
+    }
+    if(level==='add'){
+      const a = randInt(1, 5), b = randInt(1, Math.min(5, 10-a));
+      return { visual: countGroup(a, t)+'<span class="op">+</span>'+countGroup(b, t)+'<div class="formula">'+a+' + '+b+' = ?</div>',
+        say: KO_COUNT[a]+' 개와 '+KO_COUNT[b]+' 개를 합치면 몇 개일까요?', prompt:'모두 몇 개일까요?', cols:3,
+        options: numberOptions(a+b, 1, 10), after:'모두 '+KO_COUNT[a+b]+' 개!' };
+    }
+    const a = randInt(3, 9), b = randInt(1, a-1);
+    return { visual: countGroup(a, t, b)+'<div class="formula">'+a+' − '+b+' = ?</div>',
+      say: KO_COUNT[a]+' 개 중에서 '+KO_COUNT[b]+' 개가 없어지면 몇 개 남을까요?', prompt:'몇 개 남았을까요?', cols:3,
+      options: numberOptions(a-b, 1, 9), after: KO_COUNT[a-b]+' 개 남았어요!' };
+  }
+  const countMenu = { title:'🍎 수 세기', sub:'물건을 세면서 숫자를 익혀요', group:'숫자놀이',
+    back: ()=>{ buildMathOpGrid(); showScreen('screen-math-op'); },
+    items: COUNT_LEVELS.map(l=>({ emoji:l.emoji, label:l.label, gradient:l.gradient, key:'count|'+l.id,
+      onClick: ()=> startPQ({ info:'🍎 '+l.label, group:'숫자놀이', title:'🍎 잘 셌어요!',
+        make: ()=> Array.from({length:8}, ()=> makeCountQuestion(l.id)),
+        save: s=> saveFunStar('count|'+l.id, s), onBack: backToFunMenu }) })) };
+
+  // ---------- 🔤 한글 블록 ----------
+  const JAMO_NAME = Object.fromEntries(WORD_DATA.jamo.map(j=>[j.emoji, j.ko]));
+  const HB_CHO = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ';
+  const HB_JUNG = 'ㅏㅓㅗㅜㅡㅣㅑㅕㅛㅠ';
+  function composeSyllable(cho, jung){
+    return String.fromCharCode(0xAC00 + (HANGUL_CHO.indexOf(cho)*21 + HANGUL_JUNG.indexOf(jung))*28);
+  }
+  function firstCho(word){
+    const c = word.charCodeAt(0) - 0xAC00;
+    if(c < 0 || c > 11171) return null;
+    return HANGUL_CHO[Math.floor(c/588)];
+  }
+  // 그 글자로 시작하는 사진 낱말 (예: 나 → 나비) — 만든 글자를 실제 낱말과 이어 준다
+  const PHOTO_WORDS = photoItems(['과일','채소','동물','교통수단','곤충','바다생물','꽃과식물','학용품장난감']);
+  const hb = { list:[], i:0, cho:null, jung:null, mistakes:0, wrong:0, locked:false };
+  FUN_LABELS['hangul|build'] = ['🔤', '글자 만들기'];
+  FUN_LABELS['hangul|first'] = ['🔤', '첫소리 찾기'];
+  function startHangulBuild(){
+    currentPlayGroup = '한글 블록';
+    // 앞 4문제는 쉬운 모음(ㅏㅓㅗㅜㅣ), 뒤 4문제는 ㅡ와 이중 모음까지
+    const pickSyl = (vowels)=> composeSyllable(pickOne([...HB_CHO]), pickOne([...vowels]));
+    const set = new Set();
+    while(set.size < 4) set.add(pickSyl('ㅏㅓㅗㅜㅣ'));
+    while(set.size < 8) set.add(pickSyl(HB_JUNG));
+    hb.list = [...set]; hb.i = 0; hb.mistakes = 0;
+    recordPlayToday();
+    showScreen('screen-hangul-build');
+    renderHangulBuild();
+  }
+  function syllableParts(s){
+    const c = s.charCodeAt(0) - 0xAC00;
+    return { cho: HANGUL_CHO[Math.floor(c/588)], jung: HANGUL_JUNG[Math.floor((c%588)/28)] };
+  }
+  function renderHangulBuild(){
+    const target = hb.list[hb.i], parts = syllableParts(target);
+    hb.cho = null; hb.jung = null; hb.wrong = 0; hb.locked = false;
+    document.getElementById('hbProgress').textContent = (hb.i+1)+' / '+hb.list.length;
+    document.getElementById('hbTarget').textContent = target;
+    document.getElementById('hbBonus').innerHTML = '';
+    const choOpts = shuffle([parts.cho, ...shuffle([...HB_CHO].filter(c=>c!==parts.cho)).slice(0,3)]);
+    const jungPool = [...HB_JUNG].filter(v=>v!==parts.jung);
+    const jungOpts = shuffle([parts.jung, ...shuffle(jungPool).slice(0,2)]);
+    const fill = (rowId, opts, kind)=>{
+      const row = document.getElementById(rowId);
+      row.innerHTML = '';
+      opts.forEach(ch=>{
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'hb-key'; b.textContent = ch;
+        b.addEventListener('click', ()=> pickJamo(kind, ch, b));
+        row.appendChild(b);
+      });
+    };
+    fill('hbChoRow', choOpts, 'cho');
+    fill('hbJungRow', jungOpts, 'jung');
+    updateHbBuild();
+    setTimeout(()=> speak(target+'를 만들어 보세요', 'ko-KR'), 250);
+  }
+  function updateHbBuild(){
+    document.getElementById('hbCho').textContent = hb.cho || '?';
+    document.getElementById('hbJung').textContent = hb.jung || '?';
+    document.getElementById('hbResult').textContent = (hb.cho && hb.jung) ? composeSyllable(hb.cho, hb.jung) : '';
+  }
+  function pickJamo(kind, ch, btn){
+    if(hb.locked) return;
+    hb[kind] = ch;
+    document.querySelectorAll(kind==='cho' ? '#hbChoRow .hb-key' : '#hbJungRow .hb-key').forEach(b=> b.classList.toggle('sel', b===btn));
+    updateHbBuild();
+    if(!(hb.cho && hb.jung)){ speak(JAMO_NAME[ch] || ch, 'ko-KR'); return; }
+    const made = composeSyllable(hb.cho, hb.jung), target = hb.list[hb.i];
+    speak(made, 'ko-KR');
+    if(made === target){
+      hb.locked = true;
+      sfxCorrect();
+      if(hb.wrong) hb.mistakes++;
+      const w = PHOTO_WORDS.find(p=> p.item[0]===target);
+      const bonus = document.getElementById('hbBonus');
+      if(w){
+        bonus.innerHTML = photoTag(w.cat, w.item) + '<span>'+w.item+'의 '+target+'!</span>';
+        setTimeout(()=> speak(target+'! '+w.item+'의 '+target, 'ko-KR'), 600);
+      } else {
+        bonus.innerHTML = '<span>🎉 '+target+'!</span>';
+      }
+      setTimeout(()=>{
+        hb.i++;
+        if(hb.i >= hb.list.length){
+          const stars = starsFromMistakes(hb.mistakes);
+          showFunResult({ title:'🔤 글자를 잘 만들었어요!', stars, msg: hb.list.length+'글자를 만들었어요',
+            best:'최고 기록: '+starText(saveFunStar('hangul|build', stars)), onRetry: startHangulBuild, onBack: ()=> openFunMenu(hangulMenu) });
+        } else renderHangulBuild();
+      }, w ? 2600 : 1400);
+    } else {
+      hb.wrong++;
+      pqBump();
+      // 틀린 쪽을 흔들어 보여주고 다시 고르게 한다
+      const parts = syllableParts(target);
+      const badKind = hb.cho !== parts.cho ? 'cho' : 'jung';
+      const sel = document.querySelector((badKind==='cho' ? '#hbChoRow' : '#hbJungRow')+' .hb-key.sel');
+      if(sel){ sel.classList.add('wrong'); setTimeout(()=>{ sel.classList.remove('wrong','sel'); }, 400); }
+      setTimeout(()=>{ hb[badKind] = null; updateHbBuild(); }, 400);
+    }
+  }
+  document.getElementById('hbTarget').addEventListener('click', ()=> speak(hb.list[hb.i], 'ko-KR'));
+  document.getElementById('btnHbBack').addEventListener('click', ()=>{ stopSpeaking(); openFunMenu(hangulMenu); });
+
+  // 첫소리 찾기: 사진을 보고 낱말이 어떤 자음으로 시작하는지 고른다
+  function makeFirstSoundQuestions(){
+    const pool = shuffle(PHOTO_WORDS.filter(p=> p.item.length <= 4 && HB_CHO.includes(firstCho(p.item))));
+    const used = new Set(), out = [];
+    for(const p of pool){
+      if(out.length >= 8) break;
+      if(used.has(p.item)) continue;
+      used.add(p.item);
+      const cho = firstCho(p.item);
+      const opts = shuffle([cho, ...shuffle([...HB_CHO].filter(c=>c!==cho)).slice(0,2)]);
+      out.push({ visual:'<div class="pq-photo">'+photoTag(p.cat, p.item)+'</div>',
+        say: p.item+'. '+eunNeun(p.item)+' 어떤 소리로 시작할까요?', prompt:'어떤 소리로 시작할까요?', cols:3,
+        options: opts.map(c=>({ html:c, cls:'letter', correct: c===cho })),
+        after: JAMO_NAME[cho]+'! '+p.item });
+    }
+    return out;
+  }
+  const hangulMenu = { title:'🔤 한글 블록', sub:'자음과 모음으로 글자가 만들어져요', group:'한글 블록',
+    items: [
+      { emoji:'🧱', label:'글자 만들기', gradient:'linear-gradient(160deg,#8b2635,#1a2b57)', key:'hangul|build', onClick: startHangulBuild },
+      { emoji:'👂', label:'첫소리 찾기', gradient:'linear-gradient(160deg,#2d6fb0,#0b1030)', key:'hangul|first',
+        onClick: ()=> startPQ({ info:'👂 첫소리 찾기', group:'한글 블록', title:'👂 첫소리를 잘 찾았어요!', make: makeFirstSoundQuestions,
+          save: s=> saveFunStar('hangul|first', s), onBack: ()=> openFunMenu(hangulMenu) }) },
+    ] };
+
+  // ---------- 🧠 생각 놀이 ----------
+  // 분류하기: 사진이 어느 바구니에 들어갈지 고른다
+  const CLASSIFY_PAIRS = [['과일','채소'], ['동물','바다생물'], ['곤충','꽃과식물'], ['교통수단','우주']];
+  CLASSIFY_PAIRS.forEach((pr, i)=>{
+    const a = RASTER_COLORING_CATEGORIES.find(c=>c.id===pr[0]), b = RASTER_COLORING_CATEGORIES.find(c=>c.id===pr[1]);
+    FUN_LABELS['think|classify|'+i] = ['🧺', '분류하기 · '+a.label+'/'+b.label];
+  });
+  function makeClassifyQuestions(pairIdx){
+    const [ca, cb] = CLASSIFY_PAIRS[pairIdx].map(id=> RASTER_COLORING_CATEGORIES.find(c=>c.id===id));
+    // 두 쪽에 다 있는 이름(로켓 등)은 헷갈리니 뺀다
+    const both = new Set(ca.items.filter(x=> cb.items.includes(x)));
+    const pool = shuffle([...photoItems([ca.id]).slice(), ...photoItems([cb.id])].filter(p=> !both.has(p.item))).slice(0, 8);
+    return pool.map(p=>({
+      visual:'<div class="pq-photo">'+photoTag(p.cat, p.item)+'</div>',
+      say: p.item+'! '+ca.label+'일까요, '+cb.label+'일까요?', prompt: ca.label+'일까요, '+cb.label+'일까요?', cols:2,
+      options: [ca, cb].map(c=>({ html: c.emoji+'<span class="l" style="font-size:17px;">'+c.label+'</span>', correct: c.id===p.cat })),
+      after: '맞아요! '+(p.cat===ca.id ? ca.label : cb.label)+'!' }));
+  }
+  // 규칙 찾기: 🍎🍌🍎🍌 다음은?
+  const PATTERN_SETS = [['🍎','🍌','🍇'], ['🐶','🐱','🐰'], ['🔴','🔵','🟡'], ['⭐','🌙','☀️'], ['🚗','🚌','🚲'], ['🌸','🍀','🍁']];
+  const PATTERNS = ['AB','AB','AAB','ABB','ABC','AABB','ABC','AAB'];
+  FUN_LABELS['think|pattern'] = ['🔁', '규칙 찾기'];
+  function makePatternQuestions(){
+    return PATTERNS.map(pat=>{
+      const set = shuffle(PATTERN_SETS[randInt(0, PATTERN_SETS.length-1)].slice());
+      const sym = {A:set[0], B:set[1], C:set[2]};
+      const len = pat.length >= 4 ? 7 : (pat.length===3 ? 7 : 6);
+      const seq = Array.from({length:len+1}, (_,i)=> sym[pat[i % pat.length]]);
+      const answer = seq[len];
+      return { visual:'<div class="seq">'+seq.slice(0,len).map(s=>'<span>'+s+'</span>').join('')+'<span class="slot-q">?</span></div>',
+        say:'다음에 올 것은 무엇일까요?', prompt:'? 자리에 올 것을 골라요', cols:3, reveal: answer,
+        options: shuffle(set.slice()).map(s=>({ html:s, correct: s===answer })) };
+    });
+  }
+  // 순서 맞추기: 그림 카드를 일어나는 차례대로 누른다
+  const ORDER_STORIES = [
+    {t:'씨앗이 자라는 순서', s:[['🌰','씨앗'],['🌱','새싹'],['🌿','쑥쑥'],['🌻','꽃']]},
+    {t:'나비가 되는 순서', s:[['🥚','알'],['🐛','애벌레'],['🦋','나비']]},
+    {t:'아침에 하는 일', s:[['🛏️','일어나기'],['🪥','양치하기'],['🍚','아침 먹기'],['🎒','유치원 가기']]},
+    {t:'손 씻는 순서', s:[['🚰','물 묻히기'],['🧼','비누칠'],['🙌','싹싹 문지르기'],['🧻','닦기']]},
+    {t:'눈사람 만들기', s:[['❄️','눈이 와요'],['⚪','눈 굴리기'],['⛄','눈사람']]},
+    {t:'하루의 순서', s:[['🌅','아침'],['☀️','낮'],['🌇','저녁'],['🌙','밤']]},
+    {t:'비 온 뒤', s:[['☁️','구름'],['🌧️','비'],['🌈','무지개']]},
+    {t:'케이크 만들기', s:[['🥚','재료 준비'],['🥣','섞기'],['🔥','굽기'],['🎂','완성']]},
+    {t:'사과가 열리는 순서', s:[['🌳','나무'],['🌸','꽃'],['🍏','열매'],['🍎','사과']]},
+    {t:'잠자기 전에', s:[['🛁','씻기'],['👕','잠옷 입기'],['📖','책 읽기'],['😴','잠자기']]},
+  ];
+  FUN_LABELS['think|order'] = ['📅', '순서 맞추기'];
+  function makeOrderQuestions(){
+    return shuffle(ORDER_STORIES.slice()).slice(0, 6).map(st=>({
+      say: st.t+'대로 눌러 보세요', prompt: st.t+'대로 눌러요', order:true, cols: st.s.length===3 ? 3 : 2,
+      options: shuffle(st.s.map(([e,l], k)=>({ html:e+'<span class="l">'+l+'</span>', order:k, say:l, cls:'step' }))),
+      after: st.s.map(x=>x[1]).join(', ')+'!' }));
+  }
+  const thinkMenu = { title:'🧠 생각 놀이', sub:'나누고, 규칙을 찾고, 차례를 맞춰요', group:'생각 놀이',
+    items: [
+      ...CLASSIFY_PAIRS.map((pr, i)=>{
+        const a = RASTER_COLORING_CATEGORIES.find(c=>c.id===pr[0]), b = RASTER_COLORING_CATEGORIES.find(c=>c.id===pr[1]);
+        return { emoji:'🧺', label:a.emoji+' '+a.label+' / '+b.emoji+' '+b.label, gradient:'linear-gradient(160deg,#2e9e5b,#0d2b1d)', key:'think|classify|'+i,
+          onClick: ()=> startPQ({ info:'🧺 분류하기', group:'생각 놀이', title:'🧺 잘 나눴어요!', make: ()=> makeClassifyQuestions(i),
+            save: s=> saveFunStar('think|classify|'+i, s), onBack: ()=> openFunMenu(thinkMenu) }) };
+      }),
+      { emoji:'🔁', label:'규칙 찾기', gradient:'linear-gradient(160deg,#7a3fb0,#3a0f52)', key:'think|pattern',
+        onClick: ()=> startPQ({ info:'🔁 규칙 찾기', group:'생각 놀이', title:'🔁 규칙을 찾았어요!', make: makePatternQuestions,
+          save: s=> saveFunStar('think|pattern', s), onBack: ()=> openFunMenu(thinkMenu) }) },
+      { emoji:'📅', label:'순서 맞추기', gradient:'linear-gradient(160deg,#c46a2e,#3b2412)', key:'think|order',
+        onClick: ()=> startPQ({ info:'📅 순서 맞추기', group:'생각 놀이', title:'📅 차례를 잘 알아요!', make: makeOrderQuestions,
+          save: s=> saveFunStar('think|order', s), onBack: ()=> openFunMenu(thinkMenu) }) },
+    ] };
+
+  // ---------- 💛 마음·안전 ----------
+  const FEELINGS = [
+    {e:'😄', w:'기뻐요', adj:'기쁜', tip:'기쁜 마음은 친구와 나누면 더 커져요'},
+    {e:'😢', w:'슬퍼요', adj:'슬픈', tip:'슬플 때는 어른에게 말하고 꼭 안아 달라고 해요'},
+    {e:'😠', w:'화나요', adj:'화난', tip:'화가 날 때는 숨을 크게 쉬고 하나, 둘, 셋 세어 봐요'},
+    {e:'😨', w:'무서워요', adj:'무서운', tip:'무서울 때는 믿을 수 있는 어른 곁으로 가요'},
+    {e:'😲', w:'놀랐어요', adj:'놀란', tip:'깜짝 놀랐을 때는 천천히 숨을 쉬어요'},
+    {e:'😴', w:'졸려요', adj:'졸린', tip:'졸릴 때는 푹 자야 쑥쑥 커요'},
+  ];
+  const FEELING_SITUATIONS = [
+    {e:'🎁', s:'생일 선물을 받았어요', f:'기뻐요'}, {e:'🧸', s:'아끼는 인형이 찢어졌어요', f:'슬퍼요'},
+    {e:'🧱', s:'친구가 내 블록 탑을 일부러 무너뜨렸어요', f:'화나요'}, {e:'⛈️', s:'캄캄한 밤에 천둥이 쾅쾅 쳐요', f:'무서워요'},
+    {e:'🐸', s:'상자를 열었더니 개구리가 폴짝!', f:'놀랐어요'}, {e:'🌙', s:'밤늦게까지 놀았더니 눈이 자꾸 감겨요', f:'졸려요'},
+    {e:'🤗', s:'엄마가 꼭 안아 주었어요', f:'기뻐요'}, {e:'🚚', s:'단짝 친구가 멀리 이사를 가요', f:'슬퍼요'},
+    {e:'🍦', s:'아이스크림을 떨어뜨렸어요', f:'슬퍼요'}, {e:'🎢', s:'놀이공원에서 처음 보는 높은 기구 앞에 섰어요', f:'무서워요'},
+  ];
+  function feelingOpt(f, correct){ return { html: f.e+'<span class="l" style="font-size:15px;">'+f.w+'</span>', cls:'square', correct }; }
+  function makeFeelingQuestions(){
+    const qs = [];
+    shuffle(FEELINGS.slice()).slice(0, 3).forEach(f=>{
+      const others = shuffle(FEELINGS.filter(x=>x!==f)).slice(0, 3);
+      qs.push({ say: f.adj+' 얼굴을 찾아보세요', prompt: f.adj+' 얼굴을 찾아보세요', cols:2,
+        options: shuffle([f, ...others]).map(x=> feelingOpt(x, x===f)), after: f.w+'!' });
+    });
+    shuffle(FEELING_SITUATIONS.slice()).slice(0, 5).forEach(sit=>{
+      const f = FEELINGS.find(x=>x.w===sit.f);
+      const others = shuffle(FEELINGS.filter(x=>x!==f)).slice(0, 3);
+      qs.push({ visual:'<span class="pq-big">'+sit.e+'</span>', say: sit.s+'. 어떤 기분일까요?', prompt: sit.s+'. 어떤 기분일까요?', cols:2,
+        options: shuffle([f, ...others]).map(x=> feelingOpt(x, x===f)), after: f.w+'. '+f.tip });
+    });
+    return qs;
+  }
+  const SAFETY = [
+    {e:'🚦', q:'신호등이 빨간불이에요. 어떻게 할까요?', g:['🛑','멈춰서 기다려요'], b:['🏃','뛰어서 건너요'], tip:'빨간불은 멈춰요. 초록불에 좌우를 보고 건너요'},
+    {e:'🔥', q:'불이 났어요! 어디에 전화할까요?', g:['🚒','119'], b:['🍕','피자 가게'], tip:'불이 나면 119! 코와 입을 막고 밖으로 나가요'},
+    {e:'🍬', q:'모르는 어른이 과자를 주며 따라오래요.', g:['🙅','싫어요! 하고 어른에게 가요'], b:['🚶','따라가요'], tip:'모르는 사람은 절대 따라가지 않아요'},
+    {e:'🚸', q:'길을 건널 때는 어떻게 할까요?', g:['👀','왼쪽 오른쪽을 살펴요'], b:['📱','휴대폰을 보며 걸어요'], tip:'길을 건널 때는 멈추고, 보고, 건너요'},
+    {e:'🍲', q:'식탁 위에 뜨거운 냄비가 있어요.', g:['✋','만지지 않아요'], b:['👉','만져 봐요'], tip:'뜨거운 것은 어른이 다뤄요'},
+    {e:'🧍', q:'사람 많은 곳에서 엄마를 잃어버렸어요.', g:['🧍','그 자리에서 기다려요'], b:['🏃','혼자 찾으러 뛰어다녀요'], tip:'그 자리에 있거나 가게 직원이나 경찰에게 도와 달라고 해요'},
+    {e:'🚗', q:'자동차를 탈 때는 어떻게 할까요?', g:['💺','안전벨트를 매요'], b:['🤸','의자 위에 서요'], tip:'차에 타면 먼저 안전벨트!'},
+    {e:'🚲', q:'자전거를 탈 때는 무엇을 쓸까요?', g:['⛑️','헬멧을 써요'], b:['🧢','그냥 타요'], tip:'자전거를 탈 때는 헬멧을 꼭 써요'},
+    {e:'💊', q:'식탁에 알록달록한 약이 있어요.', g:['🙋','어른에게 알려요'], b:['🍬','사탕처럼 먹어요'], tip:'약은 어른이 줄 때만 먹어요'},
+    {e:'🏊', q:'수영장에서는 어떻게 놀까요?', g:['🦺','어른과 함께 놀아요'], b:['🌊','혼자 깊은 곳에 가요'], tip:'물놀이는 꼭 어른과 함께해요'},
+    {e:'🔌', q:'콘센트에 젓가락을 넣어 볼까요?', g:['🙅','안 돼요! 위험해요'], b:['🥢','넣어 봐요'], tip:'콘센트에는 전기가 흘러서 아주 위험해요'},
+    {e:'🛗', q:'엘리베이터 문이 닫히고 있어요.', g:['✋','기다렸다 다음에 타요'], b:['🖐️','손을 넣어 막아요'], tip:'닫히는 문에 손을 넣으면 다쳐요'},
+  ];
+  function makeSafetyQuestions(){
+    return shuffle(SAFETY.slice()).slice(0, 8).map(it=>{
+      const opts = shuffle([{v:it.g, ok:true}, {v:it.b, ok:false}]);
+      return { visual:'<span class="pq-big">'+it.e+'</span>', prompt: it.q, cols:1,
+        say: it.q+' '+opts[0].v[1]+'? 아니면 '+opts[1].v[1]+'?',
+        options: opts.map(o=>({ html: o.v[0]+'<span class="l">'+o.v[1]+'</span>', cls:'choice', correct:o.ok })),
+        after: '맞아요! '+it.tip };
+    });
+  }
+  FUN_LABELS['heart|feeling'] = ['😊', '기분 카드'];
+  FUN_LABELS['heart|safety'] = ['🚦', '안전 놀이'];
+  const heartMenu = { title:'💛 마음·안전', sub:'내 마음을 알고, 나를 지키는 방법을 배워요', group:'마음·안전',
+    items: [
+      { emoji:'😊', label:'기분 카드', gradient:'linear-gradient(160deg,#c49a2e,#3b2b10)', key:'heart|feeling',
+        onClick: ()=> startPQ({ info:'😊 기분 카드', group:'마음·안전', title:'😊 마음을 잘 알아요!', make: makeFeelingQuestions,
+          save: s=> saveFunStar('heart|feeling', s), onBack: ()=> openFunMenu(heartMenu) }) },
+      { emoji:'🚦', label:'안전 놀이', gradient:'linear-gradient(160deg,#b0304e,#3b0f1c)', key:'heart|safety',
+        onClick: ()=> startPQ({ info:'🚦 안전 놀이', group:'마음·안전', title:'🚦 안전 박사!', make: makeSafetyQuestions,
+          save: s=> saveFunStar('heart|safety', s), onBack: ()=> openFunMenu(heartMenu) }) },
+    ] };
+
+  // ---------- 📖 그림책 다 읽은 뒤 질문 ----------
+  // 이야기를 잘 들었는지 확인하는 질문 2개 (보기는 그 책에 나온 그림)
+  const BOOK_QUESTIONS = [
+    [['껍질을 벗겨서 먹는 노란 과일은 무엇이었나요?','Which yellow fruit do we peel?','바나나'], ['뾰족뾰족 왕관을 쓴 과일은 무엇이었나요?','Which fruit wears a spiky crown?','파인애플']],
+    [['옆으로 옆으로 걷는 친구는 누구였나요?','Who walks sideways?','게'], ['물 위로 높이 뛰어오른 친구는 누구였나요?','Who jumps high out of the water?','돌고래']],
+    [['뿔이 세 개 달린 공룡은 누구였나요?','Which dinosaur has three horns?','트리케라톱스'], ['하늘을 훨훨 나는 공룡은 누구였나요?','Which one flies in the sky?','프테라노돈']],
+    [['멋진 고리를 두른 행성은 무엇이었나요?','Which planet wears rings?','토성'], ['폴짝폴짝 뛰어 본 곳은 어디였나요?','Where did we hop around?','달']],
+    [['대나무를 냠냠 먹는 동물은 누구였나요?','Who munches on bamboo?','판다'], ['긴 코로 물을 뿌리는 동물은 누구였나요?','Who sprays water with a long trunk?','코끼리']],
+    [['불을 끄러 가는 차는 무엇이었나요?','What rushes to put out fires?','소방차'], ['구름 위를 나는 것은 무엇이었나요?','What flies above the clouds?','비행기']],
+    [['집을 등에 지고 다니는 친구는 누구였나요?','Who carries a house on its back?','달팽이'], ['윙윙 날며 꿀을 모으는 곤충은 누구였나요?','Who collects honey?','벌']],
+    [['땅속에서 자라는 주황색 채소는 무엇이었나요?','Which orange vegetable grows underground?','당근'], ['작은 나무처럼 생긴 채소는 무엇이었나요?','Which vegetable looks like a tiny tree?','브로콜리']],
+  ];
+  BOOKS.forEach((bk, i)=> FUN_LABELS['book|'+i] = ['📖', bk.title]);
+  function startBookQuiz(bk){
+    const bi = BOOKS.indexOf(bk), en = bookLang==='en';
+    startPQ({ info:'📖 '+(en ? bk.titleEn : bk.title), group:'그림책', title:'📖 이야기를 잘 들었어요!',
+      make: ()=> (BOOK_QUESTIONS[bi] || []).map(([ko, enQ, ans])=>{
+        const page = bk.pages.find(p=>p.item===ans);
+        const others = shuffle(bk.pages.filter(p=>p.item!==ans)).slice(0, 2);
+        return { prompt: en ? enQ : ko, say: en ? enQ : ko, sayLang: en ? 'en-US' : 'ko-KR', cols:3,
+          options: shuffle([page, ...others]).map(p=>({ html: photoTag(p.cat, p.item), cls:'square', correct: p===page })),
+          after: en ? null : ans+'!' };
+      }),
+      save: s=> saveFunStar('book|'+bi, s), onBack: ()=>{ buildBookList(); showScreen('screen-book-list'); } });
+  }
+
+  // ---------- 👨‍👩‍👧 보호자: 놀이 시간 기록·쉬는 시간 알림 ----------
+  // 홈 화면에서 고른 놀이 이름(currentPlayGroup)으로, 화면이 켜져 있는 동안 5초마다 시간을 쌓는다.
+  // 기기 안(localStorage)에만 저장하고 30일이 지난 기록은 지운다.
+  const PLAYTIME_KEY = 'fingerMazePlayTime_v1';
+  const REST_KEY = 'fingerMazeRestMinutes';
+  const NOT_PLAY_SCREENS = new Set(['screen-home','screen-stickers','screen-parent','screen-credits']);
+  let restMinutes = 20;
+  try{ const v = localStorage.getItem(REST_KEY); if(v!==null) restMinutes = Number(v); }catch(e){}
+  let sessionPlaySec = 0, restShowing = false;
+  function todayStr(d){ d = d || new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function loadPlayTime(){ try{ return JSON.parse(localStorage.getItem(PLAYTIME_KEY)||'{}'); }catch(e){ return {}; } }
+  setInterval(()=>{
+    if(document.visibilityState !== 'visible' || restShowing) return;
+    const active = document.querySelector('.screen.active');
+    if(!active || NOT_PLAY_SCREENS.has(active.id)) return;
+    const map = loadPlayTime(), day = todayStr();
+    map[day] = map[day] || {};
+    map[day][currentPlayGroup] = (map[day][currentPlayGroup] || 0) + 5;
+    const cutoff = todayStr(new Date(Date.now() - 30*86400000));
+    Object.keys(map).forEach(k=>{ if(k < cutoff) delete map[k]; });
+    try{ localStorage.setItem(PLAYTIME_KEY, JSON.stringify(map)); }catch(e){}
+    sessionPlaySec += 5;
+    if(restMinutes > 0 && sessionPlaySec >= restMinutes*60) showRest();
+  }, 5000);
+  function showRest(){
+    restShowing = true;
+    stopSpeaking();
+    const ov = document.getElementById('restOverlay');
+    ov.classList.add('show');
+    const btn = document.getElementById('btnRestDone');
+    btn.style.display = 'none';
+    let left = 60;
+    const cnt = document.getElementById('restCount');
+    cnt.textContent = left;
+    speak('잠깐 쉬어요! 먼 곳을 바라보고 기지개를 쭉 켜 봐요', 'ko-KR');
+    const t = setInterval(()=>{
+      left--;
+      cnt.textContent = left > 0 ? left : '👍';
+      if(left <= 0){ clearInterval(t); btn.style.display = ''; speak('잘 쉬었어요!', 'ko-KR'); }
+    }, 1000);
+  }
+  document.getElementById('btnRestDone').addEventListener('click', ()=>{
+    document.getElementById('restOverlay').classList.remove('show');
+    restShowing = false; sessionPlaySec = 0;
+  });
+
+  function fmtMin(sec){ const m = Math.round(sec/60); return m < 1 && sec > 0 ? '1분 미만' : m+'분'; }
+  function buildParent(){
+    const map = loadPlayTime();
+    // 최근 7일 막대
+    const week = document.getElementById('parentWeek');
+    week.innerHTML = '';
+    const days = [], names = ['일','월','화','수','목','금','토'];
+    for(let i=6;i>=0;i--){ const d = new Date(Date.now() - i*86400000); days.push([todayStr(d), names[d.getDay()]]); }
+    const totals = days.map(([k])=> Object.values(map[k]||{}).reduce((a,b)=>a+b, 0));
+    const max = Math.max(60, ...totals);
+    days.forEach(([k, n], i)=>{
+      const el = document.createElement('div');
+      el.className = 'day';
+      el.innerHTML = '<span class="min">'+Math.round(totals[i]/60)+'</span><div class="bar" style="height:'+Math.round(totals[i]/max*80)+'%"></div><span>'+n+'</span>';
+      week.appendChild(el);
+    });
+    // 놀이별 합계 (7일)
+    const byGame = {};
+    days.forEach(([k])=> Object.entries(map[k]||{}).forEach(([g, s])=> byGame[g] = (byGame[g]||0) + s));
+    const bg = document.getElementById('parentByGame');
+    const rows = Object.entries(byGame).sort((a,b)=>b[1]-a[1]);
+    bg.innerHTML = rows.length ? rows.map(([g,s])=>'<div class="row"><span>'+g+'</span><span>'+fmtMin(s)+'</span></div>').join('')
+      : '<div class="empty">아직 기록이 없어요.</div>';
+    // 쉬는 시간 설정
+    const seg = document.getElementById('parentRestSeg');
+    seg.innerHTML = '';
+    [[0,'끄기'],[15,'15분'],[20,'20분'],[30,'30분'],[45,'45분']].forEach(([v, label])=>{
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.classList.toggle('selected', v===restMinutes);
+      b.addEventListener('click', ()=>{ restMinutes = v; sessionPlaySec = 0; try{ localStorage.setItem(REST_KEY, String(v)); }catch(e){} buildParent(); });
+      seg.appendChild(b);
+    });
+    // 자주 틀린 문제
+    const mk = document.getElementById('parentMistakes');
+    const wordRows = loadWordMistakes().slice(-12).reverse().map(e=>{
+      const lang = WORD_LANGS.find(l=>l.id===e.langId), item = (WORD_DATA[e.topicId]||[])[e.itemIdx];
+      if(!lang || !item) return '';
+      const w = wordEntry(item, lang.id).word;
+      return '<div class="row"><span>'+lang.flag+' '+w+(lang.id!=='ko' ? ' ('+item.ko+')' : '')+'</span><span>단어</span></div>';
+    }).join('');
+    const mathRows = loadMathMistakes().slice(-8).reverse().map(e=>
+      '<div class="row"><span>'+e.a+' '+e.symbol+' '+e.b+' = '+e.answer+'</span><span>숫자</span></div>').join('');
+    mk.innerHTML = (wordRows + mathRows) || '<div class="empty">틀린 문제가 없어요. 잘하고 있어요! 👍</div>';
+    // 별이 3개가 안 되는 따라쓰기 글자
+    const ws = loadWriteStars();
+    const weak = Object.entries(ws).filter(([,s])=> s < 3).map(([k])=> k.split('|')[2]);
+    document.getElementById('parentWrite').innerHTML = weak.length ? weak.map(t=>'<span>'+t+'</span>').join('')
+      : '<div class="empty">모든 글자를 별 3개로 썼거나, 아직 써 본 글자가 없어요.</div>';
+  }
+  document.getElementById('btnParentBack').addEventListener('click', ()=> showScreen('screen-home'));
+  // 자동 점검용: 20분을 기다리지 않고 쉬는 시간 화면을 띄워 본다
+  window.__eduTest = { showRest };
+  document.getElementById('btnParentCredits').addEventListener('click', ()=>{ buildCredits(); showScreen('screen-credits'); });
+
+  // ---------- 📖 그림책: 읽는 낱말 따라 색칠하기·따라 읽기 ----------
+  // 어른이 손가락으로 글자를 짚으며 읽어주듯, 지금 읽는 낱말을 노랗게 보여준다.
+  // 낱말 경계 신호(onboundary)를 주지 않는 기기도 있어서, 그때는 글자 수로 시간을 어림잡아 넘긴다.
+  let bookHlTimer = null, bookHlToken = 0;
+  function setBookTextWords(text){
+    const el = document.getElementById('bookTextMain');
+    el.innerHTML = '';
+    let pos = 0;
+    text.split(/(\s+)/).forEach(part=>{
+      if(!part) return;
+      if(/^\s+$/.test(part)) el.appendChild(document.createTextNode(part));
+      else{
+        const s = document.createElement('span');
+        s.className = 'w'; s.dataset.start = pos; s.textContent = part;
+        el.appendChild(s);
+      }
+      pos += part.length;
+    });
+  }
+  function highlightBookAt(charIdx){
+    const spans = [...document.querySelectorAll('#bookTextMain .w')];
+    let cur = null;
+    spans.forEach(s=>{ if(Number(s.dataset.start) <= charIdx) cur = s; });
+    spans.forEach(s=> s.classList.toggle('on', s===cur));
+  }
+  function clearBookHighlight(){ document.querySelectorAll('#bookTextMain .w.on').forEach(s=> s.classList.remove('on')); }
+  function readBookWithHighlight(text, lang){
+    const token = ++bookHlToken;
+    clearInterval(bookHlTimer);
+    clearBookHighlight();
+    try{
+      if(!('speechSynthesis' in window) || muted) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang; u.rate = 0.85;
+      let gotBoundary = false, t0 = 0;
+      const msPerChar = lang.startsWith('ko') ? 200 : 75; // 0.85배 속도에서 실측한 대략값(2026-10-11, 크롬)
+      u.onboundary = (e)=>{
+        if(token !== bookHlToken || (e.name && e.name !== 'word')) return;
+        gotBoundary = true; highlightBookAt(e.charIndex);
+      };
+      u.onstart = ()=>{
+        t0 = Date.now();
+        highlightBookAt(0);
+        bookHlTimer = setInterval(()=>{
+          if(token !== bookHlToken || gotBoundary){ clearInterval(bookHlTimer); return; }
+          highlightBookAt(Math.floor((Date.now()-t0)/msPerChar));
+        }, 120);
+      };
+      u.onend = ()=>{ if(token === bookHlToken){ clearInterval(bookHlTimer); setTimeout(clearBookHighlight, 400); } };
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  // 따라 읽기: 페이지 문장을 아이 목소리로 녹음해서 바로 들려준다 (문장 길이에 맞춰 4~10초)
+  const bookRec = { rec:null, stream:null, url:null, timer:null, left:0, audio:null, token:0 };
+  function setBookRecHint(t){ document.getElementById('bookRecHint').textContent = t || ''; }
+  function setBookRecBtn(on){ document.getElementById('btnBookRec').textContent = on ? '🔴 듣는 중… '+bookRec.left : '🎤 따라 읽기'; }
+  function stopBookRec(discard){
+    clearInterval(bookRec.timer); bookRec.timer = null;
+    const rec = bookRec.rec; bookRec.rec = null;
+    if(rec && rec.state !== 'inactive'){ rec._discard = !!discard; rec.stop(); }
+    else if(bookRec.stream){ bookRec.stream.getTracks().forEach(t=>t.stop()); bookRec.stream = null; }
+    setBookRecBtn(false);
+  }
+  function resetBookRec(){
+    bookRec.token++;
+    stopBookRec(true);
+    if(bookRec.audio){ bookRec.audio.pause(); bookRec.audio = null; }
+    if(bookRec.url){ URL.revokeObjectURL(bookRec.url); bookRec.url = null; }
+    document.getElementById('btnBookPlay').style.display = 'none';
+    setBookRecHint('');
+  }
+  function playBookRec(){
+    if(!bookRec.url) return;
+    if(muted){ setBookRecHint('🔇 소리가 꺼져 있어요. 오른쪽 위 버튼으로 켜 주세요.'); return; }
+    if(bookRec.audio) bookRec.audio.pause();
+    bookRec.audio = new Audio(bookRec.url);
+    bookRec.audio.play().catch(()=>{});
+    setBookRecHint('내가 읽은 목소리예요! 🔊 다시 읽기와 비교해 봐요.');
+  }
+  async function startBookRec(){
+    if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)){ setBookRecHint('이 브라우저에서는 녹음을 쓸 수 없어요.'); return; }
+    stopSpeaking(); clearBookHighlight();
+    const token = bookRec.token;
+    let stream;
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ setBookRecHint('마이크 사용을 허락해야 녹음할 수 있어요.'); return; }
+    if(token !== bookRec.token){ stream.getTracks().forEach(t=>t.stop()); return; }
+    bookRec.stream = stream;
+    const chunks = [], rec = new MediaRecorder(stream);
+    rec.ondataavailable = (e)=>{ if(e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop = ()=>{
+      if(bookRec.stream){ bookRec.stream.getTracks().forEach(t=>t.stop()); bookRec.stream = null; }
+      if(rec._discard || !chunks.length) return;
+      if(bookRec.url) URL.revokeObjectURL(bookRec.url);
+      bookRec.url = URL.createObjectURL(new Blob(chunks, {type: rec.mimeType || 'audio/webm'}));
+      document.getElementById('btnBookPlay').style.display = '';
+      playBookRec();
+    };
+    bookRec.rec = rec;
+    rec.start();
+    const p = book.bk.pages[book.page], text = bookLang==='en' ? p.en : p.ko;
+    bookRec.left = Math.max(4, Math.min(10, Math.ceil(text.length * (bookLang==='en' ? 0.09 : 0.22))));
+    setBookRecBtn(true);
+    setBookRecHint('노란 글자를 보며 소리 내어 읽어 보세요! (다 읽으면 한 번 더 누르기)');
+    bookRec.timer = setInterval(()=>{
+      bookRec.left--;
+      if(bookRec.left <= 0) stopBookRec(false); else setBookRecBtn(true);
+    }, 1000);
+  }
+  document.getElementById('btnBookRec').addEventListener('click', ()=>{ if(bookRec.rec) stopBookRec(false); else startBookRec(); });
+  document.getElementById('btnBookPlay').addEventListener('click', playBookRec);
 
 })();
 </script>

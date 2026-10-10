@@ -50,7 +50,7 @@ hub('그림책'); shot('book_list'); click('#bookGrid > *'); shot('book_read', 1
 # 따라쓰기
 hub('따라쓰기'); shot('write_lang'); click('#writeLangGrid .card', '한글'); shot('write_list'); click('#writeGrid .write-tile'); shot('write_watch', 1.5)
 # 출처
-home(); js("document.getElementById('lnkCredits').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));"); shot('credits', 1.9)
+home(); js("document.getElementById('lnkCredits').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));"); shot('parent', 1.9)
 d.quit()
 
 # 3장씩 묶기
