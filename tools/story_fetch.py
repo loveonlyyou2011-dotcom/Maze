@@ -164,7 +164,7 @@ def embed():
             c = credits.get(f'{st["id"]}/{n}', {})
             scenes.append({'t': sc['t'], 'fx': sc.get('fx', ''), 'video': bool(c.get('video')),
                            'credit': [x for x in [c.get('photo'), c.get('video')] if x]})
-        data.append({'id': st['id'], 'emoji': st['emoji'], 'gradient': st['gradient'], 'title': st['title'],
+        data.append({'id': st['id'], 'group': st.get('group', ''), 'emoji': st['emoji'], 'gradient': st['gradient'], 'title': st['title'],
                      'moral': st['moral'], 'scenes': scenes, 'quiz': st['quiz']})
     html_path = ROOT / 'index.html'
     html = html_path.read_text(encoding='utf-8')

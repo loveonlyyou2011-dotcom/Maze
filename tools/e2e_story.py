@@ -1,5 +1,5 @@
 # 🎬 동화 극장 자동 점검 (헤드리스 크롬, 폰 화면 390×750)
-# - 8편 × 4개 언어 글이 다 있는지, 장면 사진·영상 64장면이 전부 열리는지
+# - 22편 × 4개 언어 글이 다 있는지, 장면 사진·영상 176장면이 전부 열리는지, 종류별 보기
 # - 장면 넘기기·영상 재생·언어 바꾸기·끝 화면·문제 풀기·스티커판
 # - 소리를 끈 상태에서도 자막을 따라가며 저절로 다음 장면으로 넘어가는지
 # 실행: python tools/e2e_story.py  (장면 비교표는 tools/_out/e2e/story_scenes_*.png)
@@ -26,7 +26,14 @@ def active(): return js("return document.querySelector('.screen.active').id;")
 n = js("return document.querySelectorAll('#gameHubGrid > *').length;")
 js("[...document.querySelectorAll('#gameHubGrid > *')].find(e=>e.textContent.includes('동화')).click();"); time.sleep(.8)
 cards = js("return document.querySelectorAll('#storyGrid .story-card').length;")
-check('동화 8편 목록', cards == 8, cards)
+check('동화 22편 목록', cards == 22, cards)
+counts = []
+for gi in range(1, 4):
+    js("document.querySelectorAll('#storyGroupRow button')[arguments[0]].click();", gi); time.sleep(.3)
+    counts.append(js("return document.querySelectorAll('#storyGrid .story-card').length;"))
+check('종류별 보기(이솝·세계·한국)', counts == [9, 6, 7], counts)
+js("document.querySelectorAll('#storyGroupRow button')[0].click();"); time.sleep(.3)
+NST = cards
 d.save_screenshot(str(OUT / 'story_list.png'))
 # 목록 그림이 다 열렸는지
 time.sleep(1)
@@ -34,7 +41,7 @@ broken = js("return [...document.querySelectorAll('#storyGrid img')].filter(i=>!
 check('목록 표지 그림', not broken, broken[:2])
 
 missing_text = []; missing_media = []; shots = []
-for si in range(8):
+for si in range(NST):
     js("document.querySelectorAll('#storyGrid .story-card')[arguments[0]].click();", si); time.sleep(1.2)
     title = js("return document.getElementById('storyTitle').textContent;")
     total = int(js("return document.getElementById('storyProgress').textContent;").split('/')[1])
@@ -59,8 +66,8 @@ for si in range(8):
         if not js("return document.getElementById('storyText').textContent.trim();"): missing_text.append((si, 'lang', li))
     js("document.querySelectorAll('#storyPlayLangSeg button')[0].click();"); time.sleep(.3)
     js("document.getElementById('btnStoryPlayBack').click();"); time.sleep(.5)
-check('64장면 글이 모두 있음(4개 언어)', not missing_text, missing_text[:5])
-check('64장면 사진·영상이 모두 열림, 8편 모두 끝 화면', not missing_media, missing_media[:5])
+check(f'{NST*8}장면 글이 모두 있음(4개 언어)', not missing_text, missing_text[:5])
+check(f'{NST*8}장면 사진·영상이 모두 열림, {NST}편 모두 끝 화면', not missing_media, missing_media[:5])
 
 # 영상 장면 재생 확인
 js("document.querySelectorAll('#storyGrid .story-card')[0].click();"); time.sleep(1)
@@ -110,7 +117,7 @@ d.quit()
 
 # 장면 비교표 (동화 2편씩 한 장)
 font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 16)
-for part in range(0, 8, 2):
+for part in range(0, NST, 2):
     group = [s for s in shots if part <= s[0] < part+2]
     W, H = 195, 375
     sheet = Image.new('RGB', (8*(W+4), 2*(H+24)), 'white')
