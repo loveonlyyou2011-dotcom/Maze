@@ -552,7 +552,6 @@
       <button class="icon-btn" id="btnTravelListLang">🌐</button>
     </div>
     <div id="travelPhraseList"></div>
-    <button class="icon-btn" style="margin:14px 0 4px" id="btnTravelListBack">◀ 다른 상황 보기</button>
   </section>
 
   <!-- COLORING: category select -->
@@ -1320,39 +1319,64 @@
   const screens = {};
   document.querySelectorAll('.screen').forEach(el => screens[el.id] = el);
   function showScreen(id){
+    const prev = document.querySelector('.screen.active');
     Object.values(screens).forEach(el => el.classList.remove('active'));
     screens[id].classList.add('active');
     if(id==='screen-home') updateStreakDisplay();
     playGuideOnce(id);
-    syncBackTrap(id);
+    if(!prev || prev.id !== id) syncBackHistory(id);
   }
 
   // ---------- 폰·태블릿 뒤로가기 버튼 ----------
   // 화면 전환이 한 페이지 안에서만 일어나서, 폰의 뒤로가기를 누르면 앱 밖(이전 사이트·새 탭 화면)으로
-  // 나가 버렸다(2026-10-12 제보). 홈이 아닌 화면에 있을 때는 브라우저 기록에 "덫" 한 칸을 넣어 두고,
-  // 뒤로가기가 그 칸을 지우면 그 화면의 왼쪽 위 "◀ 뒤로" 버튼을 대신 눌러 준다.
-  // 그래서 화면마다 하던 정리(읽어주기 멈춤, 타이머 정리 등)가 버튼을 누를 때와 똑같이 일어난다.
-  // 홈 화면에서 누르는 뒤로가기만 원래대로 앱을 나간다.
-  let backTrapArmed = false, selfBack = false;
-  function syncBackTrap(id){
-    try{
-      if(id !== 'screen-home' && !backTrapArmed){ history.pushState({kidsTrap:1}, ''); backTrapArmed = true; }
-      else if(id === 'screen-home' && backTrapArmed){ backTrapArmed = false; selfBack = true; history.back(); }
-    }catch(e){}
+  // 나가 버렸다(2026-10-12 제보). 그래서 다른 화면으로 들어갈 때마다 브라우저 기록을 한 칸씩 쌓고,
+  // 뒤로가기가 한 칸을 되돌리면 지금 화면의 왼쪽 위 "◀ 뒤로" 버튼을 대신 눌러 준다.
+  // (화면마다 하던 정리 — 읽어주기 멈춤, 타이머 정리 등 — 가 버튼을 누를 때와 똑같이 일어난다)
+  //
+  // 처음에는 기록을 "한 칸만" 두고 뒤로가기를 처리할 때마다 다시 채웠는데, 폰 크롬은 사용자가 화면을
+  // 누르지 않은 순간에 추가된 기록을 뒤로가기 때 건너뛴다(뒤로가기 가로채기 방지). 그래서 첫 번째
+  // 뒤로가기만 되고 두 번째에는 앱을 나가 버렸다(2026-10-12 재제보). 이제 기록은 아이가 버튼을 눌러
+  // 화면을 열 때만 쌓고, 뒤로가기를 처리하는 동안에는 절대 새로 쌓지 않는다.
+  // 각 칸에는 몇 번째 칸인지(kidsDepth)를 적어 두어, 홈에 돌아오면 남은 칸을 한꺼번에 지운다
+  // → 홈에서 누르는 뒤로가기는 한 번에 앱을 나간다.
+  let navDepth = 0, handlingPop = false, selfNav = false, pendingPush = false;
+  try{ history.replaceState({kidsDepth:0}, ''); }catch(e){}
+  function clearNavHistory(){
+    if(navDepth <= 0) return;
+    selfNav = true;
+    const n = navDepth;
+    navDepth = 0;
+    try{ history.go(-n); }catch(e){ selfNav = false; }
   }
-  window.addEventListener('popstate', ()=>{
-    backTrapArmed = false;
+  function syncBackHistory(id){
+    if(handlingPop) return;            // 뒤로가기를 처리하는 중에는 기록을 쌓지 않는다
+    if(id === 'screen-home'){ pendingPush = false; clearNavHistory(); return; }
+    // 홈으로 돌아오며 지우는 중(비동기)이면, 다 지운 뒤에 쌓는다
+    if(selfNav){ pendingPush = true; return; }
+    navDepth++;
+    try{ history.pushState({kidsDepth:navDepth}, ''); }catch(e){}
+  }
+  window.addEventListener('popstate', (e)=>{
+    const d = (e.state && typeof e.state.kidsDepth === 'number') ? e.state.kidsDepth : 0;
+    const before = navDepth;
+    navDepth = d;
     const cur = document.querySelector('.screen.active');
-    if(!cur) return;
-    // 앱이 홈으로 돌아오면서 덫을 스스로 지운 경우: 그 사이 다른 화면으로 들어갔다면 덫만 다시 놓는다
-    if(selfBack){ selfBack = false; syncBackTrap(cur.id); return; }
-    if(cur.id === 'screen-home') return;
+    if(selfNav){
+      selfNav = false;
+      if(pendingPush){ pendingPush = false; if(cur && cur.id !== 'screen-home') syncBackHistory(cur.id); }
+      return;
+    }
+    if(d >= before) return;              // 앞으로 가기 버튼 등은 무시
+    if(!cur || cur.id === 'screen-home') return;
     const rest = document.getElementById('restOverlay');
-    if(rest && rest.classList.contains('show')){ syncBackTrap(cur.id); return; } // 쉬는 시간에는 뒤로가기로 빠져나가지 못한다
-    const btn = cur.querySelector('.topbar button');
-    if(btn) btn.click(); else showScreen('screen-home');
+    if(rest && rest.classList.contains('show')) return;   // 쉬는 시간 화면은 그대로 둔다
+    handlingPop = true;
+    try{
+      const btn = cur.querySelector('.topbar button');
+      if(btn) btn.click(); else showScreen('screen-home');
+    }finally{ handlingPop = false; }
     const now = document.querySelector('.screen.active');
-    if(now) syncBackTrap(now.id);
+    if(now && now.id === 'screen-home') clearNavHistory();
   });
 
   // ---------- 소리 안내 ----------
@@ -3664,7 +3688,7 @@
   });
   document.getElementById('btnWordResultHome').addEventListener('click', ()=>{
     if(wordState.lastMode==='review'){ buildWordLangGrid(); showScreen('screen-word-lang'); }
-    else { buildWordTopicGrid(); showScreen('screen-word-topic'); }
+    else { buildWordModeGrid(); showScreen('screen-word-mode'); }   // "◀ 뒤로"는 한 단계 위(놀이 방식)로
   });
   document.getElementById('btnWordTopicBack').addEventListener('click', ()=>{ buildWordLangGrid(); showScreen('screen-word-lang'); });
   document.getElementById('btnWordModeBack').addEventListener('click', ()=>{ buildWordTopicGrid(); showScreen('screen-word-topic'); });
@@ -3913,9 +3937,9 @@
 
   document.getElementById('btnTravelLangBack').addEventListener('click', ()=> showScreen('screen-home'));
   document.getElementById('btnTravelSituationBack').addEventListener('click', ()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); });
-  document.getElementById('btnTravelListHome').addEventListener('click', ()=> showScreen('screen-home'));
+  // 왼쪽 위 버튼이 "◀ 뒤로"로 바뀌어서(2026-10-12) 홈 대신 한 단계 위(상황 고르기)로 간다
+  document.getElementById('btnTravelListHome').addEventListener('click', ()=>{ buildTravelSituationGrid(); showScreen('screen-travel-situation'); });
   document.getElementById('btnTravelListLang').addEventListener('click', ()=>{ buildTravelLangGrid(); showScreen('screen-travel-lang'); });
-  document.getElementById('btnTravelListBack').addEventListener('click', ()=>{ buildTravelSituationGrid(); showScreen('screen-travel-situation'); });
 
   // =====================================================================
   // COLORING BOOK
