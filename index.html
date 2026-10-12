@@ -71,16 +71,18 @@
   .level-row .lv-age{ font-size:12px; opacity:.7; }
   .level-row .lv-best{ font-size:14px; opacity:.9; white-space:nowrap; }
 
+  /* 왼쪽 위 "◀ 뒤로"와 오른쪽 위 🔊(위에서 10px) 높이를 맞춘다.
+     태블릿에서도 뒤로 버튼이 늘 화면 왼쪽 끝에 오도록 가운데 정렬(최대 480px)을 없앴다 */
   .topbar{
-    width:100%; max-width:480px; display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:10px; flex-shrink:0;
+    width:100%; display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:10px; flex-shrink:0; padding-top:10px;
   }
   /* 제목이 "우주 탐험 · 1…"처럼 잘리지 않도록 두 줄까지 허용한다 */
   .topbar .info{ font-size:15px; font-weight:700; flex:1; text-align:center; overflow:hidden; padding:0 6px; line-height:1.2;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:keep-all; }
   /* 폰 화면에서는 오른쪽 위에 고정된 음소거 버튼(폭 약 52px, 오른쪽 14px)이 topbar 오른쪽 끝(객관식·🗑️·🌐 등)을
      가려서 그만큼 비워 둔다. 50px로는 버튼끼리 맞닿아 잘못 누르기 쉬웠다(2026-10-11 화면 점검) */
-  @media (max-width:560px){ .topbar{ padding-right:62px; } }
+  .topbar{ padding-right:62px; }
   .icon-btn{
     background:rgba(255,255,255,.12); border:none; border-radius:12px; color:#fff;
     font-size:20px; padding:8px 14px; cursor:pointer;
@@ -534,7 +536,7 @@
   <!-- TRAVEL: situation select -->
   <section id="screen-travel-situation" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnTravelSituationBack">◀ 언어</button>
+      <button class="icon-btn" id="btnTravelSituationBack">◀ 뒤로</button>
       <div class="info" id="travelSituationTitle">어떤 상황인가요?</div>
       <span style="width:44px"></span>
     </div>
@@ -545,7 +547,7 @@
   <!-- TRAVEL: phrase list -->
   <section id="screen-travel-list" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnTravelListHome">🏠</button>
+      <button class="icon-btn" id="btnTravelListHome">◀ 뒤로</button>
       <div class="info" id="travelListInfo">이미그레이션</div>
       <button class="icon-btn" id="btnTravelListLang">🌐</button>
     </div>
@@ -578,7 +580,7 @@
   <!-- COLORING: canvas -->
   <section id="screen-color-canvas" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnColorCanvasHome">🏠</button>
+      <button class="icon-btn" id="btnColorCanvasHome">◀ 뒤로</button>
       <div class="info" id="colorCanvasInfo">로켓 친구</div>
       <div style="display:flex; gap:6px;">
         <button class="icon-btn" id="btnColorUndo" title="되돌리기">↩️</button>
@@ -618,7 +620,7 @@
   <!-- PUZZLE: game -->
   <section id="screen-puzzle-game" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnPuzzleGameBack">🏠</button>
+      <button class="icon-btn" id="btnPuzzleGameBack">◀ 뒤로</button>
       <div class="info" id="puzzleInfo">퍼즐</div>
       <div class="info" id="puzzleProgress" style="flex:0 0 auto;">0 / 12</div>
     </div>
@@ -647,7 +649,7 @@
   <!-- SHADOW: game -->
   <section id="screen-shadow-game" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnShadowGameBack">🏠</button>
+      <button class="icon-btn" id="btnShadowGameBack">◀ 뒤로</button>
       <div class="info" id="shadowInfo">그림자 찾기</div>
       <div class="info" id="shadowProgress" style="flex:0 0 auto;">1 / 8</div>
     </div>
@@ -674,7 +676,7 @@
   <!-- BOOK: reading -->
   <section id="screen-book-read" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnBookReadBack">🏠</button>
+      <button class="icon-btn" id="btnBookReadBack">◀ 뒤로</button>
       <div class="info" id="bookTitle">그림책</div>
       <div class="info" id="bookProgress" style="flex:0 0 auto;">1 / 6</div>
     </div>
@@ -697,12 +699,16 @@
 
   <!-- 퍼즐·그림자 찾기 공용 결과 화면 -->
   <section id="screen-fun-result" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnFunBack">◀ 뒤로</button>
+      <span></span>
+      <span style="width:44px"></span>
+    </div>
     <h1 class="title" id="funResultTitle">🎉 완료!</h1>
     <div class="stars" id="funResultStars">⭐⭐⭐</div>
     <div class="result-time" id="funResultMsg"></div>
     <div class="result-best" id="funResultBest"></div>
     <button class="big-btn" id="btnFunRetry" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 하기</button>
-    <button class="icon-btn" id="btnFunBack" style="margin-top:10px">◀ 목록으로</button>
   </section>
 
   <!-- 🎬 동화 극장: 목록 -->
@@ -721,7 +727,7 @@
   <!-- 🎬 동화 극장: 재생 -->
   <section id="screen-story-play" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnStoryPlayBack">◀ 목록</button>
+      <button class="icon-btn" id="btnStoryPlayBack">◀ 뒤로</button>
       <div class="info" id="storyTitle">동화</div>
       <div class="info" id="storyProgress" style="flex:0 0 auto;">1 / 8</div>
     </div>
@@ -761,7 +767,7 @@
   <!-- 그림 퀴즈 공용 화면: 듣고 고르기·수 세기·첫소리·분류·규칙·순서·기분·안전·그림책 질문 -->
   <section id="screen-pq" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnPqBack">◀ 그만</button>
+      <button class="icon-btn" id="btnPqBack">◀ 뒤로</button>
       <div class="info" id="pqInfo">놀이</div>
       <div class="info" id="pqProgress" style="flex:0 0 auto;">1 / 8</div>
     </div>
@@ -774,7 +780,7 @@
   <!-- 한글 블록: 자음 + 모음으로 글자 만들기 -->
   <section id="screen-hangul-build" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnHbBack">◀ 그만</button>
+      <button class="icon-btn" id="btnHbBack">◀ 뒤로</button>
       <div class="info">🔤 글자 만들기</div>
       <div class="info" id="hbProgress" style="flex:0 0 auto;">1 / 8</div>
     </div>
@@ -845,7 +851,7 @@
   <!-- WRITE: letter list -->
   <section id="screen-write-list" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWriteListBack">◀ 언어</button>
+      <button class="icon-btn" id="btnWriteListBack">◀ 뒤로</button>
       <div class="info" id="writeListTitle">한글</div>
       <span style="width:44px"></span>
     </div>
@@ -856,7 +862,7 @@
   <!-- WRITE: play -->
   <section id="screen-write-play" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWritePlayBack">🏠</button>
+      <button class="icon-btn" id="btnWritePlayBack">◀ 뒤로</button>
       <div class="info" id="writeTitle" style="font-size:22px;">ㄱ</div>
       <div class="info" id="writeCellInfo" style="flex:0 0 auto;"></div>
     </div>
@@ -896,17 +902,21 @@
 
   <!-- LEVEL SELECT -->
   <section id="screen-level" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnLevelBack">◀ 뒤로</button>
+      <span></span>
+      <span style="width:44px"></span>
+    </div>
     <h1 class="title" id="levelScreenTitle">난이도 선택</h1>
     <p class="sub">쉬운 것부터 차근차근 도전해봐요</p>
     <div class="level-list" id="levelList"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnLevelBack">◀ 테마 다시 고르기</button>
   </section>
 
   <!-- GAME -->
   <section id="screen-game" class="screen">
     <div id="decorLayer"></div>
     <div class="topbar">
-      <button class="icon-btn" id="btnGameHome">🏠</button>
+      <button class="icon-btn" id="btnGameHome">◀ 뒤로</button>
       <div class="info" id="gameInfo">우주 탐험 · 1단계</div>
       <div class="info" id="timerDisplay">00:00.0</div>
     </div>
@@ -921,13 +931,17 @@
 
   <!-- RESULT -->
   <section id="screen-result" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnResultHome">◀ 뒤로</button>
+      <span></span>
+      <span style="width:44px"></span>
+    </div>
     <h1 class="title">🎉 도착!</h1>
     <div class="stars" id="resultStars">⭐⭐⭐</div>
     <div class="result-time" id="resultTime">00:00.0</div>
     <div class="result-best" id="resultBest">최고 기록: 00:00.0</div>
     <button class="big-btn" id="btnNextLevel">다음 단계로</button>
     <button class="big-btn" id="btnRetryLevel" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 도전하기</button>
-    <button class="icon-btn" id="btnResultHome" style="margin-top:10px">🏠 테마 화면으로</button>
   </section>
 
   <!-- MATH: operation select -->
@@ -943,16 +957,20 @@
 
   <!-- MATH: level select -->
   <section id="screen-math-level" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnMathLevelBack">◀ 뒤로</button>
+      <span></span>
+      <span style="width:44px"></span>
+    </div>
     <h1 class="title" id="mathLevelTitle">난이도 선택</h1>
     <p class="sub">쉬운 것부터 차근차근 도전해봐요</p>
     <div class="level-list" id="mathLevelList"></div>
-    <button class="icon-btn" style="margin-top:20px" id="btnMathLevelBack">◀ 연산 다시 고르기</button>
   </section>
 
   <!-- MATH: game -->
   <section id="screen-math-game" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnMathHome">🏠</button>
+      <button class="icon-btn" id="btnMathHome">◀ 뒤로</button>
       <div class="info" id="mathInfo">덧셈 · 1단계</div>
       <button class="icon-btn" id="btnMathInputMode">🔘 객관식</button>
     </div>
@@ -968,13 +986,17 @@
 
   <!-- MATH: result -->
   <section id="screen-math-result" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnMathResultHome">◀ 뒤로</button>
+      <span></span>
+      <span style="width:44px"></span>
+    </div>
     <h1 class="title">🎉 완료!</h1>
     <div class="stars" id="mathResultStars">⭐⭐⭐</div>
     <div class="result-time" id="mathResultScore">8 / 8 정답</div>
     <div class="result-best" id="mathResultBest">최고 기록: ⭐⭐⭐</div>
     <button class="big-btn" id="btnMathNextLevel">다음 단계로</button>
     <button class="big-btn" id="btnMathRetryLevel" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 도전하기</button>
-    <button class="icon-btn" id="btnMathResultHome" style="margin-top:10px">🏠 연산 다시 고르기</button>
   </section>
 
   <!-- WORD: language select -->
@@ -991,7 +1013,7 @@
   <!-- WORD: topic select -->
   <section id="screen-word-topic" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWordTopicBack">◀ 언어</button>
+      <button class="icon-btn" id="btnWordTopicBack">◀ 뒤로</button>
       <div class="info" id="wordTopicTitle">주제 선택</div>
       <span style="width:44px"></span>
     </div>
@@ -1002,7 +1024,7 @@
   <!-- WORD: mode select -->
   <section id="screen-word-mode" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWordModeBack">◀ 주제</button>
+      <button class="icon-btn" id="btnWordModeBack">◀ 뒤로</button>
       <div class="info" id="wordModeTitle">어떻게 배워볼까요?</div>
       <span style="width:44px"></span>
     </div>
@@ -1012,7 +1034,7 @@
   <!-- WORD: flashcard mode -->
   <section id="screen-word-card" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWordCardHome">🏠</button>
+      <button class="icon-btn" id="btnWordCardHome">◀ 뒤로</button>
       <div class="info" id="wordCardInfo">영어 · 동물</div>
       <div class="info" id="wordCardProgress">1 / 8</div>
     </div>
@@ -1037,7 +1059,7 @@
   <!-- WORD: quiz mode -->
   <section id="screen-word-quiz" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWordQuizHome">🏠</button>
+      <button class="icon-btn" id="btnWordQuizHome">◀ 뒤로</button>
       <div class="info" id="wordQuizInfo">영어 · 동물</div>
       <div class="info" id="wordQuizProgress">1 / 8</div>
     </div>
@@ -1050,7 +1072,7 @@
   <!-- WORD: match (memory pairs) -->
   <section id="screen-word-match" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWordMatchHome">🏠</button>
+      <button class="icon-btn" id="btnWordMatchHome">◀ 뒤로</button>
       <div class="info" id="wordMatchInfo">영어 · 동물</div>
       <div class="info" id="wordMatchProgress">0 / 6</div>
     </div>
@@ -1061,7 +1083,7 @@
   <!-- WORD: connect (drag to match) -->
   <section id="screen-word-connect" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="btnWordConnectHome">🏠</button>
+      <button class="icon-btn" id="btnWordConnectHome">◀ 뒤로</button>
       <div class="info" id="wordConnectInfo">영어 · 동물</div>
       <div class="info" id="wordConnectProgress">0 / 5</div>
     </div>
@@ -1075,12 +1097,16 @@
 
   <!-- WORD: result -->
   <section id="screen-word-result" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnWordResultHome">◀ 뒤로</button>
+      <span></span>
+      <span style="width:44px"></span>
+    </div>
     <h1 class="title">🎉 완료!</h1>
     <div class="stars" id="wordResultStars">⭐⭐⭐</div>
     <div class="result-time" id="wordResultScore">8 / 8 정답</div>
     <div class="result-best" id="wordResultBest">최고 기록: ⭐⭐⭐</div>
     <button class="big-btn" id="btnWordRetryQuiz" style="background:linear-gradient(180deg,#8bd450,#5fa82f); box-shadow:0 6px 0 #3d6e1e;">다시 도전하기</button>
-    <button class="icon-btn" id="btnWordResultHome" style="margin-top:10px">🏠 주제 다시 고르기</button>
   </section>
 
 </div>
@@ -1298,7 +1324,36 @@
     screens[id].classList.add('active');
     if(id==='screen-home') updateStreakDisplay();
     playGuideOnce(id);
+    syncBackTrap(id);
   }
+
+  // ---------- 폰·태블릿 뒤로가기 버튼 ----------
+  // 화면 전환이 한 페이지 안에서만 일어나서, 폰의 뒤로가기를 누르면 앱 밖(이전 사이트·새 탭 화면)으로
+  // 나가 버렸다(2026-10-12 제보). 홈이 아닌 화면에 있을 때는 브라우저 기록에 "덫" 한 칸을 넣어 두고,
+  // 뒤로가기가 그 칸을 지우면 그 화면의 왼쪽 위 "◀ 뒤로" 버튼을 대신 눌러 준다.
+  // 그래서 화면마다 하던 정리(읽어주기 멈춤, 타이머 정리 등)가 버튼을 누를 때와 똑같이 일어난다.
+  // 홈 화면에서 누르는 뒤로가기만 원래대로 앱을 나간다.
+  let backTrapArmed = false, selfBack = false;
+  function syncBackTrap(id){
+    try{
+      if(id !== 'screen-home' && !backTrapArmed){ history.pushState({kidsTrap:1}, ''); backTrapArmed = true; }
+      else if(id === 'screen-home' && backTrapArmed){ backTrapArmed = false; selfBack = true; history.back(); }
+    }catch(e){}
+  }
+  window.addEventListener('popstate', ()=>{
+    backTrapArmed = false;
+    const cur = document.querySelector('.screen.active');
+    if(!cur) return;
+    // 앱이 홈으로 돌아오면서 덫을 스스로 지운 경우: 그 사이 다른 화면으로 들어갔다면 덫만 다시 놓는다
+    if(selfBack){ selfBack = false; syncBackTrap(cur.id); return; }
+    if(cur.id === 'screen-home') return;
+    const rest = document.getElementById('restOverlay');
+    if(rest && rest.classList.contains('show')){ syncBackTrap(cur.id); return; } // 쉬는 시간에는 뒤로가기로 빠져나가지 못한다
+    const btn = cur.querySelector('.topbar button');
+    if(btn) btn.click(); else showScreen('screen-home');
+    const now = document.querySelector('.screen.active');
+    if(now) syncBackTrap(now.id);
+  });
 
   // ---------- 소리 안내 ----------
   // 글을 아직 못 읽는 아이도 혼자 할 수 있게, 놀이를 처음 열 때 무엇을 하면 되는지 짧게 읽어준다.
