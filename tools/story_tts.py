@@ -104,7 +104,8 @@ def make_unit(client, st, lang, model, mode, voice):
     paras = [sc['t'][lang] for sc in st['scenes']]
     wav = RAW / f'{st["id"]}_{lang}.wav'
     meta = wav.with_suffix('.json')
-    if wav.exists() and meta.exists():
+    reused = wav.exists() and meta.exists()
+    if reused:
         # 지난번에 받아 두고 자르기만 못 한 음성은 다시 요청하지 않는다 (하루 10번 한도가 아까워서)
         model = json.loads(meta.read_text(encoding='utf-8'))['model']
     else:
@@ -115,8 +116,9 @@ def make_unit(client, st, lang, model, mode, voice):
             w.setnchannels(1); w.setsampwidth(2); w.setframerate(24000); w.writeframes(pcm)
         meta.write_text(json.dumps({'model': model}), encoding='utf-8')
     ok, info = split_unit(client, st, lang, wav)
-    if not ok and info.startswith('받아쓰기'):
-        wav.unlink(missing_ok=True); meta.unlink(missing_ok=True)   # 다음에 새로 만들도록
+    # 받아쓰기가 다르거나, 받아 둔 음성을 다시 써도 못 잘랐으면 버리고 다음에 새로 만든다
+    if not ok and (info.startswith('받아쓰기') or reused):
+        wav.unlink(missing_ok=True); meta.unlink(missing_ok=True)
     return ok, info, model
 
 def split_unit(client, st, lang, wav, tries=3):
@@ -134,9 +136,9 @@ def split_unit(client, st, lang, wav, tries=3):
         sims = [difflib.SequenceMatcher(None, norm(a), norm(b)).ratio() for a, b in zip(paras, j.get('spoken', []))]
         if len(sims) < len(paras) or min(sims) < 0.75:
             return False, f'받아쓰기가 원문과 다름 (최저 {min(sims or [0]):.2f})'
-        pts, ratio = best_split(paras, sil, total, lens, [float(x) for x in j['starts']])
+        pts, ratio, accepted = best_split(paras, sil, total, lens, [float(x) for x in j['starts']])
         if pts is None: last = '장면 경계를 쉼에 맞추지 못함'; continue
-        if min(ratio) < 0.5 or max(ratio) > 2.0:
+        if not accepted:
             last = f'잘린 길이가 글자 수와 안 맞음 ({min(ratio):.2f}~{max(ratio):.2f})'; continue
         tts_split.cut(wav, pts, total, [media_path(st['id'], n, lang) for n in range(len(paras))])
         return True, f'{total:.0f}초, 받아쓰기 일치 최저 {min(sims):.2f}, 길이 비율 {min(ratio):.2f}~{max(ratio):.2f}'
@@ -153,14 +155,16 @@ def best_split(paras, sil, total, lens, gem):
     # Gemini 시각을 먼저 믿고, 그 결과가 길이 확인(절반~두 배)을 못 넘을 때만 평균·글자 수 비율로.
     # "가장 고른 것"을 고르게 했더니 Gemini 시각으로 맞게 잘린 것을 두고 글자 수 쪽을 골라
     # 다음 장면 첫 낱말이 붙어 들어간 적이 있다(시골쥐 한국어 3번째 장면, 2026-10-12).
-    fallback = (None, None)
-    for est in (gem, mean, prop):
-        pts, _ = tts_split.split_points_guided(paras, sil, total, est)
+    # Gemini 시각이 쉼 위치와 맞으면(2.5초 안) 극적으로 길게 읽은 장면도 있으니 0.35~3배까지 받아 준다
+    # (실측: 금도끼 영어 "My axe!" 장면이 2.14배라 두 배 기준에 걸려 글자 수 쪽으로 바뀌며 틀렸다).
+    fallback = (None, None, False)
+    for est, lo, hi in ((gem, 0.35, 3.0), (mean, 0.5, 2.0), (prop, 0.5, 2.0)):
+        pts, near = tts_split.split_points_guided(paras, sil, total, est)
         if not pts: continue
         seg = [b - a for a, b in zip([0] + pts, pts + [total])]
         ratio = [sg / (total * L / sum(lens)) for sg, L in zip(seg, lens)]
-        if 0.5 <= min(ratio) and max(ratio) <= 2.0: return pts, ratio
-        if fallback[0] is None: fallback = (pts, ratio)
+        if (near or est is not gem) and lo <= min(ratio) and max(ratio) <= hi: return pts, ratio, True
+        if fallback[0] is None: fallback = (pts, ratio, False)
     return fallback
 
 def resplit():
