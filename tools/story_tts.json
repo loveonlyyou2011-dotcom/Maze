@@ -1,0 +1,626 @@
+{
+"ant/0/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.39,
+"ok": true
+},
+"ant/0/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 6.25,
+"ok": true
+},
+"ant/0/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.02,
+"ok": true
+},
+"ant/0/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 6.15,
+"ok": true
+},
+"ant/1/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.96,
+"ok": true
+},
+"ant/1/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.61,
+"ok": true
+},
+"ant/1/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.53,
+"ok": true
+},
+"ant/1/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 4.23,
+"ok": false
+},
+"ant/2/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.66,
+"ok": true
+},
+"ant/2/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.51,
+"ok": true
+},
+"ant/2/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.46,
+"ok": true
+},
+"ant/2/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.08,
+"ok": true
+},
+"ant/3/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.5,
+"ok": true
+},
+"ant/3/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 4.74,
+"ok": true
+},
+"ant/3/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.77,
+"ok": true
+},
+"ant/3/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 6.31,
+"ok": true
+},
+"ant/4/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.81,
+"ok": true
+},
+"ant/4/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 6.51,
+"ok": true
+},
+"ant/4/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.48,
+"ok": true
+},
+"ant/4/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.09,
+"ok": true
+},
+"ant/5/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.64,
+"ok": true
+},
+"ant/5/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 7.19,
+"ok": true
+},
+"ant/5/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.09,
+"ok": true
+},
+"ant/5/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 4.13,
+"ok": true
+},
+"ant/6/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.79,
+"ok": true
+},
+"ant/6/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 6.27,
+"ok": true
+},
+"ant/6/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.33,
+"ok": true
+},
+"ant/6/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 4.67,
+"ok": true
+},
+"ant/7/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.77,
+"ok": true
+},
+"ant/7/ja": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 7.59,
+"ok": true
+},
+"ant/7/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.11,
+"ok": true
+},
+"ant/7/zh": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 6.08,
+"ok": true
+},
+"mouse/0/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.04,
+"ok": true
+},
+"mouse/1/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.27,
+"ok": true
+},
+"mouse/2/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.1,
+"ok": true
+},
+"mouse/3/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 7.01,
+"ok": true
+},
+"mouse/4/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.87,
+"ok": true
+},
+"mouse/5/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.85,
+"ok": true
+},
+"mouse/6/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 6.34,
+"ok": true
+},
+"mouse/7/ko": {
+"model": "gemini-3.8-flash-tts",
+"voice": "Sulafat",
+"sec": 5.98,
+"ok": true
+},
+"sunwind/0/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.7,
+"ok": true
+},
+"sunwind/0/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.36,
+"ok": true
+},
+"sunwind/0/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.19,
+"ok": true
+},
+"sunwind/0/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.63,
+"ok": true
+},
+"sunwind/1/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.14,
+"ok": true
+},
+"sunwind/1/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.5,
+"ok": true
+},
+"sunwind/1/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.66,
+"ok": true
+},
+"sunwind/1/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.34,
+"ok": true
+},
+"sunwind/2/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.63,
+"ok": true
+},
+"sunwind/2/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.61,
+"ok": true
+},
+"sunwind/2/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.8,
+"ok": true
+},
+"sunwind/2/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.4,
+"ok": true
+},
+"sunwind/3/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.17,
+"ok": true
+},
+"sunwind/3/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.12,
+"ok": true
+},
+"sunwind/3/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.97,
+"ok": true
+},
+"sunwind/3/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 2.77,
+"ok": true
+},
+"sunwind/4/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.94,
+"ok": true
+},
+"sunwind/4/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.21,
+"ok": true
+},
+"sunwind/4/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.6,
+"ok": true
+},
+"sunwind/4/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.01,
+"ok": true
+},
+"sunwind/5/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.99,
+"ok": true
+},
+"sunwind/5/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.69,
+"ok": true
+},
+"sunwind/5/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 3.6,
+"ok": true
+},
+"sunwind/5/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.42,
+"ok": true
+},
+"sunwind/6/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.29,
+"ok": true
+},
+"sunwind/6/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.59,
+"ok": true
+},
+"sunwind/6/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.08,
+"ok": true
+},
+"sunwind/6/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.41,
+"ok": true
+},
+"sunwind/7/en": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.85,
+"ok": true
+},
+"sunwind/7/ja": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.86,
+"ok": true
+},
+"sunwind/7/ko": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.9,
+"ok": true
+},
+"sunwind/7/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.79,
+"ok": true
+},
+"tortoise/0/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 8.04,
+"ok": true
+},
+"tortoise/0/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 6.83,
+"ok": true
+},
+"tortoise/0/ko": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 6.94,
+"ok": true
+},
+"tortoise/0/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.5,
+"ok": true
+},
+"tortoise/1/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 6.19,
+"ok": true
+},
+"tortoise/1/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 5.86,
+"ok": true
+},
+"tortoise/1/ko": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 6.42,
+"ok": true
+},
+"tortoise/1/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.44,
+"ok": true
+},
+"tortoise/2/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 5.4,
+"ok": true
+},
+"tortoise/2/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 6.1,
+"ok": true
+},
+"tortoise/2/ko": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 7.94,
+"ok": true
+},
+"tortoise/2/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 5.18,
+"ok": true
+},
+"tortoise/3/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 6.65,
+"ok": true
+},
+"tortoise/3/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 6.42,
+"ok": true
+},
+"tortoise/3/ko": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 7.49,
+"ok": true
+},
+"tortoise/3/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.08,
+"ok": true
+},
+"tortoise/4/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 9.32,
+"ok": true
+},
+"tortoise/4/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 8.2,
+"ok": true
+},
+"tortoise/4/ko": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 9.68,
+"ok": true
+},
+"tortoise/4/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 6.24,
+"ok": true
+},
+"tortoise/5/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 8.25,
+"ok": true
+},
+"tortoise/5/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 5.59,
+"ok": true
+},
+"tortoise/5/ko": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 6.4,
+"ok": true
+},
+"tortoise/5/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.88,
+"ok": true
+},
+"tortoise/6/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 7.35,
+"ok": true
+},
+"tortoise/6/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 5.09,
+"ok": true
+},
+"tortoise/6/ko": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 6.35,
+"ok": true
+},
+"tortoise/6/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.34,
+"ok": true
+},
+"tortoise/7/en": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 6.93,
+"ok": true
+},
+"tortoise/7/ja": {
+"model": "gemini-3.1-flash-tts-preview",
+"voice": "Sulafat",
+"sec": 5.66,
+"ok": true
+},
+"tortoise/7/ko": {
+"model": "gemini-2.5-flash-preview-tts",
+"voice": "Sulafat",
+"sec": 8.06,
+"ok": true
+},
+"tortoise/7/zh": {
+"model": "gemini-3.8-flash-lite-tts",
+"voice": "Sulafat",
+"sec": 4.87,
+"ok": true
+}
+}

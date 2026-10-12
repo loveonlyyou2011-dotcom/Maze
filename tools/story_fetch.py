@@ -157,12 +157,18 @@ def vsheets():
 
 def embed():
     credits = json.loads((OUT / 'story_credits.json').read_text(encoding='utf-8'))
+    # 감정 낭독 음성(story_tts.py가 만든 stories/<id>/<장면>_<언어>.m4a)이 있는 언어와 길이(초)
+    tts_f = TOOLS / 'story_tts.json'
+    tts = json.loads(tts_f.read_text(encoding='utf-8')) if tts_f.exists() else {}
     data = []
     for st in STORIES:
         scenes = []
         for n, sc in enumerate(st['scenes']):
             c = credits.get(f'{st["id"]}/{n}', {})
-            scenes.append({'t': sc['t'], 'fx': sc.get('fx', ''), 'video': bool(c.get('video')),
+            # 받아쓰기 확인(story_tts.py --verify)을 통과한 장면만. 떨어진 장면은 기기 음성으로 읽는다
+            audio = {lang: tts[f'{st["id"]}/{n}/{lang}']['sec'] for lang in ('ko', 'en', 'ja', 'zh')
+                     if tts.get(f'{st["id"]}/{n}/{lang}', {}).get('ok') and (MEDIA / st['id'] / f'{n}_{lang}.m4a').exists()}
+            scenes.append({'t': sc['t'], 'fx': sc.get('fx', ''), 'video': bool(c.get('video')), 'a': audio,
                            'credit': [x for x in [c.get('photo'), c.get('video')] if x]})
         data.append({'id': st['id'], 'group': st.get('group', ''), 'emoji': st['emoji'], 'gradient': st['gradient'], 'title': st['title'],
                      'moral': st['moral'], 'scenes': scenes, 'quiz': st['quiz']})

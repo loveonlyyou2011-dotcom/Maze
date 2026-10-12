@@ -77,6 +77,17 @@ v = js("const v=document.getElementById('storyVideo'); return [v.style.display, 
 check('영상 장면이 실제로 재생됨', v[0] == 'block' and not v[1] and v[2] > 0.3, v)
 d.save_screenshot(str(OUT / 'story_video.png'))
 
+# 감정 낭독 파일 재생 (토끼와 거북이는 네 언어 모두 낭독 파일이 있다)
+js("document.getElementById('btnStoryPrev').click();"); time.sleep(.3)
+for _ in range(3): js("document.getElementById('btnStoryPrev').click();"); time.sleep(.3)
+time.sleep(2.5)
+a = js("const a=window.__storyAudio; return [decodeURIComponent(a.currentSrc||''), a.paused, Math.round(a.currentTime*10)/10];")
+check('감정 낭독 파일을 재생함(기기 음성 대신)', a[0].endswith('_ko.m4a') and not a[1] and a[2] > 0.5, a)
+js("document.querySelectorAll('#storyPlayLangSeg button')[1].click();"); time.sleep(2.5)
+a = js("const a=window.__storyAudio; return [decodeURIComponent(a.currentSrc||''), a.paused, Math.round(a.currentTime*10)/10];")
+check('언어를 바꾸면 그 언어 낭독으로', a[0].endswith('_en.m4a') and not a[1], a)
+js("document.querySelectorAll('#storyPlayLangSeg button')[0].click();"); time.sleep(.5)
+
 # 소리 끈 상태에서 저절로 넘어가기 (자막 따라가기)
 js("if(!document.getElementById('btnMute').textContent.includes('🔇')) document.getElementById('btnMute').click();")
 js("document.getElementById('btnStoryPrev').click();"); time.sleep(.6)
